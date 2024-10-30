@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 /**
  * 认证拦截器
  */
-public class GlobalInterceptor implements HandlerInterceptor {
+public class GlobalHandlerInterceptor implements HandlerInterceptor {
 
     @Autowired
     private AuthService authService;

@@ -10,15 +10,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * WebMvc配置
  */
 @Configuration
-public class GlobalWebConfiguration implements WebMvcConfigurer {
+public class GlobalWebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
         //拦截器
-        InterceptorRegistration globalInterceptor = registry.addInterceptor(getGlobalInterceptor());
+        InterceptorRegistration globalInterceptor = registry.addInterceptor(getGlobalHandlerInterceptor());
 
-        //排除和拦截规则无需添加contextPath前缀
         //排除
         //globalInterceptor.excludePathPatterns("/error/**");
         //globalInterceptor.excludePathPatterns("/images/**");
@@ -28,16 +27,13 @@ public class GlobalWebConfiguration implements WebMvcConfigurer {
 
         //排除所有地址
         //globalInterceptor.excludePathPatterns("/**");
-        //排除地址
-        globalInterceptor.excludePathPatterns("/info");
-        globalInterceptor.excludePathPatterns("/login");
 
-        //拦截所有地址
-        globalInterceptor.addPathPatterns("/**");       //拦截所有地址
+        //拦截地址
+        globalInterceptor.addPathPatterns("/api/**");
     }
 
     @Bean
-    public GlobalInterceptor getGlobalInterceptor() {
-        return new GlobalInterceptor();
+    public GlobalHandlerInterceptor getGlobalHandlerInterceptor() {
+        return new GlobalHandlerInterceptor();
     }
 }

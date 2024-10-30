@@ -28,7 +28,7 @@ public class NoteController {
     /**
      * 读取笔记列表
      */
-    @RequestMapping(value = "/notes", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/note/index", method = RequestMethod.GET)
     public Result getNoteIndex() {
         ArrayList<NoteIndex> notes  = noteService.getNotes();
         return Result.successData(notes);
@@ -37,7 +37,7 @@ public class NoteController {
     /**
      * 读取笔记
      */
-    @RequestMapping(value = "/note", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/note/get", method = RequestMethod.POST)
     public Result getNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String path = json.get("path").asText();
@@ -48,7 +48,7 @@ public class NoteController {
     /**
      * 保存笔记
      */
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/note/save", method = RequestMethod.POST)
     public Result saveNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String path = json.get("path").asText();
@@ -60,7 +60,7 @@ public class NoteController {
     /**
      * 创建笔记
      */
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/note/create", method = RequestMethod.POST)
     public Result createNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String path = json.get("path").asText();
@@ -71,7 +71,7 @@ public class NoteController {
     /**
      * 删除笔记
      */
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/note/delete", method = RequestMethod.POST)
     public Result deleteNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String path = json.get("path").asText();

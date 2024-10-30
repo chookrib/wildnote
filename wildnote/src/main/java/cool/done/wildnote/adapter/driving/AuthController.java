@@ -22,7 +22,7 @@ public class AuthController {
     /**
      * 登录
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/login", method = RequestMethod.POST)
     public Result login(@RequestBody String requestBody) throws JsonProcessingException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String username = json.get("username").asText();

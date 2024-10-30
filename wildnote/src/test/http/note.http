@@ -1,9 +1,9 @@
 ###
-GET http://{{host}}/notes
+GET http://{{host}}/api/note/index
 Access-Token: {{accessToken}}
 
 ###
-POST http://{{host}}/note
+POST http://{{host}}/note/get
 Content-Type: application/json
 Access-Token: {{accessToken}}
 
@@ -12,7 +12,7 @@ Access-Token: {{accessToken}}
 }
 
 ###
-POST http://{{host}}/save
+POST http://{{host}}/note/save
 Content-Type: application/json
 Access-Token: {{accessToken}}
 
