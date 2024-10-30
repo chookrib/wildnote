@@ -1,0 +1,22 @@
+###
+GET http://localhost:8080/notes
+Access-Token: 5925ced1-63b6-43aa-9b12-e20c3295dcf1
+
+###
+POST http://localhost:8080/note
+Content-Type: application/json
+
+{
+    "path": "C:\\test\\note\\note1.md"
+}
+
+###
+POST http://localhost:8080/save
+Content-Type: application/json
+
+{
+  "path": "C:\\test\\note\\note1.md",
+  "content": "test"
+}
+
+
