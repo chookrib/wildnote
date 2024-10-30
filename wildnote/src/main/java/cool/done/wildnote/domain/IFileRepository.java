@@ -1,6 +1,8 @@
 package cool.done.wildnote.domain;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +13,7 @@ public interface IFileRepository {
     /**
      * 读取目录
      */
-    ArrayList<FilePath> getFilePaths(String path);
+    ArrayList<File> getFiles(String path);
 
     /**
      * 读取文件

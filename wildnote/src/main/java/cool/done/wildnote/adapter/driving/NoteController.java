@@ -3,7 +3,7 @@ package cool.done.wildnote.adapter.driving;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cool.done.wildnote.adapter.driven.FileRepository;
-import cool.done.wildnote.domain.FilePath;
+import cool.done.wildnote.domain.NoteIndex;
 import cool.done.wildnote.domain.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,8 +29,8 @@ public class NoteController {
      * 读取笔记列表
      */
     @RequestMapping(value = "/notes", method = RequestMethod.GET)
-    public Result getNotes() {
-        ArrayList<FilePath> notes  = noteService.getNotes();
+    public Result getNoteIndex() {
+        ArrayList<NoteIndex> notes  = noteService.getNotes();
         return Result.successData(notes);
     }
 

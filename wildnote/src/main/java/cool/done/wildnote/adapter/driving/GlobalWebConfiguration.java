@@ -28,8 +28,10 @@ public class GlobalWebConfiguration implements WebMvcConfigurer {
 
         //排除所有地址
         //globalInterceptor.excludePathPatterns("/**");
-        //排除登录
+        //排除地址
+        globalInterceptor.excludePathPatterns("/info");
         globalInterceptor.excludePathPatterns("/login");
+
         //拦截所有地址
         globalInterceptor.addPathPatterns("/**");       //拦截所有地址
     }

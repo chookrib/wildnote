@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * 笔记Service
@@ -23,13 +25,27 @@ public class NoteService {
     /**
      * 读取笔记列表
      */
-    public ArrayList<FilePath> getNotes()
+    public ArrayList<NoteIndex> getNotes()
     {
         if(StringUtils.isEmpty(notePath)) {
             throw new ValidationException("未配置笔记文件夹路径");
         }
 
-        return fileRepository.getFilePaths(notePath);
+        ArrayList<NoteIndex> noteIndexes = new ArrayList<>();
+        int notePathLevel = notePath.replace("\\", "/").split("/").length;
+
+        ArrayList<File> files = fileRepository.getFiles(notePath);
+        for (File file : files) {
+            int level = file.getPath().replace("\\", "/").split("/").length - notePathLevel - 1;
+            if (file.isFile()) {
+                noteIndexes.add(new NoteIndex(level, file.getPath(), file.getName(), false));
+            }
+            if (file.isDirectory()) {
+                noteIndexes.add(new NoteIndex(level, file.getPath(), file.getName(), true));
+            }
+        }
+
+        return noteIndexes;
     }
 
     /**

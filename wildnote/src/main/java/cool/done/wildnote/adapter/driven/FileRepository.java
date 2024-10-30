@@ -1,7 +1,6 @@
 package cool.done.wildnote.adapter.driven;
 
 import cool.done.wildnote.domain.IFileRepository;
-import cool.done.wildnote.domain.FilePath;
 import cool.done.wildnote.domain.ValidationException;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 文件Repository
@@ -20,36 +20,30 @@ public class FileRepository implements IFileRepository {
      * 读取目录
      */
     @Override
-    public ArrayList<FilePath> getFilePaths(String path){
-        ArrayList<FilePath> filePaths = new ArrayList<>();
-        File[] files = new File(path).listFiles();
+    public ArrayList<File> getFiles(String path){
+        ArrayList<File> files = new ArrayList<>();
+        File[] list = new File(path).listFiles();
+        if(list == null)
+            return files;
 
-        if (files != null) {
-            List fileList = Arrays.asList(files);
-            Collections.sort(fileList, new Comparator<File>() {
-                @Override
-                public int compare(File o1, File o2) {
-                    if (o1.isDirectory() && !o2.isFile()) {
-                        return -1;
-                    }
-                    if (!o1.isFile() && o2.isDirectory()) {
-                        return 1;
-                    }
-                    return o1.getName().compareTo(o2.getName());
-                }});
-
-            for (File file : files) {
-                if (file.isFile()) {
-                    filePaths.add(new FilePath(file.getPath(), file.getName(), false,
-                            new ArrayList<FilePath>()));
-                }
-                if (file.isDirectory()) {
-                    filePaths.add(new FilePath(file.getPath(), file.getName(), true,
-                            getFilePaths(file.getPath())));
-                }
+        Arrays.sort(list, new Comparator<File>() {
+            @Override
+            public int compare(File file1, File file2) {
+                if(file1.isDirectory() && file2.isFile())
+                    return -1;
+                if(file1.isFile() && file2.isDirectory())
+                    return 1;
+                return file1.getName().compareTo(file2.getName());
             }
+        });
+
+        for (File file : list) {
+            files.add(file);
+            if(file.isDirectory())
+                files.addAll(getFiles(file.getPath()));
         }
-        return filePaths;
+
+        return files;
     }
 
     /**

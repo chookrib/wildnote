@@ -1,16 +1,16 @@
 package cool.done.wildnote.domain;
 
-import java.util.ArrayList;
-
 /**
- * 路径
+ * 笔记目录
  */
-public class FilePath {
+public class NoteIndex {
 
+    private int level;
     private String path;
     private String name;
     private boolean directory;
-    private ArrayList<FilePath> subPaths;
+
+    public int getLeval() { return level; }
 
     public String getPath() {
         return path;
@@ -24,14 +24,10 @@ public class FilePath {
         return directory;
     }
 
-    public ArrayList<FilePath> getSubPaths() {
-        return subPaths;
-    }
-
-    public FilePath(String path, String name, boolean directory, ArrayList<FilePath> subPaths) {
+    public NoteIndex(int level, String path, String name, boolean directory) {
+        this.level = level;
         this.path = path;
         this.name = name;
         this.directory = directory;
-        this.subPaths = subPaths;
     }
 }
