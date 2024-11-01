@@ -7,6 +7,9 @@ import cool.done.wildnote.domain.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 /**
  * 认证Controller
  */
@@ -22,8 +25,8 @@ public class AuthController {
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
     public Result login(@RequestBody String requestBody) throws JsonProcessingException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
-        String username = json.get("username").asText();
-        String password = json.get("password").asText();
+        String username = json.path("username").asText();
+        String password = json.path("password").asText();
         String accessToken = authService.login(username, password);
         return Result.successData(accessToken);
     }

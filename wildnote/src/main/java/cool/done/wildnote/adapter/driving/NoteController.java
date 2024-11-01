@@ -37,7 +37,7 @@ public class NoteController {
     @RequestMapping(value = "/api/note/get", method = RequestMethod.POST)
     public Result getNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
-        String path = json.get("path").asText();
+        String path = json.path("path").asText();
         String note  = noteService.getNote(path);
         return Result.successData(note);
     }
@@ -48,8 +48,8 @@ public class NoteController {
     @RequestMapping(value = "/api/note/save", method = RequestMethod.POST)
     public Result saveNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
-        String path = json.get("path").asText();
-        String content = json.get("content").asText();
+        String path = json.path("path").asText();
+        String content = json.path("content").asText();
         noteService.saveNote(path, content);
         return Result.success();
     }
@@ -60,7 +60,7 @@ public class NoteController {
     @RequestMapping(value = "/api/note/create", method = RequestMethod.POST)
     public Result createNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
-        String path = json.get("path").asText();
+        String path = json.path("path").asText();
         fileRepository.createFile(path);
         return Result.success();
     }
@@ -71,7 +71,7 @@ public class NoteController {
     @RequestMapping(value = "/api/note/delete", method = RequestMethod.POST)
     public Result deleteNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
-        String path = json.get("path").asText();
+        String path = json.path("path").asText();
         fileRepository.deleteFile(path);
         return Result.success();
     }
