@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 /**
  * 认证拦截器
  */
-public class GlobalHandlerInterceptor implements HandlerInterceptor {
+public class GlobalWebInterceptor implements HandlerInterceptor {
 
     @Autowired
     private AuthService authService;
@@ -21,8 +21,9 @@ public class GlobalHandlerInterceptor implements HandlerInterceptor {
 
         String accessToken = request.getHeader("Access-Token");
 
-        if(!authService.verifyAccessToken(accessToken))
+        if(!authService.verifyAccessToken(accessToken)) {
             throw new NotLoginException("未登录");
+        }
 
         return true;
     }

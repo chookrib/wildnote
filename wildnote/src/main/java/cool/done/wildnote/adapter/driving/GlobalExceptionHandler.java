@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ValidationException.class)
     @ResponseBody
     public Result validationExceptionHandler(HttpServletResponse response, ValidationException e) {
-        return Result.error(ResultCodes.ERROR_NOT_LOGIN, e.getMessage());
+        return Result.error(ResultCodes.ERROR_VALIDATION, e.getMessage());
     }
 
     /**
@@ -54,6 +54,6 @@ public class GlobalExceptionHandler {
             e.printStackTrace(new PrintWriter(errors));
             message = errors.toString();
         }
-        return Result.error(ResultCodes.ERROR_NOT_LOGIN, message);
+        return Result.error(ResultCodes.ERROR_DEFAULT, message);
     }
 }
