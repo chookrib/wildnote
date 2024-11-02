@@ -52,7 +52,7 @@ public class NoteService {
      * 读取笔记
      */
     public String getNote(String path) throws IOException {
-        if(!path.startsWith(notePath))
+        if(!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止读取笔记文件夹路径以外的文件");
         return fileRepository.getFile(path);
     }
@@ -61,7 +61,7 @@ public class NoteService {
      * 保存笔记
      */
     public void saveNote(String path, String content) throws IOException {
-        if(!path.startsWith(notePath))
+        if(!StringUtils.isEmpty(notePath) &&!path.startsWith(notePath))
             throw new ValidationException("禁止保存笔记文件夹路径以外的文件");
         fileRepository.saveFile(path, content);
     }
@@ -70,7 +70,7 @@ public class NoteService {
      * 创建笔记
      */
     public void createNote(String path) throws IOException {
-        if(!path.startsWith(notePath))
+        if(!StringUtils.isEmpty(notePath) &&!path.startsWith(notePath))
             throw new ValidationException("禁止在笔记文件夹路径以外创建文件");
         fileRepository.createFile(path);
     }
@@ -79,7 +79,7 @@ public class NoteService {
      * 删除笔记
      */
     public void deleteNote(String path) throws IOException {
-        if(!path.startsWith(notePath))
+        if(!StringUtils.isEmpty(notePath) &&!path.startsWith(notePath))
             throw new ValidationException("禁止删除笔记文件夹路径以外的文件");
         fileRepository.deleteFile(path);
     }

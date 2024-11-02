@@ -18,9 +18,9 @@ public class InfoController {
     @ResponseBody
     public String  info() {
         StringBuilder sb = new StringBuilder();
-        sb.append("File-Name: " + WildnoteApplication.getFileName());
+        sb.append("File-Name: ").append(WildnoteApplication.getFileName());
         sb.append(System.lineSeparator());
-        sb.append("Build-Time: " + WildnoteApplication.getBuildTime());
+        sb.append("Build-Time: ").append(WildnoteApplication.getBuildTime());
         sb.append(System.lineSeparator());
         return sb.toString();
     }
