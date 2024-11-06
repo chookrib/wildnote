@@ -1,9 +1,9 @@
 <script setup>
 
 import router from "../router";
-import axios from '../axios'
+import axios from '../utils/axios'
 import { reactive } from "vue";
-import { User, Lock } from '@element-plus/icons-vue'
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
 
 const loginForm = reactive({ username: '', password: '' })
 
@@ -26,25 +26,53 @@ function login() {
           <img src="/logo.png" alt="">
         </div>
       </div>
-      <el-form id="login-form" label-width="auto">
-        <el-form-item>
-          <el-input v-model="loginForm.username" :prefix-icon="User"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="loginForm.password" :prefix-icon="Lock" type="password"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button id="login-button" type="primary" @click="login">登录</el-button>
-        </el-form-item>
-      </el-form>
+      <a-form id="login-form" autocomplete="off">
+        <a-form-item>
+          <a-input v-model:value="loginForm.username">
+            <template #prefix>
+              <user-outlined />
+            </template>
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-input-password v-model:value="loginForm.password">
+            <template #prefix>
+              <lock-outlined />
+            </template>
+          </a-input-password>
+        </a-form-item>
+        <a-form-item style="text-align: center;">
+          <a-button id="login-button" type="primary" shape="round" @click=login>登录</a-button>
+        </a-form-item>
+      </a-form>
     </div>
   </div>
 </template>
 
 <style scoped>
 #login-container {
-  background-color: #3A6A74;
+  /* background-color: #3A6A74; */
+  background-color: #ddd;
   height: 100%;
+
+  /* background-image: linear-gradient(45deg, #2c3e50, #27ae60, #2980b9, #e74c3c, #8e44ad); */
+  background-image: linear-gradient(45deg, #3A6A74, #46537F, #458E56);
+  background-size: 400%;
+  animation: bganimation 15s infinite;
+}
+
+@keyframes bganimation {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 #login-box {
@@ -55,7 +83,8 @@ function login() {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%)
+  transform: translate(-50%, -50%);
+  opacity: 1;
 }
 
 #logo-container {
@@ -77,11 +106,11 @@ function login() {
   border-radius: 50%;
   background-color: #eee;
   padding: 15px;
+}
 
-  img {
-    width: 100%;
-    height: 100%;
-  }
+#logo-box img {
+  width: 100%;
+  height: 100%;
 }
 
 #login-form {
@@ -92,6 +121,12 @@ function login() {
 }
 
 #login-button {
-  margin: auto;
+  background-color: #3A6A74;
+  color: #fff;
+
+  &:hover {
+    background-color: #1677FF !important;
+
+  }
 }
 </style>

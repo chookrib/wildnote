@@ -1,9 +1,10 @@
 import axios from "axios"
-import router from "./router"
-import { ElMessage } from "element-plus"
+import router from "../router"
+import { message } from "ant-design-vue"
 
 const instance = axios.create({
-  baseURL: "http://localhost:8080/"
+  //baseURL: "http://localhost:8080/"
+  baseURL: "/"
 })
 
 instance.interceptors.request.use(config => {
@@ -18,10 +19,11 @@ instance.interceptors.response.use(response => {
 
   if (response.data.code === 2) {
     router.push('/login')
+    throw new Error(response.data.message)
   }
   else {
     //alert(response.data.message)
-    ElMessage.error(response.data.message)
+    message.error(response.data.message)
     throw new Error(response.data.message)
   }
 })

@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <!-- <RouterLink to="/">Home</RouterLink> -->
-  <RouterView />
+  <RouterView :key="$route.fullPath" />
 </template>
 
 <style scoped></style>
