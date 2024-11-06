@@ -17,7 +17,7 @@ public class JacksonWebConfig {
      * 自定义Spring MVC的Jackson配置
      */
     @Bean
-    public HttpMessageConverters jacksonConverters() {
+    public HttpMessageConverters jacksonWebConverters() {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
                 //.serializationInclusion(JsonInclude.Include.NON_NULL)
                 //.indentOutput(true)                                               //输出时自动缩进
@@ -55,5 +55,4 @@ public class JacksonWebConfig {
         @Override
         public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) { return ""; }
     }*/
-
 }
