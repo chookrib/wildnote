@@ -3,7 +3,7 @@ GET http://{{host}}/api/note/index
 Access-Token: {{accessToken}}
 
 ###
-POST http://{{host}}/note/get
+POST http://{{host}}/api/note/get
 Content-Type: application/json
 Access-Token: {{accessToken}}
 
@@ -12,7 +12,11 @@ Access-Token: {{accessToken}}
 }
 
 ###
-POST http://{{host}}/note/save
+GET http://{{host}}/api/note/get?path=C%3A%5Ctest%5Cnote%5Cnote1.md
+Access-Token: {{accessToken}}
+
+###
+POST http://{{host}}/api/note/save
 Content-Type: application/json
 Access-Token: {{accessToken}}
 

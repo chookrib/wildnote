@@ -26,7 +26,7 @@ public class NoteController {
      * 读取笔记列表
      */
     @RequestMapping(value = "/api/note/index", method = RequestMethod.GET)
-    public Result getNoteIndex() {
+    public Result getNoteIndex() throws IOException {
         ArrayList<NoteIndex> notes  = noteService.getNotes();
         return Result.successData(notes);
     }
@@ -38,6 +38,15 @@ public class NoteController {
     public Result getNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String path = json.path("path").asText();
+        String note  = noteService.getNote(path);
+        return Result.successData(note);
+    }
+
+    /**
+     * 读取笔记
+     */
+    @RequestMapping(value = "/api/note/get", method = RequestMethod.GET)
+    public Result getNoteByQueryString(@RequestParam String path) throws IOException {
         String note  = noteService.getNote(path);
         return Result.successData(note);
     }
