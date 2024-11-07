@@ -87,8 +87,8 @@ function showTime(time) {
   border-bottom: 1px dotted #3c3c3c;
 
   &:hover {
-    background-color: #86B1BA;
-    color: #365257;
+    background-color: #3c3c3c;
+    color: #fff;
   }
 }
 </style>

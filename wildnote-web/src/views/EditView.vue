@@ -24,7 +24,7 @@ onMounted(() => {
       id: 'markdown-container',
       value: response.data.data,
       themeSettings: {
-        mainTheme: 'dark',
+        mainTheme: 'light',
       }
     })
   })
