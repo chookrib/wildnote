@@ -8,7 +8,7 @@
 3、使用Visual Studio Code编辑笔记，打开笔记文件夹后资源管理器面板就相当于笔记目录，对Markdown格式友好，检索也方便  
 4、多台常用设备使用Syncthing同步笔记文件夹，最好有一台设备一直在线，我正好具备这样的条件  
 
-完成以上步骤后，只剩下一个问题，当常用设备不在身边时，无法查阅笔记，为解决这个问题而开发了WildNote，用于远程访问某台设备上的笔记。  
+完成以上步骤后，只剩下一个问题，当常用设备不在身边时，无法查阅笔记，为解决这个问题而开发了WildNote，用于远程访问设备上的笔记。  
 
 ## 项目说明
 wildnote\wildnote-svc 为后端程序，使用Java开发  
@@ -26,5 +26,5 @@ wildnote.password=admin
 wildnote.path=C:\\note
 ```
 3、使用 mvn package 打包 wildnote\wildnote-svc，默认生成在 wildnote\wildnote-svc\target 文件夹  
-4、运行 wildnote\run-wildnote.bat 启动程序
-5、打开浏览器访问 http://localhost:8080 访问
+4、运行 wildnote\run-wildnote.bat 启动程序  
+5、打开浏览器访问 http://localhost:8080  
