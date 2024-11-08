@@ -28,3 +28,4 @@ wildnote.path=C:\\note
 3、使用 mvn package 打包 wildnote\wildnote-svc，默认生成在 wildnote\wildnote-svc\target 文件夹  
 4、运行 wildnote\run-wildnote.bat 启动程序  
 5、打开浏览器访问 http://localhost:8080  
+6、通过内网映射工具将应用映射到公网使用  
