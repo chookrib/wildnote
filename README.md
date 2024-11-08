@@ -12,7 +12,7 @@
 
 ## 项目说明
 `wildnote\wildnote-svc`为后端程序，使用Java开发  
-`wildnote\wildnote-web` 为前端应用，主要使用Vue3和Cherry Markdown开发  
+`wildnote\wildnote-web`为前端应用，主要使用Vue3和Cherry Markdown开发  
 
 ## 如何运行
 1、使用`npm run build`打包`wildnote\wildnote-web`，默认生成在`wildnote\wildnote-web\dist`文件夹  
