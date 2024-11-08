@@ -11,12 +11,12 @@
 完成以上步骤后，只剩下一个问题，当常用设备不在身边时，无法查阅笔记，为解决这个问题而开发了WildNote，用于远程访问设备上的笔记。  
 
 ## 项目说明
-wildnote\wildnote-svc 为后端程序，使用Java开发  
-wildnote\wildnote-web 为前端应用，主要使用Vue3和Cherry Markdown  
+`wildnote\wildnote-svc`为后端程序，使用Java开发  
+`wildnote\wildnote-web` 为前端应用，主要使用Vue3和Cherry Markdown开发  
 
 ## 如何运行
-1、使用 npm run build 打包 wildnote\wildnote-web，默认生成在 wildnote\wildnote-web\dist 文件夹  
-2、复制 wildnote\wildnote-svc\src\main\resources\application.properties 到 wildnote 同一级文件夹，改名为wildnote.properties，并修改以下配置项
+1、使用`npm run build`打包`wildnote\wildnote-web`，默认生成在`wildnote\wildnote-web\dist`文件夹  
+2、复制`wildnote\wildnote-svc\src\main\resources\application.properties`到`wildnote`同一级文件夹，改名为`wildnote.properties`，并修改以下配置项
 ```
 #访问wildnote的账户
 wildnote.username=admin
@@ -25,7 +25,7 @@ wildnote.password=admin
 #笔记文件夹路径
 wildnote.path=C:\\note
 ```
-3、使用 mvn package 打包 wildnote\wildnote-svc，默认生成在 wildnote\wildnote-svc\target 文件夹  
-4、运行 wildnote\run-wildnote.bat 启动程序  
-5、打开浏览器访问 http://localhost:8080  
+3、使用`mvn package`打包`wildnote\wildnote-svc`默认生成在`wildnote\wildnote-svc\target`文件夹  
+4、运行`wildnote\run-wildnote.bat`启动程序  
+5、打开浏览器访问`http://localhost:8080`  
 6、通过内网映射工具将应用映射到公网使用  
