@@ -49,6 +49,7 @@
 
     <build>
         <!--指定打包文件名-->
+        <!--suppress UnresolvedMavenProperty -->
         <finalName>
             ${project.artifactId}-${project.version}-${build.time}
         </finalName>
@@ -82,6 +83,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
+                            <!--suppress UnresolvedMavenProperty -->
                             <Build-Time>${build.time}</Build-Time>
                         </manifestEntries>
                     </archive>
