@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 应用信息Controller
  */
 @Controller
-public class InfoController {
+public class DefaultController {
     /**
      * 应用信息
      */
