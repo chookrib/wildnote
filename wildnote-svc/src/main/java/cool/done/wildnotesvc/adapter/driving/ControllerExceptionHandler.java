@@ -16,9 +16,9 @@ import java.io.StringWriter;
  * 全局异常处理器
  */
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class ControllerExceptionHandler {
 
-    protected static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     /**
      * 未登录异常处理器

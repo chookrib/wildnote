@@ -1,8 +1,8 @@
 package cool.done.wildnotesvc.adapter.driven;
 
-import cool.done.wildnotesvc.domain.IFileRepository;
+import cool.done.wildnotesvc.domain.IFileHandler;
 import cool.done.wildnotesvc.domain.ValidationException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,10 +11,10 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * 文件Repository
+ * 文件Handler
  */
-@Repository
-public class FileRepository implements IFileRepository {
+@Component
+public class FileHandler implements IFileHandler {
     /**
      * 读取目录
      */
@@ -25,15 +25,12 @@ public class FileRepository implements IFileRepository {
         if(list == null)
             return files;
 
-        Arrays.sort(list, new Comparator<File>() {
-            @Override
-            public int compare(File file1, File file2) {
-                if(file1.isDirectory() && file2.isFile())
-                    return -1;
-                if(file1.isFile() && file2.isDirectory())
-                    return 1;
-                return file1.getName().compareTo(file2.getName());
-            }
+        Arrays.sort(list, (file1, file2) -> {
+            if(file1.isDirectory() && file2.isFile())
+                return -1;
+            if(file1.isFile() && file2.isDirectory())
+                return 1;
+            return file1.getName().compareTo(file2.getName());
         });
 
         for (File file : list) {

@@ -1,5 +1,6 @@
 package cool.done.wildnotesvc.domain;
 
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +24,7 @@ public class NoteService {
     private String notePath;
 
     @Autowired
-    private IFileRepository fileRepository;
+    private IFileHandler fileHandler;
 
     /**
      * 读取笔记列表
@@ -36,7 +37,7 @@ public class NoteService {
         ArrayList<NoteIndex> noteIndexes = new ArrayList<>();
         int notePathLevel = notePath.replace("\\", "/").split("/").length;
 
-        ArrayList<File> files = fileRepository.getFiles(notePath);
+        ArrayList<File> files = fileHandler.getFiles(notePath);
         for (File file : files) {
             int level = file.getPath().replace("\\", "/").split("/").length - notePathLevel - 1;
 
@@ -60,7 +61,7 @@ public class NoteService {
     public String getNote(String path) throws IOException {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止读取笔记文件夹路径以外的文件");
-        return fileRepository.getFile(path);
+        return fileHandler.getFile(path);
     }
 
     /**
@@ -69,7 +70,7 @@ public class NoteService {
     public void saveNote(String path, String content) throws IOException {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止保存笔记文件夹路径以外的文件");
-        fileRepository.saveFile(path, content);
+        fileHandler.saveFile(path, content);
     }
 
     /**
@@ -78,7 +79,7 @@ public class NoteService {
     public void createNote(String path) throws IOException {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止在笔记文件夹路径以外创建文件");
-        fileRepository.createFile(path);
+        fileHandler.createFile(path);
     }
 
     /**
@@ -87,6 +88,6 @@ public class NoteService {
     public void deleteNote(String path) throws IOException {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止删除笔记文件夹路径以外的文件");
-        fileRepository.deleteFile(path);
+        fileHandler.deleteFile(path);
     }
 }

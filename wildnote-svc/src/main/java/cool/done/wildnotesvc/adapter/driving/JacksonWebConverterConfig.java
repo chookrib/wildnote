@@ -12,7 +12,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
  * Jackson全局配置
  */
 @Configuration
-public class JacksonWebConfig {
+public class JacksonWebConverterConfig {
     /**
      * 自定义Spring MVC的Jackson配置
      */
@@ -32,27 +32,27 @@ public class JacksonWebConfig {
         return new HttpMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper));
     }
 
-    /**
-     * 自定义@Autowired的ObjectMapper方法
-     */
-    /*@Bean
-    public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
-        return new Jackson2ObjectMapperBuilderCustomizer() {
-            @Override
-            public void customize(Jackson2ObjectMapperBuilder builder) {
-                builder.indentOutput(true);
-                builder.dateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-                builder.serializerByType(Long.TYPE, new ToStringSerializer());
-                builder.serializerByType(Long.class, new ToStringSerializer());
-            }
-        };
-    }*/
+    ///**
+    // * 自定义@Autowired的ObjectMapper方法
+    // */
+    //@Bean
+    //public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
+    //    return new Jackson2ObjectMapperBuilderCustomizer() {
+    //        @Override
+    //        public void customize(Jackson2ObjectMapperBuilder builder) {
+    //            builder.indentOutput(true);
+    //            builder.dateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+    //            builder.serializerByType(Long.TYPE, new ToStringSerializer());
+    //            builder.serializerByType(Long.class, new ToStringSerializer());
+    //        }
+    //    };
+    //}
 
-    /**
-     * null值序列化类
-     */
-    /*public class NullDeserializer extends JsonDeserializer<Object> {
-        @Override
-        public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) { return ""; }
-    }*/
+    ///**
+    // * null值序列化类
+    // */
+    //public class NullDeserializer extends JsonDeserializer<Object> {
+    //    @Override
+    //    public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) { return ""; }
+    //}
 }

@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * 文件IRepository
+ * 文件IHandler
  */
-public interface IFileRepository {
+public interface IFileHandler {
 
     /**
      * 读取目录

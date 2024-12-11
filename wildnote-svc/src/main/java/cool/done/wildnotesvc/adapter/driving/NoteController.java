@@ -2,7 +2,7 @@ package cool.done.wildnotesvc.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cool.done.wildnotesvc.adapter.driven.FileRepository;
+import cool.done.wildnotesvc.adapter.driven.FileHandler;
 import cool.done.wildnotesvc.domain.NoteIndex;
 import cool.done.wildnotesvc.domain.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class NoteController {
     @Autowired
     private NoteService noteService;
     @Autowired
-    private FileRepository fileRepository;
+    private FileHandler fileHandler;
 
     /**
      * 读取笔记列表
@@ -70,7 +70,7 @@ public class NoteController {
     public Result createNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String path = json.path("path").asText();
-        fileRepository.createFile(path);
+        fileHandler.createFile(path);
         return Result.success();
     }
 
@@ -81,7 +81,7 @@ public class NoteController {
     public Result deleteNote(@RequestBody String requestBody) throws IOException {
         JsonNode json = new ObjectMapper().readTree(requestBody);
         String path = json.path("path").asText();
-        fileRepository.deleteFile(path);
+        fileHandler.deleteFile(path);
         return Result.success();
     }
 }

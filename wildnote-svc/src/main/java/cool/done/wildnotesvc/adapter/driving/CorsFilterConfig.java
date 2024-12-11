@@ -13,7 +13,7 @@ import java.util.List;
  * 全局跨域过滤器配置
  */
 @Configuration
-public class GlobalCorsConfig {
+public class CorsFilterConfig {
 
     @Bean
     public CorsFilter corsFilter() {
