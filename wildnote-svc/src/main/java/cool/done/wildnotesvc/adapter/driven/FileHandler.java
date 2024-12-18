@@ -47,34 +47,49 @@ public class FileHandler implements IFileHandler {
      * 读取文件
      */
     @Override
-    public String getFile(String path) throws IOException {
-        return Files.readString(Paths.get(path));
+    public String getFile(String path) {
+        try {
+            return Files.readString(Paths.get(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 保存文件
      */
     @Override
-    public void saveFile(String path, String content) throws IOException {
-        Files.writeString(Paths.get(path), content);
+    public void saveFile(String path, String content) {
+        try {
+            Files.writeString(Paths.get(path), content);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 创建文件
      */
     @Override
-    public void createFile(String path) throws IOException {
+    public void createFile(String path) {
         if(Files.exists(Paths.get(path)))
             throw new ValidationException("文件已存在");
-
-        Files.writeString(Paths.get(path), "");
+        try {
+            Files.writeString(Paths.get(path), "");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 删除文件
      */
     @Override
-    public void deleteFile(String path) throws IOException {
-        Files.delete(Paths.get(path));
+    public void deleteFile(String path) {
+        try {
+            Files.delete(Paths.get(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

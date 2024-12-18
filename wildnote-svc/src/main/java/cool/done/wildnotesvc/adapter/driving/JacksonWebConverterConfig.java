@@ -14,45 +14,17 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 @Configuration
 public class JacksonWebConverterConfig {
     /**
-     * 自定义Spring MVC的Jackson配置
+     * 配置Spring MVC的Json转换器
      */
     @Bean
     public HttpMessageConverters jacksonWebConverters() {
         Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder()
-                //.serializationInclusion(JsonInclude.Include.NON_NULL)
-                //.indentOutput(true)                                               //输出时自动缩进
-                //.dateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"))          //日期时间格式化
-                //.dateFormat(new SimpleDateFormat("yyyy-MM-dd"))                   //日期时间格式化
+                //.indentOutput(true)
+                .simpleDateFormat("yyyy-MM-dd HH:mm:ss")
                 .serializerByType(Long.TYPE, new ToStringSerializer())              //long转String
                 .serializerByType(Long.class, new ToStringSerializer())             //Long转String
                 ;
         ObjectMapper objectMapper = builder.build();
-        //SerializerProvider serializerProvider = objectMapper.getSerializerProvider();
-        //serializerProvider.setNullValueSerializer(new NullSerializer());
         return new HttpMessageConverters(new MappingJackson2HttpMessageConverter(objectMapper));
     }
-
-    ///**
-    // * 自定义@Autowired的ObjectMapper方法
-    // */
-    //@Bean
-    //public Jackson2ObjectMapperBuilderCustomizer jacksonCustomizer() {
-    //    return new Jackson2ObjectMapperBuilderCustomizer() {
-    //        @Override
-    //        public void customize(Jackson2ObjectMapperBuilder builder) {
-    //            builder.indentOutput(true);
-    //            builder.dateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-    //            builder.serializerByType(Long.TYPE, new ToStringSerializer());
-    //            builder.serializerByType(Long.class, new ToStringSerializer());
-    //        }
-    //    };
-    //}
-
-    ///**
-    // * null值序列化类
-    // */
-    //public class NullDeserializer extends JsonDeserializer<Object> {
-    //    @Override
-    //    public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) { return ""; }
-    //}
 }

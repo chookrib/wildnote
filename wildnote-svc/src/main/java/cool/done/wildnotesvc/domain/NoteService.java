@@ -28,7 +28,7 @@ public class NoteService {
     /**
      * 读取笔记列表
      */
-    public ArrayList<NoteIndex> getNotes() throws IOException {
+    public ArrayList<NoteIndex> getNotes() {
         if (StringUtils.isEmpty(notePath)) {
             throw new ValidationException("未配置笔记文件夹路径");
         }
@@ -40,7 +40,12 @@ public class NoteService {
         for (File file : files) {
             int level = file.getPath().replace("\\", "/").split("/").length - notePathLevel - 1;
 
-            BasicFileAttributes attrs = Files.readAttributes(Path.of(file.getPath()), BasicFileAttributes.class);
+            BasicFileAttributes attrs = null;
+            try {
+                attrs = Files.readAttributes(Path.of(file.getPath()), BasicFileAttributes.class);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             FileTime creationTime = attrs.creationTime();
 
             if (file.isFile()) {
@@ -57,7 +62,7 @@ public class NoteService {
     /**
      * 读取笔记
      */
-    public String getNote(String path) throws IOException {
+    public String getNote(String path) {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止读取笔记文件夹路径以外的文件");
         return fileHandler.getFile(path);
@@ -66,7 +71,7 @@ public class NoteService {
     /**
      * 保存笔记
      */
-    public void saveNote(String path, String content) throws IOException {
+    public void saveNote(String path, String content) {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止保存笔记文件夹路径以外的文件");
         fileHandler.saveFile(path, content);
@@ -75,7 +80,7 @@ public class NoteService {
     /**
      * 创建笔记
      */
-    public void createNote(String path) throws IOException {
+    public void createNote(String path) {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止在笔记文件夹路径以外创建文件");
         fileHandler.createFile(path);
@@ -84,7 +89,7 @@ public class NoteService {
     /**
      * 删除笔记
      */
-    public void deleteNote(String path) throws IOException {
+    public void deleteNote(String path) {
         if (!StringUtils.isEmpty(notePath) && !path.startsWith(notePath))
             throw new ValidationException("禁止删除笔记文件夹路径以外的文件");
         fileHandler.deleteFile(path);

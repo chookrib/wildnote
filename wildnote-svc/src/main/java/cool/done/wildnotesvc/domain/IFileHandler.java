@@ -1,7 +1,6 @@
 package cool.done.wildnotesvc.domain;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -17,20 +16,20 @@ public interface IFileHandler {
     /**
      * 读取文件
      */
-    String getFile(String path) throws IOException;
+    String getFile(String path);
 
     /**
      * 保存文件
      */
-    void saveFile(String path, String content) throws IOException;
+    void saveFile(String path, String content);
 
     /**
      * 创建文件
      */
-    void createFile(String path) throws IOException;
+    void createFile(String path);
 
     /**
      * 删除文件
      */
-    void deleteFile(String path) throws IOException;
+    void deleteFile(String path);
 }
