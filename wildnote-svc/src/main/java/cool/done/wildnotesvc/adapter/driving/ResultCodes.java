@@ -16,13 +16,13 @@ public class ResultCodes {
     public static int ERROR_DEFAULT = 1;
 
     /**
-     * 未登录
-     */
-    public static int ERROR_NOT_LOGIN = 2;
-
-    /**
      * 验证错误
      */
-    public static int ERROR_VALIDATION = 3;
+    public static int ERROR_VALIDATION = 2;
+
+    /**
+     * 未登录
+     */
+    public static int ERROR_NOT_LOGIN = -1;
 }
 
