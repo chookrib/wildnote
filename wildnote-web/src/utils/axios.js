@@ -17,7 +17,7 @@ instance.interceptors.response.use(response => {
     return response
   }
 
-  if (response.data.code === 2) {
+  if (response.data.code === -1) {
     router.push('/login')
     throw new Error(response.data.message)
   }
