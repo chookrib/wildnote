@@ -20,8 +20,6 @@ onMounted(() => {
 function loadNoteIndex() {
   axios.get('/api/note/index').then(response => {
     notes.value = response.data.data
-  }, error => {
-    console.log(error)
   })
 }
 

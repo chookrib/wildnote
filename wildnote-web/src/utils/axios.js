@@ -12,7 +12,19 @@ instance.interceptors.request.use(config => {
   config.headers['Access-Token'] = accessToken
   return config
 })
+
 instance.interceptors.response.use(response => {
+
+  // console.log(response)
+
+  // try {
+  //   JSON.parse(response.data)
+  // } catch (e) {
+  //   console.log(e)
+  //   router.push('/login')
+  //   throw new Error(e)
+  // }
+
   if (response.data.isSuccess) {
     return response
   }
@@ -26,6 +38,11 @@ instance.interceptors.response.use(response => {
     message.error(response.data.message)
     throw new Error(response.data.message)
   }
+}, error => {
+  //axios全局错误处理
+  console.log(error)
+  message.error(error.message)
+  throw new Error(error.message)
 })
 
 export default instance
