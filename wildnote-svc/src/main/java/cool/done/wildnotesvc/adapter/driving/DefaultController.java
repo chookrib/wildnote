@@ -16,7 +16,7 @@ public class DefaultController {
      */
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
-    public String  info() {
+    public String info() {
         return "File-Name: " + WildnoteSvcApplication.getFileName() +
                 System.lineSeparator() +
                 "Build-Time: " + WildnoteSvcApplication.getBuildTime() +

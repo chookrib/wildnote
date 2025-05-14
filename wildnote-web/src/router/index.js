@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
-import IndexView from '../views/IndexView.vue'
+// import IndexView from '../views/IndexView.vue'
 
 const router = createRouter({
   //history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,9 +7,14 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'main',
+      component: () => import('../views/MainView.vue')
+    },
+    {
+      path: '/index',
       name: 'index',
-      component: IndexView
-      //component: () => import('../views/IndexView.vue')
+      // component: IndexView
+      component: () => import('../views/IndexView.vue')
     },
     {
       path: '/login',
@@ -20,9 +25,9 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue')
     },
     {
-      path: '/edit',
-      name: 'edit',
-      component: () => import('../views/EditView.vue')
+      path: '/note',
+      name: 'note',
+      component: () => import('../views/NoteView.vue')
     }
   ]
 })

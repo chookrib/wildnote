@@ -41,7 +41,7 @@ function saveNote() {
 }
 
 function noteIndex() {
-  router.push('/')
+  router.push('/index')
 }
 </script>
 

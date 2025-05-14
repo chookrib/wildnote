@@ -24,7 +24,7 @@ function loadNoteIndex() {
 }
 
 function editNote(note) {
-  router.push({ path: '/edit', query: { path: note.path } })
+  router.push({ path: '/note', query: { path: note.path } })
 }
 
 function showTime(time) {
