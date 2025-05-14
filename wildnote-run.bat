@@ -22,13 +22,15 @@ if not "%4" == "" (
     set arg_server_port=--server.port=%4
 )
 
+git pull
+
 cd wildnote-web
-npm install
-npm run build
+call npm install
+call npm run build
 cd ..
 
-set mvn_path=..\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd
-%mvn_path% package -Dmaven.test.skip=true -f .\wildnote-svc
+set mvn_path=..\apache-maven-3.9.9\bin\mvn.cmd
+call %mvn_path% package -Dmaven.test.skip=true -f .\wildnote-svc
 
 if not exist ".\wildnote-svc\target\*.jar" (
     echo Wildnote jar file not found, please build first.
