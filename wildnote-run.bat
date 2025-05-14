@@ -1,4 +1,4 @@
-@echo off
+rem @echo off
 
 if "%1" == "" (
     goto :usage
@@ -21,6 +21,14 @@ if "%3" == "" (
 if not "%4" == "" (
     set arg_server_port=--server.port=%4
 )
+
+cd wildnote-web
+npm install
+npm run build
+cd ..
+
+set mvn_path=..\apache-maven-3.9.9-bin\apache-maven-3.9.9\bin\mvn.cmd
+%mvn_path% package -Dmaven.test.skip=true -f .\wildnote-svc
 
 if not exist ".\wildnote-svc\target\*.jar" (
     echo Wildnote jar file not found, please build first.
