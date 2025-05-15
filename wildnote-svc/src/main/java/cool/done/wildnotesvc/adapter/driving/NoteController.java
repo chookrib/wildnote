@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * 笔记Controller
@@ -94,6 +95,7 @@ public class NoteController {
      */
     @RequestMapping(value = "/api/note/cron", method = RequestMethod.GET)
     public Result getCorn() {
-        return Result.success();
+        List<String> crons = noteService.getAllCron();
+        return Result.successData(crons);
     }
 }
