@@ -1,28 +1,31 @@
 rem @echo off
 
+rem 批处理传入的每个参数都需要用""包裹
+
 rem if "%1" == "" (
 rem     goto :usage
 rem ) else (
 rem    set arg_wildnote_root_path=--wildnote.root-path=%1
-rem)
+rem )
 
 rem if "%2" == "" (
 rem    goto :usage
-rem) else (
+rem ) else (
 rem    set arg_wildnote_username=--wildnote.username=%2
-rem)
+rem )
 
 rem if "%3" == "" (
 rem    goto :usage
-rem) else (
+rem ) else (
 rem    set arg_wildnote_password=--wildnote.password=%3
-rem)
+rem )
 
 rem if not "%4" == "" (
 rem    set arg_server_port=--server.port=%4
-rem)
+rem )
 
 set params=%*
+rem set params=%1 %2 %3 %4 %5 %6 %7 %8 %9
 
 git pull
 
@@ -38,9 +41,8 @@ if not exist ".\wildnote-svc\target\*.jar" (
     echo Wildnote jar file not found, please build first.
 ) else (
     for /f "delims=" %%i in ('dir .\wildnote-svc\target\*.jar /b /o:-n') do (
-        rem call :runjar %%i "%arg_wildnote_root_path%" "%arg_wildnote_username%" "%arg_wildnote_password%"
+        rem call :runjar %%i "%arg_wildnote_root_path%" "%arg_wildnote_username%" "%arg_wildnote_password%" "%arg_server_port%"
         call :runjar %%i %params%
-        "%arg_server_port%"
     )
 )
 goto :EOF
