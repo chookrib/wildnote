@@ -48,6 +48,11 @@
             <artifactId>java-jwt</artifactId>
             <version>4.5.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.methvin</groupId>
+            <artifactId>directory-watcher</artifactId>
+            <version>0.19.0</version>
+        </dependency>
     </dependencies>
 
     <build>
