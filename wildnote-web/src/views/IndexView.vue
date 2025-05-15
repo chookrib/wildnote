@@ -10,7 +10,7 @@ const notes = ref([])
 const searchKey = ref('')
 
 const filteredNotes = computed(() => {
-  return notes.value.filter(note => !note.directory && note.path.includes(searchKey.value))
+  return notes.value.filter(note => !note.directory && note.relPath.includes(searchKey.value))
 })
 
 onMounted(() => {
@@ -24,7 +24,7 @@ function loadNoteIndex() {
 }
 
 function editNote(note) {
-  router.push({ path: '/note', query: { path: note.path } })
+  router.push({ path: '/note', query: { path: note.relPath } })
 }
 
 function showTime(time) {
@@ -57,8 +57,8 @@ function showTime(time) {
           笔记文件
           <div style="float: right">修改时间</div>
         </div>
-        <div v-for="note in filteredNotes" :key="note.path" @click="editNote(note)">
-          {{ note.path }}
+        <div v-for="note in filteredNotes" :key="note.relPath" @click="editNote(note)">
+          {{ note.relPath }}
           <div style="float: right">{{ showDateTime(note.lastModifiedTime) }}</div>
         </div>
       </div>

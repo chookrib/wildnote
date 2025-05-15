@@ -1,16 +1,15 @@
 package cool.done.wildnotesvc.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cool.done.wildnotesvc.adapter.driven.FileHandler;
 import cool.done.wildnotesvc.common.util.JacksonUtils;
-import cool.done.wildnotesvc.domain.NoteIndex;
+import cool.done.wildnotesvc.domain.NoteIndexNode;
 import cool.done.wildnotesvc.domain.NoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * 笔记Controller
@@ -29,12 +28,15 @@ public class NoteController {
      */
     @RequestMapping(value = "/api/note/index", method = RequestMethod.GET)
     public Result getNoteIndex() {
-        ArrayList<NoteIndex> notes  = noteService.getNotes();
+        ArrayList<NoteIndexNode> notes = new ArrayList<>(
+                noteService.getNoteMap().values().stream().sorted(
+                        Comparator.comparing(NoteIndexNode::getAbsPath)
+                ).toList());
         return Result.successData(notes);
     }
 
     /**
-     * 读取笔记
+     * 读取笔记，根据POST参数
      */
     @RequestMapping(value = "/api/note/get", method = RequestMethod.POST)
     public Result getNote(@RequestBody String requestBody) {
@@ -45,7 +47,7 @@ public class NoteController {
     }
 
     /**
-     * 读取笔记
+     * 读取笔记，根据QueryString参数
      */
     @RequestMapping(value = "/api/note/get", method = RequestMethod.GET)
     public Result getNoteByQueryString(@RequestParam String path) {
@@ -84,6 +86,14 @@ public class NoteController {
         JsonNode json = JacksonUtils.readTree(requestBody);
         String path = json.path("path").asText();
         fileHandler.deleteFile(path);
+        return Result.success();
+    }
+
+    /**
+     * 获取所有定时任务
+     */
+    @RequestMapping(value = "/api/note/cron", method = RequestMethod.GET)
+    public Result getCorn() {
         return Result.success();
     }
 }

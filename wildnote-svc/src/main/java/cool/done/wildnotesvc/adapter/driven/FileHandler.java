@@ -20,23 +20,24 @@ public class FileHandler implements IFileHandler {
      * 读取目录
      */
     @Override
-    public ArrayList<File> getFiles(String path){
+    public ArrayList<File> getFiles(String path) {
+
         ArrayList<File> files = new ArrayList<>();
         File[] list = new File(path).listFiles();
-        if(list == null)
+        if (list == null)
             return files;
 
         Arrays.sort(list, (file1, file2) -> {
-            if(file1.isDirectory() && file2.isFile())
+            if (file1.isDirectory() && file2.isFile())
                 return -1;
-            if(file1.isFile() && file2.isDirectory())
+            if (file1.isFile() && file2.isDirectory())
                 return 1;
             return file1.getName().compareTo(file2.getName());
         });
 
         for (File file : list) {
             files.add(file);
-            if(file.isDirectory())
+            if (file.isDirectory())
                 files.addAll(getFiles(file.getPath()));
         }
 
@@ -72,7 +73,7 @@ public class FileHandler implements IFileHandler {
      */
     @Override
     public void createFile(String path) {
-        if(Files.exists(Paths.get(path)))
+        if (Files.exists(Paths.get(path)))
             throw new ValidationException("文件已存在");
         try {
             Files.writeString(Paths.get(path), "");

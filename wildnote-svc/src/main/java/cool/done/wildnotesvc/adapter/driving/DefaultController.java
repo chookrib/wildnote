@@ -22,6 +22,16 @@ public class DefaultController {
                 "Build-Time: " + WildnoteSvcApplication.getBuildTime() +
                 System.lineSeparator();
     }
+
+    /**
+     * 用于reminder的测试
+     */
+    @RequestMapping(value = "/reminder", method = RequestMethod.GET)
+    @ResponseBody
+    public Result reminder(String message){
+        System.out.println("收到reminder消息: " + message);
+        return Result.success(message);
+    }
 }
 
 
