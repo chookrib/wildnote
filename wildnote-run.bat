@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 
 rem 批处理传入的每个参数都需要用""包裹
 
