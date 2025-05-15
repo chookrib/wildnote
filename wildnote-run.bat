@@ -1,26 +1,28 @@
 rem @echo off
 
-if "%1" == "" (
-    goto :usage
-) else (
-    set arg_wildnote_path=--wildnote.path=%1
-)
+rem if "%1" == "" (
+rem     goto :usage
+rem ) else (
+rem    set arg_wildnote_root_path=--wildnote.root-path=%1
+rem)
 
-if "%2" == "" (
-    goto :usage
-) else (
-    set arg_wildnote_username=--wildnote.username=%2
-)
+rem if "%2" == "" (
+rem    goto :usage
+rem) else (
+rem    set arg_wildnote_username=--wildnote.username=%2
+rem)
 
-if "%3" == "" (
-    goto :usage
-) else (
-    set arg_wildnote_password=--wildnote.password=%3
-)
+rem if "%3" == "" (
+rem    goto :usage
+rem) else (
+rem    set arg_wildnote_password=--wildnote.password=%3
+rem)
 
-if not "%4" == "" (
-    set arg_server_port=--server.port=%4
-)
+rem if not "%4" == "" (
+rem    set arg_server_port=--server.port=%4
+rem)
+
+set params=%*
 
 git pull
 
@@ -36,14 +38,17 @@ if not exist ".\wildnote-svc\target\*.jar" (
     echo Wildnote jar file not found, please build first.
 ) else (
     for /f "delims=" %%i in ('dir .\wildnote-svc\target\*.jar /b /o:-n') do (
-        call :runjar %%i "%arg_wildnote_path%" "%arg_wildnote_username%" "%arg_wildnote_password%" "%arg_server_port%"
+        rem call :runjar %%i "%arg_wildnote_root_path%" "%arg_wildnote_username%" "%arg_wildnote_password%"
+        call :runjar %%i %params%
+        "%arg_server_port%"
     )
 )
 goto :EOF
 
 :runjar
 rem set run_wildnote_cmd=java -jar ".\wildnote-svc\target\%1" --spring.config.location="%cd%\..\wildnote.properties"
-set run_wildnote_cmd=java -jar .\wildnote-svc\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %~2 %~3 %~4 %~5
+rem set run_wildnote_cmd=java -jar .\wildnote-svc\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %~2 %~3 %~4 %~5
+set run_wildnote_cmd=java -jar .\wildnote-svc\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %*
 echo %run_wildnote_cmd%
 %run_wildnote_cmd%
 goto :EOF
