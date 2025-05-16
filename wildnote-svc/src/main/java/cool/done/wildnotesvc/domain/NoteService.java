@@ -139,8 +139,7 @@ public class NoteService {
      */
     private NoteIndexNode createNoteIndexNode(File file) {
 
-        Path path = file.toPath().normalize();
-        String absPath = path.toAbsolutePath().toString();              // D:\xxx\log\log.log
+        String absPath = file.toPath().normalize().toAbsolutePath().toString();              // D:\xxx\log\log.log
         String relPath = absPath.substring(rootAbsPath.length());       // log\log.log
 
         int level = relPath.split("\\\\|/").length - 1;

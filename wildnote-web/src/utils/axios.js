@@ -1,10 +1,10 @@
 import axios from "axios"
-import router from "../router"
+//import router from "../router"
 import { message } from "ant-design-vue"
 
 const instance = axios.create({
-  //baseURL: "http://localhost:8080/"
-  baseURL: "/"
+  baseURL: "http://localhost:8080/"
+  //baseURL: "/"
 })
 
 instance.interceptors.request.use(config => {
@@ -25,12 +25,13 @@ instance.interceptors.response.use(response => {
   //   throw new Error(e)
   // }
 
-  if (response.data.isSuccess) {
+  if (response.data.success) {
     return response
   }
 
   if (response.data.code === -1) {
-    router.push('/login')
+    //router.push('/login')
+    window.location.href = "/login.html"
     throw new Error(response.data.message)
   }
   else {

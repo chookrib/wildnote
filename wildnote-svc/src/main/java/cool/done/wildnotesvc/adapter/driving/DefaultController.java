@@ -1,7 +1,7 @@
 package cool.done.wildnotesvc.adapter.driving;
 
 import cool.done.wildnotesvc.WildnoteSvcApplication;
-import cool.done.wildnotesvc.domain.NoteService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

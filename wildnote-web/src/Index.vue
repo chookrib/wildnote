@@ -1,5 +1,7 @@
 <script setup>
-import router from '../router'
+import { RouterLink, RouterView } from 'vue-router'
+
+import router from './router'
 import { createVNode } from 'vue'
 import { Modal } from 'ant-design-vue';
 import { LogoutOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
@@ -13,30 +15,37 @@ function logout() {
     cancelText: '取消',
     onOk: function () {
       localStorage.removeItem('accessToken')
-      router.push('/login')
+      //router.push('/login')
+      window.location.href= '/login.html'
     },
     onCancel: function () {
     },
   })
 }
+
 </script>
 
 <template>
+  <!-- <RouterLink to="/">Home</RouterLink> -->
   <a-layout-header>
     <div style="display: flex; align-items: center;">
       <img src="/img/logo.png" alt="" style="height: 20px; filter: brightness(100);">
     </div>
     <div style="flex-grow: 1; display: flex; align-items: center; white-space: nowrap; gap: 10px;">
-      <slot> </slot>
+      <slot></slot>
     </div>
     <div>
       <a-button @click=logout>
         <template #icon>
           <LogoutOutlined />
         </template>
-        注销</a-button>
+        注销
+      </a-button>
     </div>
   </a-layout-header>
+
+  <RouterView :key="$route.fullPath" />
+
 </template>
 
 <style scoped>

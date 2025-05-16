@@ -1,7 +1,7 @@
 <script setup>
 
-import router from "../router";
-import axios from '../utils/axios'
+//import router from "./router";
+import axios from './utils/axios'
 import { reactive } from "vue";
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
 
@@ -13,43 +13,83 @@ function login() {
     password: loginForm.password
   }).then(response => {
     localStorage.setItem('accessToken', response.data.data)
-    router.push('/')
+    //router.push('/')
+    window.location.href = '/'
   })
 }
 </script>
 
 <template>
-  <div id="login-container">
-    <div id="login-box">
-      <div id="logo-container">
-        <div id="logo-box">
-          <img src="/img/logo.png" alt="">
-        </div>
-      </div>
-      <a-form id="login-form" autocomplete="off">
-        <a-form-item>
-          <a-input v-model:value="loginForm.username">
-            <template #prefix>
-              <user-outlined />
-            </template>
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-input-password v-model:value="loginForm.password">
-            <template #prefix>
-              <lock-outlined />
-            </template>
-          </a-input-password>
-        </a-form-item>
-        <a-form-item style="text-align: center;">
-          <a-button id="login-button" type="primary" shape="round" @click=login>登录</a-button>
-        </a-form-item>
-      </a-form>
+  <a-card title=" " :hoverable="true" style="width: 300px;">
+    <div class="logo-box-outside">
+    <div class="logo-box-inside">
+      <img src="/img/logo.png">
     </div>
-  </div>
+    </div>
+    <a-form autocomplete="off">
+      <a-form-item>
+        <a-input v-model:value="loginForm.username">
+          <template #prefix>
+            <user-outlined />
+          </template>
+        </a-input>
+      </a-form-item>
+      <a-form-item>
+        <a-input-password v-model:value="loginForm.password" @keyup.enter="login">
+          <template #prefix>
+            <lock-outlined />
+          </template>
+        </a-input-password>
+      </a-form-item>
+      <div style="text-align: center">
+        <a-button type="primary" @click="login">登录</a-button>
+      </div>
+    </a-form>
+  </a-card>
 </template>
 
-<style scoped>
+<style>
+body {
+  background: #ececec;
+  /*background-image: linear-gradient(45deg, #3A6A74, #46537F, #458E56);
+  background-size: 400%;
+  animation: bganimation 15s infinite;*/
+}
+
+#app {
+  /*min-height: 100vh;*/
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-box-outside {
+  width: 100px;
+  height: 100px;
+  border: 1px solid #eee;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 0 10px #ddd;
+  position: absolute;
+  left: 50%;
+  top: 0px;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+}
+
+.logo-box-inside {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #eee;
+  padding: 15px;
+}
+
+.logo-box-inside img {
+  width: 100%;
+  height: 100%;
+}
+
 #login-container {
   /* background-color: #3A6A74; */
   background-color: #ddd;
