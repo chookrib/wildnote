@@ -1,11 +1,9 @@
 package cool.done.wildnotesvc.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import cool.done.wildnotesvc.adapter.driven.FileHandler;
 import cool.done.wildnotesvc.common.util.JacksonUtils;
 import cool.done.wildnotesvc.domain.NoteIndexNode;
 import cool.done.wildnotesvc.domain.NoteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,11 +16,11 @@ import java.util.List;
 @RestController
 public class NoteController {
 
-    @Autowired
-    private NoteService noteService;
+    private final NoteService noteService;
 
-    @Autowired
-    private FileHandler fileHandler;
+    public NoteController(NoteService noteService) {
+        this.noteService = noteService;
+    }
 
     /**
      * 读取笔记列表
@@ -75,7 +73,7 @@ public class NoteController {
     public Result createNote(@RequestBody String requestBody) {
         JsonNode json = JacksonUtils.readTree(requestBody);
         String path = json.path("path").asText();
-        fileHandler.createFile(path);
+        noteService.createNote(path);
         return Result.success();
     }
 
@@ -86,7 +84,7 @@ public class NoteController {
     public Result deleteNote(@RequestBody String requestBody) {
         JsonNode json = JacksonUtils.readTree(requestBody);
         String path = json.path("path").asText();
-        fileHandler.deleteFile(path);
+        noteService.deleteNote(path);
         return Result.success();
     }
 

@@ -1,7 +1,6 @@
 package cool.done.wildnotesvc.adapter.driven;
 
 import cool.done.wildnotesvc.domain.IReminder;
-import cool.done.wildnotesvc.domain.NoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,10 +23,10 @@ public class Reminder implements IReminder {
         try {
             String url = reminderUrl + message;
             new RestTemplate().getForObject(url, String.class);
-            logger.error("笔记提醒成功: " + message);
+            logger.info("笔记提醒成功: {}", message);
         }
         catch (Exception e) {
-            logger.error("笔记提醒失败: " + e.getMessage());
+            logger.error("笔记提醒失败: {}", e.getMessage());
         }
     }
 }

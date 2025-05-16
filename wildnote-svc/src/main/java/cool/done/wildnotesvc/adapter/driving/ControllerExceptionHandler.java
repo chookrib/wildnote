@@ -45,7 +45,7 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public Result defaultExceptionHandler(HttpServletResponse response, Exception e) {
         //logger.error("捕捉到未处理的异常", e);
-        logger.error("捕捉到未处理的异常:" + e.getMessage());
+        logger.error("捕捉到未处理的异常: {}", e.getMessage());
         //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
         //String message = e.getMessage();
