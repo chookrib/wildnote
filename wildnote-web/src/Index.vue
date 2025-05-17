@@ -26,26 +26,31 @@ function logout() {
 </script>
 
 <template>
-  <!-- <RouterLink to="/">Home</RouterLink> -->
-  <a-layout-header>
-    <div style="display: flex; align-items: center;">
-      <img src="/img/logo.png" alt="" style="height: 20px; filter: brightness(100);">
-    </div>
-    <div style="flex-grow: 1; display: flex; align-items: center; white-space: nowrap; gap: 10px;">
-      <slot></slot>
-    </div>
-    <div>
-      <a-button @click=logout>
-        <template #icon>
-          <LogoutOutlined />
-        </template>
-        注销
-      </a-button>
-    </div>
-  </a-layout-header>
+  <a-layout>
+    <a-layout-header>
+      <div style="display: flex; align-items: center;">
+        <img src="/img/logo.png" alt="" style="height: 20px; filter: brightness(100);">
+      </div>
+      <RouterLink to="/">首页</RouterLink>
+      <RouterLink to="/search">搜索</RouterLink>
+      <RouterLink to="/cron">提醒</RouterLink>
 
-  <RouterView :key="$route.fullPath" />
-
+      <div style="flex-grow: 1; display: flex; align-items: center; white-space: nowrap; gap: 10px;">
+        <slot></slot>
+      </div>
+      <div>
+        <a-button @click=logout>
+          <template #icon>
+            <LogoutOutlined />
+          </template>
+          注销
+        </a-button>
+      </div>
+    </a-layout-header>
+    <a-layout-content>
+      <RouterView :key="$route.fullPath" />
+    </a-layout-content>
+  </a-layout>
 </template>
 
 <style scoped>

@@ -16,13 +16,13 @@ import java.util.Properties;
 @EnableScheduling
 public class WildnoteSvcApplication {
 
-    private static final Logger log = LoggerFactory.getLogger(WildnoteSvcApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(WildnoteSvcApplication.class);
 
     public static ConfigurableApplicationContext applicationContext;
 
     public static void main(String[] args) {
         applicationContext = SpringApplication.run(WildnoteSvcApplication.class, args);
-        log.info("Started File-Name: {} Build-Time: {}", getFileName(), getBuildTime());
+        logger.info("Started File-Name: {} Build-Time: {}", getFileName(), getBuildTime());
     }
 
     /**
@@ -41,7 +41,8 @@ public class WildnoteSvcApplication {
                     .getResourceAsStream("META-INF/MANIFEST.MF");
 
             if(inputStream == null) {
-                return "META-INF/MANIFEST.MF 不存在";
+                logger.warn("获取 Build-Time 失败: META-INF/MANIFEST.MF 文件不存在");
+                return "";
             }
 
             Properties props = new Properties();
@@ -53,9 +54,11 @@ public class WildnoteSvcApplication {
                 }
             }
 
-            return "META-INF/MANIFEST.MF 未包含 Build-Time";
+            logger.warn("获取 Build-Time 失败: META-INF/MANIFEST.MF 文件未包含 Build-Time");
+            return "";
         } catch (Exception e) {
-            return String.format("META-INF/MANIFEST.MF 获取 Build-Time 失败 %s", e.getMessage());
+            logger.warn("获取 Build-Time 失败: {}", e.getMessage());
+            return "";
         }
     }
 }
