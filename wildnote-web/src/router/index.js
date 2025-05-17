@@ -8,21 +8,26 @@ const router = createRouter({
     {
       path: '/',
       name: 'index',
+      // component: IndexView
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
       component: () => import('../views/IndexView.vue')
     },
     {
       path: '/explore',
       name: 'explore',
-      // component: IndexView
       component: () => import('../views/ExploreView.vue')
     },
     {
-      path: '/login',
-      name: 'login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/LoginView.vue')
+      path: '/search',
+      name: 'search',
+      component: () => import('../views/SearchView.vue')
+    },
+    {
+      path: '/cron',
+      name: 'cron',
+      component: () => import('../views/CronView.vue')
     },
     {
       path: '/note',

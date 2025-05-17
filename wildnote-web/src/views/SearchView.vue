@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import axios from '../utils/axios'
 import router from '../router'
 import { ref, computed } from 'vue'
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { showDateTime } from '@/utils/dateTime'
 
 const notes = ref([])
@@ -13,7 +14,7 @@ const filteredNotes = computed(() => {
 })
 
 onMounted(() => {
-  loadNoteIndex()
+  // loadNoteIndex()
 })
 
 function loadNoteIndex() {
@@ -26,9 +27,20 @@ function editNote(note) {
   router.push({ path: '/note', query: { path: note.relPath } })
 }
 
+function showTime(time) {
+  var date = new Date()
+  date.setTime(time)
+  return date
+}
+
 </script>
 
 <template>
+  <a-input v-model:value=searchKey>
+    <template #prefix>
+      <SearchOutlined />
+    </template>
+  </a-input>
   <div id="node-index">
     <div>
       笔记文件
@@ -42,6 +54,9 @@ function editNote(note) {
 </template>
 
 <style scoped>
+.ant-layout {
+  height: 100%;
+}
 
 #node-index {
   height: 100%;

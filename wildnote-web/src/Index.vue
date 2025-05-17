@@ -32,6 +32,7 @@ function logout() {
         <img src="/img/logo.png" alt="" style="height: 20px; filter: brightness(100);">
       </div>
       <RouterLink to="/">首页</RouterLink>
+      <RouterLink to="/explore">浏览</RouterLink>
       <RouterLink to="/search">搜索</RouterLink>
       <RouterLink to="/cron">提醒</RouterLink>
 

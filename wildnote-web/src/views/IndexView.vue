@@ -6,29 +6,22 @@ import { ref, computed } from 'vue'
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import { showDateTime } from '@/utils/dateTime'
 
+const indexNotes = ref(null);
+
 onMounted(() => {
-  
+  localStorage.setItem('indexNotes', JSON.stringify(['1', '2']))
+  indexNotes.value = JSON.parse(localStorage.getItem('indexNotes'))
+  console.log(indexNotes)
 })
 
 </script>
 
 <template>
-  <a-layout>
-    <Header>
-      <span style=" padding: 10px; font-weight: bold;">主页</span>
-    </Header>
-    <a-layout-content>
-
-      <router-link to="/explore">目录</router-link>
-      <router-link to="/search">搜索</router-link>
-      <router-link to="/cron">提醒</router-link>
-
-    </a-layout-content>
-  </a-layout>
+  <div v-for="(note, index) in indexNotes" :key="index">
+    {{note}}
+  </div>
 </template>
 
 <style scoped>
-.ant-layout {
-  height: 100%;
-}
+
 </style>
