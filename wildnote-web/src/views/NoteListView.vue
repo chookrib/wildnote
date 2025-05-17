@@ -27,12 +27,6 @@ function editNote(note) {
   router.push({ path: '/note', query: { path: note.relPath } })
 }
 
-function showTime(time) {
-  var date = new Date()
-  date.setTime(time)
-  return date;
-}
-
 </script>
 
 <template>
