@@ -4,11 +4,10 @@ import io.methvin.watcher.DirectoryWatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
 
 /**
  * 笔记Service
@@ -30,15 +28,13 @@ public class NoteService {
 
     private final String rootAbsPath;
 
-    private final IReminder reminder;
-    private final TaskScheduler taskScheduler;
-
     private DirectoryWatcher watcher = null;
     private Map<String, NoteIndexNode> noteMap = new ConcurrentHashMap<>();
-    private Map<String, ScheduledFuture<?>> schdMap = new ConcurrentHashMap<>();
+
+    private final INoteRemindScheduler remindScheduler;
 
     public NoteService(@Value("${wildnote.root-path}") String rootPath,
-                       IReminder reminder, TaskScheduler taskScheduler) {
+                       @Qualifier("noteRemindQuartzScheduler") INoteRemindScheduler remindScheduler) {
 
         if (StringUtils.isEmpty(rootPath)) {
             throw new ValidationException("未配置笔记根路径");
@@ -58,8 +54,7 @@ public class NoteService {
 
         logger.info("笔记根路径: {}", rootAbsPath);
 
-        this.reminder = reminder;
-        this.taskScheduler = taskScheduler;
+        this.remindScheduler = remindScheduler;
     }
 
     /**
@@ -77,10 +72,7 @@ public class NoteService {
     public void reloadNote() {
 
         noteMap.clear();
-
-        // 停止所有定时器
-        schdMap.values().forEach(scheduledFuture -> scheduledFuture.cancel(true));
-        schdMap.clear();
+        remindScheduler.clearAll();
 
         ArrayList<File> files = new ArrayList<>();
 
@@ -173,65 +165,51 @@ public class NoteService {
         }
 
         String path = file.getPath();
-
         try (var lines = Files.lines(file.toPath())) {
             // cron = lines.findFirst().orElse("");
             int lineNumber = 1;
             for (String line : (Iterable<String>) lines::iterator) {
-                if (line.startsWith("> cron")) {
-                    String[] parts = line.split("\\|");
-                    String cron = parts.length > 1 ? parts[1].trim() : "";
-
-                    String schdKey = path + " | " + lineNumber + " | " + cron;
-                    if (StringUtils.isEmpty(cron)) {
-                        logger.error("笔记提醒Scheduled失败: cron表达式空 {}", schdKey);
-                        return;
-                    }
-
-                    CronTrigger cronTrigger;
-                    try {
-                        cronTrigger = new CronTrigger(cron);
-                    } catch (IllegalArgumentException e) {
-                        logger.error("笔记提醒Scheduled失败: cron表达式不合法 {}", schdKey);
-                        return;
-                    }
-
-                    String reminderMessage = path + " | " + lineNumber + " | " + line;
-                    ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(() -> {
-                        reminder.remind(reminderMessage);
-                    }, cronTrigger);
-
-                    schdMap.put(schdKey, scheduledFuture);
-                    logger.info("笔记提醒Scheduled成功: {}", schdKey);
-
-                    lineNumber++;
-                } else {
-                    break;
+                if(!line.startsWith("> cron")){
+                    continue;
                 }
+
+                String[] parts = line.split("\\|");
+                String cron = parts.length >= 1 ? parts[1].trim() : "";
+                if (StringUtils.isEmpty(cron)) {
+                    logger.error("笔记提醒Scheduled失败: cron表达式空 {} {}", path, lineNumber);
+                    continue;
+                }
+
+                String message = parts.length >= 2 ? parts[2].trim() : "";
+                try {
+                    remindScheduler.add(path, lineNumber, cron, message);
+                    logger.info("笔记提醒Scheduled成功: {} {} {}", path, lineNumber, cron);
+                }
+                catch (Exception e) {
+                    logger.error("笔记提醒Scheduled失败: {} {} {} {}", path, lineNumber, cron, e.getMessage());
+                    continue;
+                }
+
+                lineNumber++;
             }
         } catch (IOException e) {
             logger.error("处理笔记提醒事项失败: 读取文件异常 {} {}", path, e.getMessage());
         }
     }
 
+
     /**
      * 取消并删除定时任务
      */
     private void removeCron(String path) {
-        schdMap.entrySet().removeIf(entry -> {
-            if (entry.getKey().startsWith(path + " | ")) {
-                entry.getValue().cancel(true);
-                return true;
-            }
-            return false;
-        });
+        remindScheduler.remove(path);
     }
 
     /**
      * 获取所有cron定时任务
      */
     public List<String> getAllCron() {
-        return schdMap.keySet().stream().toList();
+        return remindScheduler.getAll();
     }
 
     /**
@@ -267,7 +245,8 @@ public class NoteService {
                                 break;
                         }
                     })
-                    .fileHashing(false)     // 禁用hashing，启用时删除空文件会监控不到
+                    //.fileHashing(false)     // 禁用hashing，启用时删除空文件会监控不到
+                    .fileHashing(true)
                     .build();
         } catch (IOException e) {
             throw new RuntimeException(e);
