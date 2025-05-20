@@ -31,7 +31,7 @@ public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
             this.scheduler.setJobFactory((bundle, scheduler) ->
                     (context) -> {
                         JobDataMap data = context.getJobDetail().getJobDataMap();
-                        String message = data.getString("message");
+                        String message = data.getString("remindMessage");
                         this.reminder.remind(message);
                     });
             this.scheduler.start();
@@ -46,7 +46,8 @@ public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
             JobDetail jobDetail = JobBuilder.newJob()
                     .ofType(Job.class)
                     .withIdentity(String.valueOf(lineNumber), path)
-                    .usingJobData("message", path + " | " + lineNumber + " | " + cron + " | " + message)
+                    .usingJobData("message", message)
+                    .usingJobData("remindMessage", path + " | " + lineNumber + " | " + cron + " | " + message)
                     .build();
             Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(String.valueOf(lineNumber), path)

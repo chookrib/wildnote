@@ -24,7 +24,7 @@ function logout() {
 <template>
   <a-layout-header>
     <div style="display: flex; align-items: center;">
-      <img src="/img/logo.png" alt="" style="height: 20px; filter: brightness(100);">
+      <img src="/img/logo1.png" alt="" style="height: 20px; filter: brightness(100);">
     </div>
     <div style="flex-grow: 1; display: flex; align-items: center; white-space: nowrap; gap: 10px;">
       <slot> </slot>

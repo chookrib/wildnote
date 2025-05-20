@@ -50,7 +50,7 @@ const login = function () {
 
 <style>
 body {
-  background: #ececec;
+  background: #f5f7fa;
   /*background-image: linear-gradient(45deg, #3A6A74, #46537F, #458E56);
   background-size: 400%;
   animation: bganimation 15s infinite;*/
@@ -90,17 +90,6 @@ body {
   height: 100%;
 }
 
-#login-container {
-  /* background-color: #3A6A74; */
-  background-color: #ddd;
-  height: 100%;
-
-  /* background-image: linear-gradient(45deg, #2c3e50, #27ae60, #2980b9, #e74c3c, #8e44ad); */
-  background-image: linear-gradient(45deg, #3A6A74, #46537F, #458E56);
-  background-size: 400%;
-  animation: bganimation 15s infinite;
-}
-
 @keyframes bganimation {
   0% {
     background-position: 0% 50%;
@@ -115,58 +104,9 @@ body {
   }
 }
 
-#login-box {
-  width: 450px;
-  height: 270px;
-  background-color: #fff;
-  border-radius: 3px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 1;
-}
-
-#logo-container {
-  width: 130px;
-  height: 130px;
-  border: 1px solid #eee;
-  border-radius: 50%;
-  padding: 10px;
-  box-shadow: 0 0 10px #ddd;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #fff;
-}
-
-#logo-box {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #eee;
-  padding: 15px;
-}
-
 #logo-box img {
   width: 100%;
   height: 100%;
 }
 
-#login-form {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 20px;
-}
-
-#login-button {
-  background-color: #3A6A74;
-  color: #fff;
-
-  &:hover {
-    background-color: #1677FF !important;
-
-  }
-}
 </style>

@@ -72,7 +72,7 @@ const unpinNote = function() {
       <SaveFilled />
     </template>
   </a-float-button>
-  <a-float-button type="primary" @click="pinNote" v-if="!editMode&&!notePinned" style="right: 80px;">
+  <a-float-button type="default" @click="pinNote" v-if="!editMode&&!notePinned" style="right: 80px;">
     <template #icon>
       <StarOutlined />
     </template>
@@ -89,7 +89,9 @@ const unpinNote = function() {
   </a-float-button>
   <a-card>
     <template #title>
-      <span style="font-weight: bold;">{{ notePath }}</span>
+      <div style="position: fixed; top: 40px; left: 0; right: 0; z-index: 1000;
+       height: 40px; line-height: 40px; padding-left: 24px; padding-right: 24px;
+        background-color: #FFFBE6; font-weight: bold;">{{ notePath }}</div>
     </template>
     <template #extra>
       <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
