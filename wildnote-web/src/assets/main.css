@@ -11,3 +11,10 @@ body {
 #app {
   height: 100%;
 }
+
+/*antd 表格 header 样式*/
+.ant-table-thead > tr > th {
+  font-weight: normal!important;
+  white-space: nowrap;
+  /*text-align: center;*/
+}

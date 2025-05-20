@@ -1,79 +1,75 @@
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import axios from '../utils/axios'
-import router from '../router'
-import { ref, computed } from 'vue'
-import { ReloadOutlined, SearchOutlined } from '@ant-design/icons-vue'
+import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue'
 import { showDateTime } from '@/utils/dateTime'
+import { RouterLink } from 'vue-router'
 
-const notes = ref([])
+const dataSource = ref([])
 const searchKey = ref('')
 
-const filteredNotes = computed(() => {
-  return notes.value.filter(note => !note.directory && note.relPath.includes(searchKey.value))
-})
-
 onMounted(() => {
-  // loadNoteIndex()
+  axios.get('/api/note/all').then(response => {
+    dataSource.value = response.data.data
+  })
 })
 
-function loadNoteIndex() {
-  axios.get('/api/note/index').then(response => {
-    notes.value = response.data.data
+const dataSourceComputed = computed(() => {
+  if (searchKey.value.length === 0) {
+    return []
+  }
+  let ds = dataSource.value.filter(node => node.relPath.toLowerCase().includes(searchKey.value.toLowerCase()))
+  return ds.sort((a, b) => {
+    return a.relPath.localeCompare(b.relPath)
   })
-}
+})
 
-function editNote(note) {
-  router.push({ path: '/note', query: { path: note.relPath } })
-}
-
-function showTime(time) {
-  var date = new Date()
-  date.setTime(time)
-  return date
-}
-
+const columns = [
+  {
+    title: '路径',
+    dataIndex: 'relPath'
+  },
+  {
+    title: '修改时间',
+    dataIndex: 'lastModifiedTime',
+    width: '150px',
+    align: 'center'
+  }
+]
 </script>
 
 <template>
-  <a-input v-model:value=searchKey>
-    <template #prefix>
-      <SearchOutlined />
-    </template>
-  </a-input>
-  <div id="node-index">
-    <div>
-      笔记文件
-      <div style="float: right">修改时间</div>
-    </div>
-    <div v-for="note in filteredNotes" :key="note.relPath" @click="editNote(note)">
-      {{ note.relPath }}
-      <div style="float: right">{{ showDateTime(note.lastModifiedTime) }}</div>
-    </div>
-  </div>
+  <a-card>
+    <a-input v-model:value="searchKey" placeholder="最输入关键字搜索">
+      <template #prefix>
+        <SearchOutlined />
+      </template>
+    </a-input>
+    <a-table
+      :columns="columns"
+      :row-key="record => record.relPath"
+      :data-source="dataSourceComputed"
+      :pagination="false"
+      size="small"
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'relPath'">
+          <RouterLink v-if="record.directory" :to="{path:'/explore', query: {path: record.relPath + '\\'}}">
+            <FolderFilled :style="{ color: '#F7C427'}" />
+            {{ record.relPath }}
+          </RouterLink>
+          <RouterLink v-if="!record.directory" :to="{path:'/note', query: {path: record.relPath}}">
+            <FileTextOutlined :style="{ color: '#000000'}" />
+            {{ record.relPath }}
+          </RouterLink>
+        </template>
+        <template v-if="column.dataIndex === 'lastModifiedTime'">
+          {{ showDateTime(record.lastModifiedTime) }}
+        </template>
+      </template>
+    </a-table>
+  </a-card>
 </template>
 
 <style scoped>
-.ant-layout {
-  height: 100%;
-}
-
-#node-index {
-  height: 100%;
-  white-space: nowrap;
-  overflow: auto;
-  line-height: 1.5;
-  padding: 10px;
-  font-size: 12pt;
-}
-
-#node-index div {
-  cursor: pointer;
-  border-bottom: 1px dotted #3c3c3c;
-
-  &:hover {
-    background-color: #3c3c3c;
-    color: #fff;
-  }
-}
 </style>

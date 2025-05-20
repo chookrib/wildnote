@@ -17,12 +17,12 @@ public interface INoteRemindScheduler {
     void clearAll();
 
     /**
-     * 删除提醒计划任务
+     * 删除指定笔记的提醒Cron
      */
     void remove(String path);
 
     /**
      * 取所有提醒计划任务
      */
-    List<String> getAll();
+    List<NoteRemindCron> getAll();
 }

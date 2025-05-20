@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +46,7 @@ public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
             JobDetail jobDetail = JobBuilder.newJob()
                     .ofType(Job.class)
                     .withIdentity(String.valueOf(lineNumber), path)
-                    .usingJobData("message", path + " | " + lineNumber + " | " + cron + "|" + message)
+                    .usingJobData("message", path + " | " + lineNumber + " | " + cron + " | " + message)
                     .build();
             Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(String.valueOf(lineNumber), path)
@@ -84,8 +86,7 @@ public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
         try {
             GroupMatcher<JobKey> matcher = GroupMatcher.groupEquals(path);
             Set<JobKey> jobKeySet = scheduler.getJobKeys(matcher);
-            List<JobKey> jobKeyList = new ArrayList<JobKey>();
-            jobKeyList.addAll(jobKeySet);
+            List<JobKey> jobKeyList = new ArrayList<>(jobKeySet);
             scheduler.deleteJobs(jobKeyList);
         } catch (SchedulerException e) {
             throw new RuntimeException(e);
@@ -106,43 +107,42 @@ public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
     }
 
     @Override
-    public List<String> getAll() {
-        List<String> result = new ArrayList<>();
+    public List<NoteRemindCron> getAll() {
+        List<NoteRemindCron> result = new ArrayList<>();
 
         try {
             // 获取所有Job组
             for (String groupName : scheduler.getJobGroupNames()) {
                 // 获取组内所有JobKey
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                    JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+
+                    List<String> cronExpressions = new ArrayList<>();
+                    List<String> nextTimes = new ArrayList<>();
                     // 获取Job对应的Trigger
                     List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
-
                     for (Trigger trigger : triggers) {
                         // 获取Trigger的CronSchedule表达式
                         if (trigger instanceof CronTrigger cronTrigger) {
-                            result.add(String.format("%s | %s",
-                                    jobKey.getName(),
-                                    cronTrigger.getCronExpression()
-                            ));
+                            cronExpressions.add(cronTrigger.getCronExpression());
+                            nextTimes.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(trigger.getNextFireTime()));
                         }
                     }
+
+                    NoteRemindCron cron = new NoteRemindCron(groupName, jobKey.getName(),
+                            String.join(" , ", cronExpressions),
+                            jobDetail.getJobDataMap().getString("message"),
+                            String.join(" , ", nextTimes));
+
+                    result.add(cron);
                 }
             }
         } catch (SchedulerException e) {
-            logger.error("获取提醒任务失败: {}", e.getMessage());
+            throw new RuntimeException(e);
         }
 
         return result;
     }
-
-    //public class ReminderJob implements Job {
-    //    @Override
-    //    public void execute(JobExecutionContext context) {
-    //        JobDataMap data = context.getJobDetail().getJobDataMap();
-    //        String message = data.getString("message");
-    //        reminder.remind(message);
-    //    }
-    //}
 }
 
 

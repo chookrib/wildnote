@@ -7,7 +7,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
 
 const loginForm = reactive({ username: '', password: '' })
 
-function login() {
+const login = function () {
   axios.post('/api/login', {
     username: loginForm.username,
     password: loginForm.password
@@ -30,14 +30,14 @@ function login() {
       <a-form-item>
         <a-input v-model:value="loginForm.username">
           <template #prefix>
-            <user-outlined />
+            <UserOutlined />
           </template>
         </a-input>
       </a-form-item>
       <a-form-item>
         <a-input-password v-model:value="loginForm.password" @keyup.enter="login">
           <template #prefix>
-            <lock-outlined />
+            <LockOutlined />
           </template>
         </a-input-password>
       </a-form-item>

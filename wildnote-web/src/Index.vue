@@ -1,70 +1,59 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import zhCN from 'ant-design-vue/es/locale/zh_CN'
 
 import router from './router'
 import { createVNode } from 'vue'
-import { Modal } from 'ant-design-vue';
-import { LogoutOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { Modal } from 'ant-design-vue'
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 
-function logout() {
+console.log(import.meta.env);
+
+const logout = function () {
   Modal.confirm({
     title: '注销',
     icon: createVNode(ExclamationCircleOutlined),
     content: '确定要注销吗？',
     okText: '确认',
     cancelText: '取消',
-    onOk: function () {
+    onOk: function() {
       localStorage.removeItem('accessToken')
       //router.push('/login')
-      window.location.href= '/login.html'
+      window.location.href = '/login.html'
     },
-    onCancel: function () {
-    },
+    onCancel: function() {
+    }
   })
 }
 
 </script>
 
 <template>
-  <a-layout>
-    <a-layout-header>
-      <div style="display: flex; align-items: center;">
+  <a-config-provider :locale="zhCN">
+    <a-layout>
+      <a-layout-header style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; height: 40px; align-items: center; padding: 10px; gap: 10px;">
         <img src="/img/logo.png" alt="" style="height: 20px; filter: brightness(100);">
-      </div>
-      <RouterLink to="/">首页</RouterLink>
-      <RouterLink to="/explore">浏览</RouterLink>
-      <RouterLink to="/search">搜索</RouterLink>
-      <RouterLink to="/cron">提醒</RouterLink>
-
-      <div style="flex-grow: 1; display: flex; align-items: center; white-space: nowrap; gap: 10px;">
-        <slot></slot>
-      </div>
-      <div>
-        <a-button @click=logout>
-          <template #icon>
-            <LogoutOutlined />
-          </template>
-          注销
-        </a-button>
-      </div>
-    </a-layout-header>
-    <a-layout-content>
-      <RouterView :key="$route.fullPath" />
-    </a-layout-content>
-  </a-layout>
+        <RouterLink to="/">首页</RouterLink>
+        <RouterLink to="/explore">浏览</RouterLink>
+        <RouterLink to="/search">搜索</RouterLink>
+        <RouterLink to="/cron">提醒</RouterLink>
+        <div style="flex-grow: 1;">
+        </div>
+        <a href="#" @click="logout">注销</a>
+      </a-layout-header>
+      <a-layout-content style="margin-top: 40px;">
+        <RouterView :key="$route.fullPath" />
+      </a-layout-content>
+    </a-layout>
+  </a-config-provider>
 </template>
 
 <style scoped>
-.ant-layout-header {
-  padding: 0px;
-  height: 40px;
-  color: #fff;
-  background-color: #3c3c3c;
-  display: flex;
-  gap: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  justify-content: space-between;
-  align-items: center;
+.ant-layout-header a {
+  color: #ffffff;
+  &:hover {
+    color: #1677ff;
+  }
 }
+
 </style>

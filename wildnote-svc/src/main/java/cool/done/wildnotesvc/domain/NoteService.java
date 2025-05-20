@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,34 +27,39 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NoteService {
     private static final Logger logger = LoggerFactory.getLogger(NoteService.class);
 
-    private final String rootAbsPath;
+    private final String noteRootAbsPath;
+    private final String[] noteExtensions;
 
     private DirectoryWatcher watcher = null;
-    private Map<String, NoteIndexNode> noteMap = new ConcurrentHashMap<>();
+    private Map<String, NoteNode> noteNodeMap = new ConcurrentHashMap<>();
 
     private final INoteRemindScheduler remindScheduler;
 
-    public NoteService(@Value("${wildnote.root-path}") String rootPath,
-                       @Qualifier("noteRemindQuartzScheduler") INoteRemindScheduler remindScheduler) {
+    public NoteService(@Value("${wildnote.note-root-path}") String noteRootPath,
+                       @Value("${wildnote.note-extensions}") String noteExtensions,
+                       //@Qualifier("noteRemindTaskScheduler") INoteRemindScheduler remindScheduler,
+                       @Qualifier("noteRemindQuartzScheduler") INoteRemindScheduler remindScheduler
+    ) {
 
-        if (StringUtils.isEmpty(rootPath)) {
-            throw new ValidationException("未配置笔记根路径");
+        if (StringUtils.isEmpty(noteRootPath)) {
+            throw new RuntimeException("未配置笔记根路径");
         }
-
-        //File rootPathFile = new File(rootPath);
-        //if (!rootPathFile.exists() || !rootPathFile.isDirectory()) {
-        //    throw new ValidationException("笔记根路径不存在");
-        //}
-        //rootAbsPath = rootPathFile.toPath().normalize().toAbsolutePath().toString();     // 不会处理 ..
-
+        Path noteRootRealPath;
         try {
-            rootAbsPath = Path.of(rootPath).toRealPath().toString();
+            noteRootRealPath = Path.of(noteRootPath).toRealPath();
         } catch (IOException e) {
-            throw new ValidationException(String.format("笔记根路径无效: %s", e.getMessage()));
+            throw new RuntimeException(String.format("笔记根路径无效: %s", e.getMessage()));
         }
+        //if (!Files.exists(noteRootRealPath)) {
+        //    throw new RuntimeException("笔记根路径不存在");
+        //}
+        if (!Files.isDirectory(noteRootRealPath)) {
+            throw new RuntimeException("笔记根路径必须为文件夹");
+        }
+        this.noteRootAbsPath = noteRootRealPath.toString();
+        logger.info("笔记根路径: {}", noteRootAbsPath);
 
-        logger.info("笔记根路径: {}", rootAbsPath);
-
+        this.noteExtensions = noteExtensions.split(",");
         this.remindScheduler = remindScheduler;
     }
 
@@ -67,11 +73,27 @@ public class NoteService {
     }
 
     /**
+     * 验证笔记文件扩展名
+     */
+    private boolean isValidExtension(File file) {
+        return Arrays.stream(noteExtensions)
+                .anyMatch(ext -> file.getName().toLowerCase().endsWith(ext.toLowerCase()));
+    }
+
+    /**
+     * 验证笔记文件提醒扩展名
+     */
+    private boolean isValidCronExtension(File file) {
+        return Arrays.stream(noteExtensions)
+                .anyMatch(ext -> file.getName().toLowerCase().endsWith(".cron" + ext.toLowerCase()));
+    }
+
+    /**
      * 重新加载笔记
      */
     public void reloadNote() {
 
-        noteMap.clear();
+        noteNodeMap.clear();
         remindScheduler.clearAll();
 
         ArrayList<File> files = new ArrayList<>();
@@ -95,7 +117,7 @@ public class NoteService {
         //}
 
         try {
-            Files.walkFileTree(Path.of(rootAbsPath), new SimpleFileVisitor<>() {
+            Files.walkFileTree(Path.of(noteRootAbsPath), new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                     files.add(file.toFile());
@@ -104,7 +126,9 @@ public class NoteService {
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    files.add(dir.toFile());
+                    if (!dir.equals(Path.of(noteRootAbsPath))) {    // 排队根路径
+                        files.add(dir.toFile());
+                    }
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -112,39 +136,56 @@ public class NoteService {
             throw new RuntimeException(e);
         }
 
-        files.sort((file1, file2) -> {
-            if (file1.isDirectory() && file2.isFile())
-                return -1;
-            if (file1.isFile() && file2.isDirectory())
-                return 1;
-            return file1.getName().compareTo(file2.getName());
-        });
+        //files.sort((file1, file2) -> {
+        //    if (file1.isDirectory() && file2.isFile())
+        //        return -1;
+        //    if (file1.isFile() && file2.isDirectory())
+        //        return 1;
+        //    return file1.getName().compareTo(file2.getName());
+        //});
 
         for (File file : files) {
-            noteMap.put(file.getPath(), createNoteIndexNode(file));
+            addNoteNode(file);
             processCron(file);
         }
     }
 
     /**
+     * 添加笔记节点
+     */
+    private void addNoteNode(File file) {
+        if (file.isFile() && !isValidExtension(file)) {
+            return;
+        }
+        noteNodeMap.put(file.getPath(), createNoteNode(file));
+    }
+
+    /**
+     * 移除笔记节点
+     */
+    private void removeNoteNode(File file) {
+        noteNodeMap.remove(file.getPath());
+    }
+
+    /**
      * 创建笔记目录节点
      */
-    private NoteIndexNode createNoteIndexNode(File file) {
+    private NoteNode createNoteNode(File file) {
 
         String absPath = file.toPath().normalize().toAbsolutePath().toString();              // D:\xxx\log\log.log
-        String relPath = absPath.substring(rootAbsPath.length());       // log\log.log
+        String relPath = absPath.substring(noteRootAbsPath.length());       // log\log.log
 
-        int level = relPath.split("\\\\|/").length - 1;
+        int level = relPath.split("\\\\|/").length - 2;
 
         Long creationTime = null;
         try {
-            BasicFileAttributes attrs = Files.readAttributes(Path.of(file.getPath()), BasicFileAttributes.class);
+            BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
             creationTime = attrs.creationTime().toMillis();
         } catch (IOException e) {
             logger.error("获取笔记文件属性失败: {}", absPath);
         }
 
-        return new NoteIndexNode(
+        return new NoteNode(
                 level,
                 relPath,
                 absPath,
@@ -159,56 +200,57 @@ public class NoteService {
      * 处理笔记文件中的提醒
      */
     private void processCron(File file) {
-        // 判断文件名
-        if (!file.getName().endsWith(".cron.md")) {
+
+        String path = file.getPath().substring(noteRootAbsPath.length());
+
+        if (!file.isFile() || !isValidCronExtension(file)) {
             return;
         }
 
-        String path = file.getPath();
         try (var lines = Files.lines(file.toPath())) {
             // cron = lines.findFirst().orElse("");
-            int lineNumber = 1;
+            int lineNumber = 0;
             for (String line : (Iterable<String>) lines::iterator) {
-                if(!line.startsWith("> cron")){
+                lineNumber++;
+                if (!line.startsWith("> cron")) {
                     continue;
                 }
 
                 String[] parts = line.split("\\|");
                 String cron = parts.length >= 1 ? parts[1].trim() : "";
                 if (StringUtils.isEmpty(cron)) {
-                    logger.error("笔记提醒Scheduled失败: cron表达式空 {} {}", path, lineNumber);
+                    logger.error("处理笔记提醒失败: cron表达式空 {} {}", path, lineNumber);
                     continue;
                 }
 
                 String message = parts.length >= 2 ? parts[2].trim() : "";
                 try {
                     remindScheduler.add(path, lineNumber, cron, message);
-                    logger.info("笔记提醒Scheduled成功: {} {} {}", path, lineNumber, cron);
-                }
-                catch (Exception e) {
-                    logger.error("笔记提醒Scheduled失败: {} {} {} {}", path, lineNumber, cron, e.getMessage());
+                    logger.info("处理笔记提醒成功: {} {} {}", path, lineNumber, cron);
+                } catch (Exception e) {
+                    logger.error("处理笔记提醒失败: {} {} {} {}", path, lineNumber, cron, e.getMessage());
                     continue;
                 }
-
-                lineNumber++;
             }
         } catch (IOException e) {
-            logger.error("处理笔记提醒事项失败: 读取文件异常 {} {}", path, e.getMessage());
+            logger.error("处理笔记提醒失败: 读取文件异常 {} {}", path, e.getMessage());
         }
     }
 
 
     /**
-     * 取消并删除定时任务
+     * 删除提醒计划任务
      */
-    private void removeCron(String path) {
+    private void removeCron(File file) {
+        String path = file.getPath().substring(noteRootAbsPath.length());
         remindScheduler.remove(path);
+        logger.info("移除笔记提醒成功: {}", path);
     }
 
     /**
-     * 获取所有cron定时任务
+     * 取所有提醒计划任务
      */
-    public List<String> getAllCron() {
+    public List<NoteRemindCron> getAllCron() {
         return remindScheduler.getAll();
     }
 
@@ -218,7 +260,7 @@ public class NoteService {
     public void startWatch() {
         try {
             watcher = DirectoryWatcher.builder()
-                    .path(Paths.get(rootAbsPath))
+                    .path(Paths.get(noteRootAbsPath))
                     .listener(event -> {
 
                         File file = event.path().toFile();
@@ -228,18 +270,18 @@ public class NoteService {
 
                         switch (event.eventType()) {
                             case CREATE:
-                                noteMap.put(path, createNoteIndexNode(file));
+                                addNoteNode(file);
                                 processCron(file);
                                 break;
                             case MODIFY:
-                                noteMap.remove(path);
-                                noteMap.put(path, createNoteIndexNode(file));   // 重新添加以更新文件属性
-                                removeCron(path);
+                                removeNoteNode(file);
+                                addNoteNode(file);      // 重新添加以更新文件属性
+                                removeCron(file);
                                 processCron(file);
                                 break;
                             case DELETE:
-                                noteMap.remove(path);
-                                removeCron(path);
+                                removeNoteNode(file);
+                                removeCron(file);
                                 break;
                             default:
                                 break;
@@ -271,19 +313,20 @@ public class NoteService {
     /**
      * 拼接绝对路径
      */
-    private String combineAbsPath(String relPath) {
-        String absPath = Path.of(rootAbsPath, relPath).normalize().toAbsolutePath().toString();
-        if (!absPath.startsWith(rootAbsPath)) {
-            throw new ValidationException("禁止访问笔记根路径以外的文件");
+    private Path combineAbsPath(String relPath) {
+        Path path = Path.of(noteRootAbsPath, relPath);
+        String absPath = path.normalize().toAbsolutePath().toString();
+        if (!absPath.startsWith(noteRootAbsPath)) {
+            throw new RuntimeException("禁止访问笔记根路径以外的文件");
         }
-        return absPath;
+        return path;
     }
 
     /**
      * 取笔记目录
      */
-    public Map<String, NoteIndexNode> getNoteMap() {
-        return noteMap;
+    public Map<String, NoteNode> getNoteNodeMap() {
+        return noteNodeMap;
     }
 
     /**
@@ -292,7 +335,7 @@ public class NoteService {
     public String getNote(String relPath) {
 
         try {
-            return Files.readString(Path.of(relPath));
+            return Files.readString(combineAbsPath(relPath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -303,7 +346,7 @@ public class NoteService {
      */
     public void saveNote(String relPath, String content) {
         try {
-            Files.writeString(Path.of(relPath), content);
+            Files.writeString(combineAbsPath(relPath), content);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -313,9 +356,9 @@ public class NoteService {
      * 创建笔记
      */
     public void createNote(String relPath) {
-        Path path = Path.of(relPath);
+        Path path = combineAbsPath(relPath);
         if (Files.exists(path))
-            throw new ValidationException("笔记文件已存在");
+            throw new RuntimeException("笔记文件已存在");
         try {
             Files.writeString(path, "");
         } catch (IOException e) {
@@ -328,7 +371,7 @@ public class NoteService {
      */
     public void deleteNote(String relPath) {
         try {
-            Files.delete(Path.of(relPath));
+            Files.delete(combineAbsPath(relPath));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

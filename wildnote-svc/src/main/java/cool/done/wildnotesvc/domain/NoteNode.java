@@ -1,9 +1,9 @@
 package cool.done.wildnotesvc.domain;
 
 /**
- * 笔记目录节点
+ * 笔记节点
  */
-public class NoteIndexNode {
+public class NoteNode {
 
     private int level;
     private String relPath;
@@ -35,8 +35,8 @@ public class NoteIndexNode {
 
     public long getLastModifiedTime() { return lastModifiedTime; }
 
-    public NoteIndexNode(int level, String relPath, String absPath, String name, boolean directory, Long creationTime,
-                         long lastModifiedTime) {
+    public NoteNode(int level, String relPath, String absPath, String name, boolean directory,
+                    Long creationTime, long lastModifiedTime) {
         this.level = level;
         this.relPath = relPath;
         this.absPath = absPath;

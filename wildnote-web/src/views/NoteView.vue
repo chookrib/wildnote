@@ -1,68 +1,106 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from '../utils/axios'
-import router from '../router'
-import 'cherry-markdown/dist/cherry-markdown.css'
-import Cherry from 'cherry-markdown';
-import { ref } from 'vue'
-import { message } from "ant-design-vue"
+import { isPinned, pin, unpin } from '../utils/pinnedNote'
+import { message } from 'ant-design-vue'
 import { useRoute } from 'vue-router'
-import { showDateTime } from '@/utils/dateTime';
+import { showDateTime } from '@/utils/dateTime'
+import { StarOutlined, StarFilled, EditFilled, RollbackOutlined, SaveFilled } from '@ant-design/icons-vue'
 
 const route = useRoute()
 const notePath = route.query.path
+const noteContent = ref('')
+const noteContentEdit = ref('')
+const editMode = ref(false)
+const notePinned = ref(false)
 
-const lastSaveTime = ref(null);
-
-const cherryInstance = defineModel('cherryInstance')
+const lastSaveTime = ref(null)
 
 onMounted(() => {
+  loadNote()
+})
+
+const loadNote = function() {
   axios.post('/api/note/get', {
     path: notePath
   }).then(response => {
-    cherryInstance.value = new Cherry({
-      id: 'markdown-container',
-      value: response.data.data,
-      themeSettings: {
-        mainTheme: 'light',
-      }
-    })
-  })
-})
-
-function saveNote() {
-  axios.post('/api/note/save', {
-    path: notePath,
-    content: cherryInstance.value.getValue(),
-  }).then(response => {
-    lastSaveTime.value = new Date()
-    message.success('保存成功')
+    noteContent.value = response.data.data
+    notePinned.value = isPinned(notePath)
   })
 }
 
-function noteIndex() {
-  router.push('/index')
+const editNote = function() {
+  noteContentEdit.value = noteContent.value
+  editMode.value = true
+}
+
+const saveNote = function() {
+  axios.post('/api/note/save', {
+    path: notePath,
+    content: noteContentEdit.value
+  }).then(response => {
+    lastSaveTime.value = new Date()
+    message.success('保存成功')
+    editMode.value = false
+    loadNote()
+  })
+}
+
+const cancelEditNote = function() {
+  editMode.value = false
+}
+
+const pinNote = function() {
+  pin(notePath)
+  notePinned.value = true
+}
+
+const unpinNote = function() {
+  unpin(notePath)
+  notePinned.value = false
 }
 </script>
 
 <template>
-  <a-layout>
-    <Header>
-      <a-button @click=noteIndex>返回目录</a-button>
-      <span>{{ notePath }}</span>
-      <a-button type="primary" @click=saveNote>保存</a-button>
+  <a-float-button type="primary" @click="cancelEditNote" v-if="editMode" style="right: 80px;">
+    <template #icon>
+      <RollbackOutlined />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="saveNote" v-if="editMode">
+    <template #icon>
+      <SaveFilled />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="pinNote" v-if="!editMode&&!notePinned" style="right: 80px;">
+    <template #icon>
+      <StarOutlined />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="unpinNote" v-if="!editMode&&notePinned" style="right: 80px;">
+    <template #icon>
+      <StarFilled />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="editNote" v-if="!editMode">
+    <template #icon>
+      <EditFilled />
+    </template>
+  </a-float-button>
+  <a-card>
+    <template #title>
+      <span style="font-weight: bold;">{{ notePath }}</span>
+    </template>
+    <template #extra>
       <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
-    </Header>
-    <a-layout-content>
-      <div id="markdown-container"></div>
-    </a-layout-content>
-  </a-layout>
+    </template>
+    <div v-if="!editMode" style="white-space: pre-wrap;">
+      {{ noteContent }}
+    </div>
+    <a-textarea v-if="editMode" :autosize="true" v-model:value="noteContentEdit" :showCount="true">
+    </a-textarea>
+  </a-card>
 </template>
 
 <style scoped>
-.ant-layout {
-  height: 100%;
-}
-
-#markdown-container {}
 </style>

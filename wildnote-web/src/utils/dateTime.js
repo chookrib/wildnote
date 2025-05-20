@@ -1,4 +1,7 @@
 export function showDateTime(dt) {
+  if(!dt) {
+    return ''
+  }
   const date = new Date()
   date.setTime(dt)
   const year = date.getFullYear()

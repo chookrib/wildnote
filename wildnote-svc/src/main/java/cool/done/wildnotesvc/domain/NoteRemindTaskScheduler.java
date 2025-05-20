@@ -10,10 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 笔记提醒计划任务
- * 使用TaskScheduler实现
+ * 使用 TaskScheduler 实现
  */
 @Component
 public class NoteRemindTaskScheduler implements INoteRemindScheduler {
@@ -21,7 +22,7 @@ public class NoteRemindTaskScheduler implements INoteRemindScheduler {
 
     private final IReminder reminder;
     private final TaskScheduler taskScheduler;
-    private Map<String, ScheduledFuture<?>> schdMap = new ConcurrentHashMap<>();
+    private Map<String, ScheduledFuture<?>> scheduleMap = new ConcurrentHashMap<>();
 
     public NoteRemindTaskScheduler(IReminder reminder, TaskScheduler taskScheduler) {
         this.reminder = reminder;
@@ -31,8 +32,9 @@ public class NoteRemindTaskScheduler implements INoteRemindScheduler {
     /**
      * 添加提醒计划任务
      */
+    @Override
     public void add(String path, int lineNumber, String cron, String message) {
-        String key = path + " | " + lineNumber + " | " + cron;
+        String key = path + " | " + lineNumber + " | " + cron + " | " + message;
 
         CronTrigger cronTrigger;
         try {
@@ -42,26 +44,28 @@ public class NoteRemindTaskScheduler implements INoteRemindScheduler {
         }
 
         ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(() -> {
-                    reminder.remind(path + " | " + lineNumber + " | " + cron + "|" + message);
+                    reminder.remind(path + " | " + lineNumber + " | " + cron + " | " + message);
                 },
                 cronTrigger
         );
-        schdMap.put(key, scheduledFuture);
+        scheduleMap.put(key, scheduledFuture);
     }
 
     /**
      * 清除所有提醒计划任务
      */
+    @Override
     public void clearAll() {
-        schdMap.values().forEach(scheduledFuture -> scheduledFuture.cancel(true));
-        schdMap.clear();
+        scheduleMap.values().forEach(scheduledFuture -> scheduledFuture.cancel(true));
+        scheduleMap.clear();
     }
 
     /**
      * 删除提醒计划任务
      */
+    @Override
     public void remove(String path) {
-        schdMap.entrySet().removeIf(entry -> {
+        scheduleMap.entrySet().removeIf(entry -> {
             if (entry.getKey().startsWith(path + " | ")) {
                 entry.getValue().cancel(true);
                 return true;
@@ -73,7 +77,20 @@ public class NoteRemindTaskScheduler implements INoteRemindScheduler {
     /**
      * 取所有提醒计划任务
      */
-    public List<String> getAll() {
-        return schdMap.keySet().stream().toList();
+    @Override
+    public List<NoteRemindCron> getAll() {
+        //return scheduleMap.keySet().stream().toList();
+        return scheduleMap.keySet().stream()
+                .map(key -> {
+                    String[] parts = key.split("\\|");
+                    String path = parts.length >= 0 ? parts[0].trim() : "";
+                    String lineNumber = parts.length >= 1 ? parts[1].trim() : "";
+                    String cron = parts.length >= 2 ? parts[2].trim() : "";
+                    String message = parts.length >= 3 ? parts[3].trim() : "";
+                    String nextTime = scheduleMap.get(key).getDelay(TimeUnit.SECONDS) + "s";
+                    return new NoteRemindCron(path, lineNumber, cron, message, nextTime);
+                })
+                //.filter(cron -> cron != null)
+                .toList();
     }
 }

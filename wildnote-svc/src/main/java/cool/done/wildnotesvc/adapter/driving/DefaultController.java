@@ -29,7 +29,7 @@ public class DefaultController {
     }
 
     /**
-     * 用于reminder的测试
+     * reminder测试
      */
     @RequestMapping(value = "/reminder", method = RequestMethod.GET)
     @ResponseBody

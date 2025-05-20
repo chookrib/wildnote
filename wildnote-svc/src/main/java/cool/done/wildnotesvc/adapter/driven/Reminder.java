@@ -8,20 +8,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * 提醒
+ * 提醒器
  */
 @Component
 public class Reminder implements IReminder {
     private static final Logger logger = LoggerFactory.getLogger(Reminder.class);
 
-    @Value("${wildnote.reminder-url:}")
-    private String reminderUrl;
+    @Value("${wildnote.note-reminder-url:}")
+    private String noteReminderUrl;
 
 
     @Override
     public void remind(String message) {
         try {
-            String url = reminderUrl + message;
+            String url = noteReminderUrl + message;
             new RestTemplate().getForObject(url, String.class);
             logger.info("笔记提醒成功: {}", message);
         }

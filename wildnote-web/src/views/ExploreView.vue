@@ -1,64 +1,112 @@
 <script setup>
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import axios from '../utils/axios'
-import router from '../router'
-import { ref, computed } from 'vue'
 import { showDateTime } from '@/utils/dateTime'
+import { RouterLink, useRoute } from 'vue-router'
+import { FileTextOutlined, FolderFilled } from '@ant-design/icons-vue'
 
-const notes = ref([])
-const searchKey = ref('')
+const route = useRoute()
+const path = route.query.path || ''
 
-const filteredNotes = computed(() => {
-  return notes.value.filter(note => !note.directory && note.relPath.includes(searchKey.value))
-})
+const dataSource = ref([])
 
 onMounted(() => {
-  loadNoteIndex()
+  axios.get('/api/note/all').then(response => {
+    dataSource.value = response.data.data
+  })
 })
 
-function loadNoteIndex() {
-  axios.get('/api/note/index').then(response => {
-    notes.value = response.data.data
+const sorterParam = ref({})
+
+const dataSourceComputed = computed(() => {
+  let ds = []
+  if (path) {
+    const level = path.split('\\').length - 2
+    ds = dataSource.value.filter(node => node.relPath.startsWith(path) && node.level === level)
+  } else {
+    ds = dataSource.value.filter(node => node.level === 0)
+  }
+  const sorter = sorterParam.value
+  if (sorter && sorter.field && sorter.order) {
+    return ds.sort((a, b) => {
+      if (sorter.order === 'descend') {
+        if (a.directory === b.directory) {
+          return b.relPath.localeCompare(a.relPath)
+        }
+        return a.directory - b.directory
+      }
+    })
+  }
+  return ds.sort((a, b) => {
+      // 目录在前，文件在后，按名称排序
+      if (a.directory === b.directory) {
+        return a.relPath.localeCompare(b.relPath)
+      }
+      return b.directory - a.directory
   })
+})
+
+const handleTableChange = function(pagination, filters, sorter) {
+  sorterParam.value = sorter
 }
 
-function editNote(note) {
-  router.push({ path: '/note', query: { path: note.relPath } })
-}
-
+const columns = [
+  {
+    title: '路径',
+    dataIndex: 'relPath',
+    sorter: true,
+    sortDirections: ['descend']
+  },
+  {
+    title: '修改时间',
+    dataIndex: 'lastModifiedTime',
+    width: '150px',
+    align: 'center'
+  }
+]
 </script>
 
 <template>
-  <div id="node-index">
-    <div>
-      笔记文件
-      <div style="float: right">修改时间</div>
-    </div>
-    <div v-for="note in filteredNotes" :key="note.relPath" @click="editNote(note)">
-      {{ note.relPath }}
-      <div style="float: right">{{ showDateTime(note.lastModifiedTime) }}</div>
-    </div>
-  </div>
+  <a-card>
+    <template #title>
+      <RouterLink :to="{ path: '/explore' }">根</RouterLink>
+      \
+      <span v-if="path">
+        <template v-for="(segment, idx) in path.split('\\').filter(s => s)" :key="idx">
+          <RouterLink
+            :to="{ path: '/explore', query: { path: path.split('\\').slice(0, idx + 2).join('\\') + '\\' } }">
+            {{ segment }}
+          </RouterLink>
+          \
+        </template>
+      </span>
+    </template>
+    <a-table
+      :columns="columns"
+      :row-key="record => record.relPath"
+      :data-source="dataSourceComputed"
+      :pagination="false"
+      @change="handleTableChange"
+      size="small"
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'relPath'">
+          <RouterLink v-if="record.directory" :to="{path:'/explore', query: {path: record.relPath + '\\'}}">
+            <FolderFilled :style="{ color: '#F7C427'}" />
+            {{ record.name }}
+          </RouterLink>
+          <RouterLink v-if="!record.directory" :to="{path:'/note', query: {path: record.relPath}}">
+            <FileTextOutlined :style="{ color: '#000000'}" />
+            {{ record.name }}
+          </RouterLink>
+        </template>
+        <template v-if="column.dataIndex === 'lastModifiedTime'">
+          {{ showDateTime(record.lastModifiedTime) }}
+        </template>
+      </template>
+    </a-table>
+  </a-card>
 </template>
 
 <style scoped>
-
-#node-index {
-  height: 100%;
-  white-space: nowrap;
-  overflow: auto;
-  line-height: 1.5;
-  padding: 10px;
-  font-size: 12pt;
-}
-
-#node-index div {
-  cursor: pointer;
-  border-bottom: 1px dotted #3c3c3c;
-
-  &:hover {
-    background-color: #3c3c3c;
-    color: #fff;
-  }
-}
 </style>

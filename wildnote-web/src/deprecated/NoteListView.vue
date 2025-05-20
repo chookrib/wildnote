@@ -18,7 +18,7 @@ onMounted(() => {
 })
 
 function loadNoteIndex() {
-  axios.get('/api/note/index').then(response => {
+  axios.get('/api/note/all').then(response => {
     notes.value = response.data.data
   })
 }

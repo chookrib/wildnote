@@ -9,7 +9,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
 
 @SpringBootApplication
