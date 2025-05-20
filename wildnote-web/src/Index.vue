@@ -31,7 +31,7 @@ const logout = function () {
         "
       >
         <img
-          src="/img/logo1.png"
+          src="/img/logo.png"
           alt=""
           style="height: 20px; filter: brightness(100)"
         />
