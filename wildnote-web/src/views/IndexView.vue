@@ -28,7 +28,7 @@ const onDrop = (dropIndex) => {
 }
 
 const unpinPath = function(path) {
-  confirm(`确定取消固定 ${path} 吗？`, function() {
+  confirm(`确定取消在首页固定 ${path} 吗？`, function() {
     unpin(path)
     pinnedPaths.value = getAllPinned()
   })
