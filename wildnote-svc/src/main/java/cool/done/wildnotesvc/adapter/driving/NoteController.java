@@ -122,7 +122,7 @@ public class NoteController {
             result = result.substring(result.indexOf("\\n") + 1);
             return Result.successData(result);
         } catch (Exception e) {
-            throw Result.successData(e.getMessage());
+            return Result.successData(e.getMessage());
         }
     }
 }

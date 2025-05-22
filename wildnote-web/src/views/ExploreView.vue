@@ -33,7 +33,7 @@ const dataSourceComputed = computed(() => {
     return ds.sort((a, b) => {
       if (sorter.order === 'descend') {
         if (a.directory === b.directory) {
-          return b.relPath.localeCompare(a.relPath)
+          return b.relPath.localeCompare(a.relPath, 'en')
         }
         return a.directory - b.directory
       }
@@ -42,7 +42,7 @@ const dataSourceComputed = computed(() => {
   return ds.sort((a, b) => {
     // 目录在前，文件在后，按名称排序
     if (a.directory === b.directory) {
-      return a.relPath.localeCompare(b.relPath)
+      return a.relPath.localeCompare(b.relPath, 'en')
     }
     return b.directory - a.directory
   })
