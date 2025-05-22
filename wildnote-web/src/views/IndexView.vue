@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { DeleteTwoTone } from '@ant-design/icons-vue'
+import { CloseCircleOutlined } from '@ant-design/icons-vue'
 import { getAll, unpin } from '@/utils/pinnedNote'
 import { RouterLink } from 'vue-router'
 import { confirm } from '../utils/confirm'
@@ -52,15 +52,15 @@ const unpinNote = function (notePath) {
           </RouterLink>
         </template>
         <template #extra>
-          <a-button @click="unpinNote(notePath)" size="small">
-            <template #icon>
-              <DeleteTwoTone />
-            </template>
-          </a-button>
+          <CloseCircleOutlined @click="unpinNote(notePath)" />
         </template>
       </a-card>
     </a-flex>
   </a-card>
 </template>
 
-<style scoped></style>
+<style scoped>
+.anticon:hover {
+  color: #1890ff;
+}
+</style>

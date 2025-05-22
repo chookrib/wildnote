@@ -39,12 +39,16 @@ const columns = [
 </script>
 
 <template>
-  <a-card>
+  <div style="position: fixed; top: 40px; left: 0; right: 0; z-index: 1000;
+       height: 40px; line-height: 40px; padding-left: 24px; padding-right: 24px;
+        background-color: #FFFBE6; font-weight: bold;">
     <a-input v-model:value="searchKey" placeholder="最输入关键字搜索">
       <template #prefix>
         <SearchOutlined />
       </template>
     </a-input>
+  </div>
+  <a-card title=" ">
     <a-table
       :columns="columns"
       :row-key="record => record.relPath"

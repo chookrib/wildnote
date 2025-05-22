@@ -69,17 +69,19 @@ const columns = [
 <template>
   <a-card>
     <template #title>
-      <RouterLink :to="{ path: '/explore' }">根</RouterLink>
-      \
-      <span v-if="path">
-        <template v-for="(segment, idx) in path.split('\\').filter(s => s)" :key="idx">
+      <div style="position: fixed; top: 40px; left: 0; right: 0; z-index: 1000;
+       height: 40px; line-height: 40px; padding-left: 24px; padding-right: 24px;
+        background-color: #FFFBE6; font-weight: bold;">
+        <!--<RouterLink :to="{ path: '/explore' }">根</RouterLink>-->
+        \<span v-if="path">
+          <template v-for="(segment, idx) in path.split('\\').filter(s => s)" :key="idx">
           <RouterLink
             :to="{ path: '/explore', query: { path: path.split('\\').slice(0, idx + 2).join('\\') + '\\' } }">
             {{ segment }}
-          </RouterLink>
-          \
+          </RouterLink>\
         </template>
       </span>
+      </div>
     </template>
     <a-table
       :columns="columns"
