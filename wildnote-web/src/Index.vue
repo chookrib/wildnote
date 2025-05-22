@@ -5,8 +5,8 @@ import { confirm } from './utils/confirm'
 
 console.log(import.meta.env)
 
-const logout = function () {
-  confirm('确定要注销吗？', function () {
+const logout = function() {
+  confirm('确定要注销吗？', function() {
     localStorage.removeItem('accessToken')
     window.location.href = '/login.html'
   })
@@ -16,20 +16,7 @@ const logout = function () {
 <template>
   <a-config-provider :locale="zhCN">
     <a-layout>
-      <a-layout-header
-        style="
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          z-index: 1000;
-          display: flex;
-          height: 40px;
-          align-items: center;
-          padding: 10px;
-          gap: 10px;
-        "
-      >
+      <a-layout-header>
         <img
           src="/img/logo.png"
           alt=""
@@ -50,6 +37,19 @@ const logout = function () {
 </template>
 
 <style scoped>
+.ant-layout-header {
+  padding: 10px;
+  height: 40px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .ant-layout-header a {
   color: #ffffff;
 

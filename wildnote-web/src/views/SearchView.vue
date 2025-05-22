@@ -39,16 +39,14 @@ const columns = [
 </script>
 
 <template>
-  <div style="position: fixed; top: 40px; left: 0; right: 0; z-index: 1000;
-       height: 40px; line-height: 40px; padding-left: 24px; padding-right: 24px;
-        background-color: #FFFBE6; font-weight: bold;">
-    <a-input v-model:value="searchKey" placeholder="最输入关键字搜索">
+  <div class="fixed-title">
+    <a-input v-model:value="searchKey" placeholder="最输入关键字搜索" size="small" :allow-clear="true">
       <template #prefix>
         <SearchOutlined />
       </template>
     </a-input>
   </div>
-  <a-card title=" ">
+  <a-card style="margin-top: 40px;">
     <a-table
       :columns="columns"
       :row-key="record => record.relPath"
@@ -56,6 +54,9 @@ const columns = [
       :pagination="false"
       size="small"
     >
+      <template #emptyText>
+        <a-empty description="没有搜索结果" />
+      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'relPath'">
           <RouterLink v-if="record.directory" :to="{path:'/explore', query: {path: record.relPath + '\\'}}">
@@ -76,4 +77,21 @@ const columns = [
 </template>
 
 <style scoped>
+.fixed-title {
+  background-color: #FFFBE6;
+  /*font-weight: bold;*/
+  padding-left: 24px;
+  padding-right: 24px;
+  height: 40px;
+  line-height: 40px;
+  position: fixed;
+  top: 40px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.fixed-title * {
+  /*font-weight: bold;*/
+}
 </style>

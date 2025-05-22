@@ -1,13 +1,12 @@
 <script setup>
 
-//import router from "./router";
 import axios from './utils/axios'
-import { reactive } from "vue";
+import { reactive } from 'vue'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
 
 const loginForm = reactive({ username: '', password: '' })
 
-const login = function () {
+const login = function() {
   axios.post('/api/login', {
     username: loginForm.username,
     password: loginForm.password
@@ -20,11 +19,11 @@ const login = function () {
 </script>
 
 <template>
-  <a-card title=" " :hoverable="true" style="width: 300px;">
+  <a-card :hoverable="true" style="width: 300px; padding-top: 50px;">
     <div class="logo-box-outside">
-    <div class="logo-box-inside">
-      <img src="/img/logo.png">
-    </div>
+      <div class="logo-box-inside">
+        <img src="/img/logo.png" alt="">
+      </div>
     </div>
     <a-form autocomplete="off">
       <a-form-item>
@@ -50,10 +49,9 @@ const login = function () {
 
 <style>
 body {
-  background: #f5f7fa;
   /*background-image: linear-gradient(45deg, #3A6A74, #46537F, #458E56);
   background-size: 400%;
-  animation: bganimation 15s infinite;*/
+  animation: bg-animation 15s infinite;*/
 }
 
 #app {
@@ -90,7 +88,7 @@ body {
   height: 100%;
 }
 
-@keyframes bganimation {
+@keyframes bg-animation {
   0% {
     background-position: 0% 50%;
   }
@@ -103,10 +101,4 @@ body {
     background-position: 0% 50%;
   }
 }
-
-#logo-box img {
-  width: 100%;
-  height: 100%;
-}
-
 </style>

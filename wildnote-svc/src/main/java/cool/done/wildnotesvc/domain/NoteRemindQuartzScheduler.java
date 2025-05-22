@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -67,13 +65,9 @@ public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
             throw new RuntimeException(e);
         }
         //try {
-        //    // 暂停调度器
         //    scheduler.standby();
-        //    // 获取所有Job组
         //    for (String groupName : scheduler.getJobGroupNames()) {
-        //        // 获取组内所有JobKey
         //        for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
-        //            // 删除Job及其关联的Trigger
         //            scheduler.deleteJob(jobKey);
         //        }
         //    }
@@ -112,30 +106,42 @@ public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
         List<NoteRemindCron> result = new ArrayList<>();
 
         try {
-            // 获取所有Job组
             for (String groupName : scheduler.getJobGroupNames()) {
-                // 获取组内所有JobKey
                 for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
                     JobDetail jobDetail = scheduler.getJobDetail(jobKey);
 
-                    List<String> cronExpressions = new ArrayList<>();
-                    List<String> nextTimes = new ArrayList<>();
-                    // 获取Job对应的Trigger
+                    //List<String> crons = new ArrayList<>();
+                    //List<String> nextTimes = new ArrayList<>();
+                    //List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
+                    //for (Trigger trigger : triggers) {
+                    //    if (trigger instanceof CronTrigger cronTrigger) {
+                    //        crons.add(cronTrigger.getCronExpression());
+                    //        nextTimes.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(trigger.getNextFireTime()));
+                    //    }
+                    //}
+                    //NoteRemindCron remindCron = new NoteRemindCron(groupName, jobKey.getName(),
+                    //        String.join(" , ", crons),
+                    //        jobDetail.getJobDataMap().getString("message"),
+                    //        String.join(" , ", nextTimes));
+
+                    String cron = "";
+                    Long nextTime = null;
+                    long delayTime = 0;
                     List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
                     for (Trigger trigger : triggers) {
-                        // 获取Trigger的CronSchedule表达式
                         if (trigger instanceof CronTrigger cronTrigger) {
-                            cronExpressions.add(cronTrigger.getCronExpression());
-                            nextTimes.add(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(trigger.getNextFireTime()));
+                            cron = cronTrigger.getCronExpression();
+                            nextTime = trigger.getNextFireTime().getTime();
+                            delayTime = nextTime - System.currentTimeMillis();
+                            break;
                         }
                     }
-
-                    NoteRemindCron cron = new NoteRemindCron(groupName, jobKey.getName(),
-                            String.join(" , ", cronExpressions),
+                    NoteRemindCron remindCron = new NoteRemindCron(groupName, jobKey.getName(),
+                            cron,
                             jobDetail.getJobDataMap().getString("message"),
-                            String.join(" , ", nextTimes));
+                            nextTime, delayTime);
 
-                    result.add(cron);
+                    result.add(remindCron);
                 }
             }
         } catch (SchedulerException e) {

@@ -3,17 +3,19 @@ import { computed, onMounted, ref } from 'vue'
 import axios from '../utils/axios'
 import { showDateTime } from '@/utils/dateTime'
 import { RouterLink, useRoute } from 'vue-router'
-import { FileTextOutlined, FolderFilled } from '@ant-design/icons-vue'
+import { FolderFilled, FileTextOutlined, StarFilled, StarOutlined } from '@ant-design/icons-vue'
+import { isPinned, pin, unpin } from '@/utils/pinnedPath'
 
 const route = useRoute()
-const path = route.query.path || ''
-
+const path = route.query.path || '\\'
+const isPinnedFolder = ref(false)
 const dataSource = ref([])
 
 onMounted(() => {
   axios.get('/api/note/all').then(response => {
     dataSource.value = response.data.data
   })
+  isPinnedFolder.value = isPinned(path)
 })
 
 const sorterParam = ref({})
@@ -38,11 +40,11 @@ const dataSourceComputed = computed(() => {
     })
   }
   return ds.sort((a, b) => {
-      // 目录在前，文件在后，按名称排序
-      if (a.directory === b.directory) {
-        return a.relPath.localeCompare(b.relPath)
-      }
-      return b.directory - a.directory
+    // 目录在前，文件在后，按名称排序
+    if (a.directory === b.directory) {
+      return a.relPath.localeCompare(b.relPath)
+    }
+    return b.directory - a.directory
   })
 })
 
@@ -60,29 +62,34 @@ const columns = [
   {
     title: '修改时间',
     dataIndex: 'lastModifiedTime',
-    width: '150px',
+    width: '160px',
     align: 'center'
   }
 ]
+
+const pinFolder = function() {
+  pin(path)
+  isPinnedFolder.value = true
+}
+
+const unpinFolder = function() {
+  unpin(path)
+  isPinnedFolder.value = false
+}
 </script>
 
 <template>
-  <a-card>
-    <template #title>
-      <div style="position: fixed; top: 40px; left: 0; right: 0; z-index: 1000;
-       height: 40px; line-height: 40px; padding-left: 24px; padding-right: 24px;
-        background-color: #FFFBE6; font-weight: bold;">
-        <!--<RouterLink :to="{ path: '/explore' }">根</RouterLink>-->
-        \<span v-if="path">
-          <template v-for="(segment, idx) in path.split('\\').filter(s => s)" :key="idx">
+  <div class="fixed-title">
+    <!--<RouterLink :to="{ path: '/explore' }">根</RouterLink>-->
+    \<span v-if="path">
+          <template v-for="(segment, index) in path.split('\\').filter(s => s)" :key="index">
           <RouterLink
-            :to="{ path: '/explore', query: { path: path.split('\\').slice(0, idx + 2).join('\\') + '\\' } }">
+            :to="{ path: '/explore', query: { path: path.split('\\').slice(0, index + 2).join('\\') + '\\' } }">
             {{ segment }}
-          </RouterLink>\
-        </template>
+          </RouterLink>\</template>
       </span>
-      </div>
-    </template>
+  </div>
+  <a-card style="margin-top: 40px;">
     <a-table
       :columns="columns"
       :row-key="record => record.relPath"
@@ -98,7 +105,7 @@ const columns = [
             {{ record.name }}
           </RouterLink>
           <RouterLink v-if="!record.directory" :to="{path:'/note', query: {path: record.relPath}}">
-            <FileTextOutlined :style="{ color: '#000000'}" />
+            <FileTextOutlined />
             {{ record.name }}
           </RouterLink>
         </template>
@@ -108,7 +115,34 @@ const columns = [
       </template>
     </a-table>
   </a-card>
+  <a-float-button type="default" @click="pinFolder" v-if="!isPinnedFolder">
+    <template #icon>
+      <StarOutlined />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="unpinFolder" v-if="isPinnedFolder">
+    <template #icon>
+      <StarFilled />
+    </template>
+  </a-float-button>
 </template>
 
 <style scoped>
+.fixed-title {
+  background-color: #FFFBE6;
+  /*font-weight: bold;*/
+  padding-left: 24px;
+  padding-right: 24px;
+  height: 40px;
+  line-height: 40px;
+  position: fixed;
+  top: 40px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.fixed-title * {
+  /*font-weight: bold;*/
+}
 </style>

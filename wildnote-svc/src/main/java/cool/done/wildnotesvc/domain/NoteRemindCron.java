@@ -8,13 +8,16 @@ public class NoteRemindCron {
     public String lineNumber;
     public String cron;
     public String message;
-    public String nextTime;
+    public Long nextTime;
+    public long delayTime;
 
-    public NoteRemindCron(String path, String lineNumber, String cron, String message, String nextTime) {
+    public NoteRemindCron(String path, String lineNumber, String cron, String message,
+                          Long nextTime, long delayTime) {
         this.path = path;
         this.lineNumber = lineNumber;
         this.cron = cron;
         this.message = message;
         this.nextTime = nextTime;
+        this.delayTime = delayTime;
     }
 }

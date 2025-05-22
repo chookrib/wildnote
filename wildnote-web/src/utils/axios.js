@@ -1,6 +1,5 @@
-import axios from "axios"
-//import router from "../router"
-import { message } from "ant-design-vue"
+import axios from 'axios'
+import { message } from 'ant-design-vue'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -31,7 +30,7 @@ instance.interceptors.response.use(response => {
 
   if (response.data.code === -1) {
     //router.push('/login')
-    window.location.href = "/login.html"
+    window.location.href = '/login.html'
     throw new Error(response.data.message)
   }
   else {

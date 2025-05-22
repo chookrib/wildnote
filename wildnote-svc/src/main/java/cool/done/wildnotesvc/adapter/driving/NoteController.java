@@ -5,8 +5,13 @@ import cool.done.wildnotesvc.common.util.JacksonUtils;
 import cool.done.wildnotesvc.domain.NoteNode;
 import cool.done.wildnotesvc.domain.NoteRemindCron;
 import cool.done.wildnotesvc.domain.NoteService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -18,6 +23,9 @@ import java.util.List;
 public class NoteController {
 
     private final NoteService noteService;
+
+    @Value("${wildnote.note-remind-log:}")
+    private String noteRemindLog;
 
     public NoteController(NoteService noteService) {
         this.noteService = noteService;
@@ -90,11 +98,31 @@ public class NoteController {
     }
 
     /**
-     * 获取所有定时任务
+     * 取所有定时任务
      */
     @RequestMapping(value = "/api/note/cron", method = RequestMethod.GET)
-    public Result getCorn() {
+    public Result getCron() {
         List<NoteRemindCron> result = noteService.getAllCron();
         return Result.successData(result);
+    }
+
+    /**
+     * 取最新提醒日志
+     */
+    @RequestMapping(value = "/api/note/remind", method = RequestMethod.GET)
+    public Result getRemind(@RequestParam(defaultValue = "1024") int size) {
+        try (RandomAccessFile raf = new RandomAccessFile(noteRemindLog, "r")) {
+            long fileLength = raf.length();
+            long start = Math.max(0, fileLength - size);
+            raf.seek(start);
+            byte[] buffer = new byte[(int)Math.min(size, fileLength)];
+            raf.readFully(buffer);
+
+            String result = new String(buffer, StandardCharsets.UTF_8);
+            result = result.substring(result.indexOf("\\n") + 1);
+            return Result.successData(result);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

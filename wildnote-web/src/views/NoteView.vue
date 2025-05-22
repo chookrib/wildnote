@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from '../utils/axios'
-import { isPinned, pin, unpin } from '../utils/pinnedNote'
+import { isPinned, pin, unpin } from '../utils/pinnedPath'
 import { message } from 'ant-design-vue'
-import { useRoute } from 'vue-router'
+import { RouterLink, useRoute } from 'vue-router'
 import { showDateTime } from '@/utils/dateTime'
 import { StarOutlined, StarFilled, EditFilled, RollbackOutlined, SaveFilled } from '@ant-design/icons-vue'
 
@@ -12,7 +12,7 @@ const notePath = route.query.path
 const noteContent = ref('')
 const noteContentEdit = ref('')
 const editMode = ref(false)
-const notePinned = ref(false)
+const isPinnedNote = ref(false)
 
 const lastSaveTime = ref(null)
 
@@ -25,7 +25,7 @@ const loadNote = function() {
     path: notePath
   }).then(response => {
     noteContent.value = response.data.data
-    notePinned.value = isPinned(notePath)
+    isPinnedNote.value = isPinned(notePath)
   })
 }
 
@@ -52,16 +52,52 @@ const cancelEditNote = function() {
 
 const pinNote = function() {
   pin(notePath)
-  notePinned.value = true
+  isPinnedNote.value = true
 }
 
 const unpinNote = function() {
   unpin(notePath)
-  notePinned.value = false
+  isPinnedNote.value = false
 }
 </script>
 
 <template>
+  <div class="fixed-title">
+    <!--<RouterLink :to="{ path: '/explore' }">根</RouterLink>-->
+    \<template v-for="(segment, index) in notePath.split('\\').filter(s => s)" :key="index">
+      <template v-if="index < notePath.split('\\').length - 2">
+        <RouterLink
+          :to="{ path: '/explore', query: { path: notePath.split('\\').slice(0, index + 2).join('\\') + '\\' } }">
+          {{ segment }}
+        </RouterLink>\</template>
+      <template v-if="index === notePath.split('\\').length - 2">{{ segment }}</template>
+    </template>
+  </div>
+  <a-card style="margin-top: 40px;">
+    <template #extra>
+      <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
+    </template>
+    <div v-if="!editMode" style="white-space: pre-wrap; word-wrap: anywhere;">
+      {{ noteContent }}
+    </div>
+    <a-textarea v-if="editMode" :autoSize="true" v-model:value="noteContentEdit" :showCount="true">
+    </a-textarea>
+  </a-card>
+  <a-float-button type="default" @click="pinNote" v-if="!editMode&&!isPinnedNote" style="right: 80px;">
+    <template #icon>
+      <StarOutlined />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="unpinNote" v-if="!editMode&&isPinnedNote" style="right: 80px;">
+    <template #icon>
+      <StarFilled />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="editNote" v-if="!editMode">
+    <template #icon>
+      <EditFilled />
+    </template>
+  </a-float-button>
   <a-float-button type="primary" @click="cancelEditNote" v-if="editMode" style="right: 80px;">
     <template #icon>
       <RollbackOutlined />
@@ -72,37 +108,24 @@ const unpinNote = function() {
       <SaveFilled />
     </template>
   </a-float-button>
-  <a-float-button type="default" @click="pinNote" v-if="!editMode&&!notePinned" style="right: 80px;">
-    <template #icon>
-      <StarOutlined />
-    </template>
-  </a-float-button>
-  <a-float-button type="primary" @click="unpinNote" v-if="!editMode&&notePinned" style="right: 80px;">
-    <template #icon>
-      <StarFilled />
-    </template>
-  </a-float-button>
-  <a-float-button type="primary" @click="editNote" v-if="!editMode">
-    <template #icon>
-      <EditFilled />
-    </template>
-  </a-float-button>
-  <a-card>
-    <template #title>
-      <div style="position: fixed; top: 40px; left: 0; right: 0; z-index: 1000;
-       height: 40px; line-height: 40px; padding-left: 24px; padding-right: 24px;
-        background-color: #FFFBE6; font-weight: bold;">{{ notePath }}</div>
-    </template>
-    <template #extra>
-      <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
-    </template>
-    <div v-if="!editMode" style="white-space: pre-wrap;">
-      {{ noteContent }}
-    </div>
-    <a-textarea v-if="editMode" :autosize="true" v-model:value="noteContentEdit" :showCount="true">
-    </a-textarea>
-  </a-card>
 </template>
 
 <style scoped>
+.fixed-title {
+  background-color: #FFFBE6;
+  /*font-weight: bold;*/
+  padding-left: 24px;
+  padding-right: 24px;
+  height: 40px;
+  line-height: 40px;
+  position: fixed;
+  top: 40px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.fixed-title * {
+  /*font-weight: bold;*/
+}
 </style>

@@ -87,8 +87,12 @@ public class NoteRemindTaskScheduler implements INoteRemindScheduler {
                     String lineNumber = parts.length >= 1 ? parts[1].trim() : "";
                     String cron = parts.length >= 2 ? parts[2].trim() : "";
                     String message = parts.length >= 3 ? parts[3].trim() : "";
-                    String nextTime = scheduleMap.get(key).getDelay(TimeUnit.SECONDS) + "s";
-                    return new NoteRemindCron(path, lineNumber, cron, message, nextTime);
+                    long delayTime = scheduleMap.get(key).getDelay(TimeUnit.MILLISECONDS);
+                    Long nextTime = null;
+                    if (delayTime >= 0) {
+                        nextTime = System.currentTimeMillis() + delayTime;
+                    }
+                    return new NoteRemindCron(path, lineNumber, cron, message, nextTime, delayTime);
                 })
                 //.filter(cron -> cron != null)
                 .toList();
