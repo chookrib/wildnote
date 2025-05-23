@@ -18,9 +18,9 @@ const logout = function() {
     <a-layout>
       <a-layout-header>
         <img
-          src="/img/logo.png"
+          src="/img/logo192.png"
           alt=""
-          style="height: 20px; filter: brightness(100)"
+          style="height: 20px; /*filter: brightness(100);*/"
         />
         <RouterLink to="/">首页</RouterLink>
         <RouterLink to="/explore">浏览</RouterLink>
@@ -57,4 +57,5 @@ const logout = function() {
     color: #1677ff;
   }
 }
+
 </style>

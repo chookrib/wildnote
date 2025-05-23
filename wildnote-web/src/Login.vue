@@ -22,7 +22,7 @@ const login = function() {
   <a-card :hoverable="true" style="width: 300px; padding-top: 50px;">
     <div class="logo-box-outside">
       <div class="logo-box-inside">
-        <img src="/img/logo.png" alt="">
+        <img src="/img/logo192.png" alt="">
       </div>
     </div>
     <a-form autocomplete="off">
