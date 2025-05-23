@@ -69,7 +69,7 @@ const unpinPath = function(path) {
   </a-card>
   <a-card>
     <template #title>
-      最近提醒
+      最新提醒
     </template>
     <div class="log">
       {{ remindLog }}

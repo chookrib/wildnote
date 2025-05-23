@@ -18,7 +18,8 @@
 
 3. 启动程序，启动后使用浏览器访问`http://localhost:端口`进行使用。
 - 运行`wildnote\wildnote-run.bat`启动程序；
-- 脚本支持传入参数覆盖`application.properties`中的配置，如`wildnote-run.bat --server.port=8888`；
+- 脚本支持传入参数覆盖`application.properties`中的配置，参数需用双引号包裹。
+  - 如：`wildnote-run.bat "--server.port=8888" "--wildnote.username=admin" "--wildnote.password=password"`
 
 4. 备份脚本，可设定计划任务进行自动备份。
 - 运行`wildnote\bak-wildnote.bat 笔记目录路径 备份目录路径`；

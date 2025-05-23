@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -50,7 +51,7 @@ public class Reminder implements IReminder {
         }
 
         try {
-            FileWriter fileWriter = new FileWriter(noteRemindLog, true);
+            FileWriter fileWriter = new FileWriter(noteRemindLog, StandardCharsets.UTF_8, true);
             fileWriter.write(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + log + "\n");
             fileWriter.close();
         }
