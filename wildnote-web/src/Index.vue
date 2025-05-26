@@ -20,7 +20,7 @@ const logout = function() {
         <img
           src="/img/logo192.png"
           alt=""
-          style="height: 20px; /*filter: brightness(100);*/"
+          style="height: 20px; filter: brightness(0) invert(1);"
         />
         <RouterLink to="/">首页</RouterLink>
         <RouterLink to="/explore">浏览</RouterLink>
