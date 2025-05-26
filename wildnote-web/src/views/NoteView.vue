@@ -109,21 +109,20 @@ const markdownHtml = function() {
         </RouterLink>\</template>
       <template v-if="index === notePath.split('\\').length - 2">{{ segment }}</template>
     </template>
+    <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
   </div>
-  <a-card style="margin-top: 40px;">
-    <template #extra>
-      <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
-    </template>
-    <div class="markdown">
+  <div style="margin-top: 40px; height: calc(100% - 40px); background-color: #fff; overflow: hidden;">
+    <div v-if="!editMode" class="markdown" style="padding: 20px; height: 100%; overflow: scroll;">
       <!--<div v-if="!editMode" style="white-space: pre-wrap; word-wrap: anywhere;">-->
       <!--  {{ noteContent }}-->
       <!--</div>-->
-      <div v-if="!editMode" style="" v-html="markdownHtml()">
+      <div v-html="markdownHtml()">
       </div>
     </div>
-    <a-textarea v-if="editMode" :autoSize="true" v-model:value="noteContentEdit" :showCount="true">
+    <a-textarea v-if="editMode" v-model:value="noteContentEdit" wrap="off"
+      style="height: 100%;">
     </a-textarea>
-  </a-card>
+  </div>
   <a-float-button type="default" @click="pinNote" v-if="!editMode&&!isPinnedNote" style="right: 80px;">
     <template #icon>
       <StarOutlined />
@@ -152,6 +151,28 @@ const markdownHtml = function() {
 </template>
 
 <style scoped>
+@font-face {
+  font-family: 'Maple Mono NF CN';
+  src: url('/font/MapleMono-NF-CN-Regular.woff2') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:global(textarea) {
+  font-family: 'Maple Mono NF CN'!important;
+}
+
+/*@font-face {
+  font-family: 'Sarasa Mono SC';
+  src: url('/font/SarasaMonoSC-Regular.woff2') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:global(textarea) {
+  font-family: 'Sarasa Mono SC'!important;
+}*/
+
 .fixed-title {
   background-color: #fffbe6;
   /*font-weight: bold;*/

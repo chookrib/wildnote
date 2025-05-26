@@ -16,7 +16,7 @@ const logout = function() {
 
 <template>
   <a-config-provider :locale="zhCN">
-    <a-layout>
+    <a-layout style="height: 100vh;">
       <a-layout-header>
         <img
           src="/img/logo192.png"
@@ -30,7 +30,7 @@ const logout = function() {
         <div style="flex-grow: 1"></div>
         <a href="javascript:void(0)" @click="logout">注销</a>
       </a-layout-header>
-      <a-layout-content style="margin-top: 40px">
+      <a-layout-content style="margin-top: 40px; height: 100%;">
         <RouterView :key="$route.fullPath" />
       </a-layout-content>
     </a-layout>
