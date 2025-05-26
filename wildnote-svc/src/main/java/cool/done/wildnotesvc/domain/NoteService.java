@@ -31,7 +31,7 @@ public class NoteService {
     private final String[] noteExtensions;
 
     private DirectoryWatcher watcher = null;
-    private Map<String, NoteNode> noteNodeMap = new ConcurrentHashMap<>();
+    private Map<String, NotePath> notePathMap = new ConcurrentHashMap<>();
 
     private final INoteRemindScheduler remindScheduler;
 
@@ -93,7 +93,7 @@ public class NoteService {
      */
     public void reloadNote() {
 
-        noteNodeMap.clear();
+        notePathMap.clear();
         remindScheduler.clearAll();
 
         ArrayList<File> files = new ArrayList<>();
@@ -145,32 +145,32 @@ public class NoteService {
         //});
 
         for (File file : files) {
-            addNoteNode(file);
+            addNotePath(file);
             processCron(file);
         }
     }
 
     /**
-     * 添加笔记节点
+     * 添加笔记路径对象
      */
-    private void addNoteNode(File file) {
+    private void addNotePath(File file) {
         if (file.isFile() && !isValidExtension(file)) {
             return;
         }
-        noteNodeMap.put(file.getPath(), createNoteNode(file));
+        notePathMap.put(file.getPath(), createNotePath(file));
     }
 
     /**
-     * 移除笔记节点
+     * 移除笔记路径对象
      */
-    private void removeNoteNode(File file) {
-        noteNodeMap.remove(file.getPath());
+    private void removeNotePath(File file) {
+        notePathMap.remove(file.getPath());
     }
 
     /**
-     * 创建笔记目录节点
+     * 创建笔记路径对象
      */
-    private NoteNode createNoteNode(File file) {
+    private NotePath createNotePath(File file) {
 
         String absPath = file.toPath().normalize().toAbsolutePath().toString();              // D:\xxx\log\log.log
         String relPath = absPath.substring(noteRootAbsPath.length());       // log\log.log
@@ -185,7 +185,7 @@ public class NoteService {
             logger.error("获取笔记文件属性失败: {}", absPath);
         }
 
-        return new NoteNode(
+        return new NotePath(
                 level,
                 relPath,
                 absPath,
@@ -270,17 +270,17 @@ public class NoteService {
 
                         switch (event.eventType()) {
                             case CREATE:
-                                addNoteNode(file);
+                                addNotePath(file);
                                 processCron(file);
                                 break;
                             case MODIFY:
-                                removeNoteNode(file);
-                                addNoteNode(file);      // 重新添加以更新文件属性
+                                removeNotePath(file);
+                                addNotePath(file);      // 重新添加以更新文件属性
                                 removeCron(file);
                                 processCron(file);
                                 break;
                             case DELETE:
-                                removeNoteNode(file);
+                                removeNotePath(file);
                                 removeCron(file);
                                 break;
                             default:
@@ -323,10 +323,10 @@ public class NoteService {
     }
 
     /**
-     * 取笔记目录
+     * 取笔记路径对象Map
      */
-    public Map<String, NoteNode> getNoteNodeMap() {
-        return noteNodeMap;
+    public Map<String, NotePath> getNotePathMap() {
+        return notePathMap;
     }
 
     /**

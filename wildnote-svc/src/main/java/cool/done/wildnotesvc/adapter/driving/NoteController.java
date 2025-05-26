@@ -2,14 +2,12 @@ package cool.done.wildnotesvc.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import cool.done.wildnotesvc.common.util.JacksonUtils;
-import cool.done.wildnotesvc.domain.NoteNode;
+import cool.done.wildnotesvc.domain.NotePath;
 import cool.done.wildnotesvc.domain.NoteRemindCron;
 import cool.done.wildnotesvc.domain.NoteService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -36,9 +34,9 @@ public class NoteController {
      */
     @RequestMapping(value = "/api/note/all", method = RequestMethod.GET)
     public Result getAllNote() {
-        ArrayList<NoteNode> result = new ArrayList<>(
-                noteService.getNoteNodeMap().values().stream().sorted(
-                        Comparator.comparing(NoteNode::getAbsPath)
+        ArrayList<NotePath> result = new ArrayList<>(
+                noteService.getNotePathMap().values().stream().sorted(
+                        Comparator.comparing(NotePath::getAbsPath)
                 ).toList());
         return Result.successData(result);
     }

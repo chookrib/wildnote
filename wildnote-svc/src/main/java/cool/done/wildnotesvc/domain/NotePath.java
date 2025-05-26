@@ -3,7 +3,7 @@ package cool.done.wildnotesvc.domain;
 /**
  * 笔记节点
  */
-public class NoteNode {
+public class NotePath {
 
     private int level;
     private String relPath;
@@ -35,7 +35,7 @@ public class NoteNode {
 
     public long getLastModifiedTime() { return lastModifiedTime; }
 
-    public NoteNode(int level, String relPath, String absPath, String name, boolean directory,
+    public NotePath(int level, String relPath, String absPath, String name, boolean directory,
                     Long creationTime, long lastModifiedTime) {
         this.level = level;
         this.relPath = relPath;
