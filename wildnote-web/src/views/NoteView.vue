@@ -68,7 +68,14 @@ const renderer = {
   link(href, title, text) {
     const link = marked.Renderer.prototype.link.call(this, href, title, text)
     return link.replace('<a', '<a target=\'_blank\' rel=\'noreferrer\' ')
-  }
+  },
+  // paragraph(text) {
+  //   console.log(text)
+  //   if (/^\s*$/.test(text)) {
+  //     return '<br>'
+  //   }
+  //   return marked.Renderer.prototype.paragraph.call(this, text)
+  // }
 }
 const marked = new Marked({
     breaks: true,
@@ -85,15 +92,6 @@ const marked = new Marked({
 )
 
 const markdownHtml = function() {
-  const renderer = new marked.Renderer()
-  const linkRenderer = renderer.link
-  renderer.link = (href, title, text) => {
-    const html = linkRenderer.call(renderer, href, title, text)
-    return html.replace(/^<a /, '<a target="_blank" rel="nofollow noreferrer" ')
-  }
-  renderer.paragraph = (text) => {
-    return `<p>${text.replace(/\n/g, '<br><br><br>')}</p>`
-  }
   return marked.parse(noteContent.value)
 }
 </script>
@@ -179,8 +177,17 @@ const markdownHtml = function() {
   font-style: italic;
 }
 
-.markdown :deep(p) {
+.markdown :deep(:not(blockquote) > p) {
   margin-bottom: 10px;
+}
+
+.markdown :deep(h1),
+.markdown :deep(h2),
+.markdown :deep(h3),
+.markdown :deep(h4),
+.markdown :deep(h5),
+.markdown :deep(h6) {
+  margin-top: 10px;
 }
 
 .markdown :deep(table) {
@@ -192,4 +199,5 @@ const markdownHtml = function() {
   padding: 4px;
   white-space: nowrap;
 }
+
 </style>
