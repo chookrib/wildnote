@@ -47,14 +47,14 @@ const login = function() {
   </a-card>
 </template>
 
-<style>
+<style scoped>
 body {
   /*background-image: linear-gradient(45deg, #3A6A74, #46537F, #458E56);
   background-size: 400%;
   animation: bg-animation 15s infinite;*/
 }
 
-#app {
+:global(#app) {
   /*min-height: 100vh;*/
   display: flex;
   justify-content: center;
@@ -70,7 +70,7 @@ body {
   box-shadow: 0 0 10px #ddd;
   position: absolute;
   left: 50%;
-  top: 0px;
+  top: 0;
   transform: translate(-50%, -50%);
   background-color: #fff;
 }

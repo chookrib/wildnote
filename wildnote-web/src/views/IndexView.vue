@@ -83,4 +83,8 @@ const unpinPath = function(path) {
   word-wrap: anywhere;
   font-size: 12px;
 }
+.ant-tag {
+  font-size: 14px;
+  padding: 4px;
+}
 </style>

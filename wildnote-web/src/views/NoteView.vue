@@ -5,7 +5,11 @@ import { isPinned, pin, unpin } from '../utils/pinnedPath'
 import { message } from 'ant-design-vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { showDateTime } from '@/utils/dateTime'
-import { StarOutlined, StarFilled, EditFilled, RollbackOutlined, SaveFilled } from '@ant-design/icons-vue'
+import { EditFilled, RollbackOutlined, SaveFilled, StarFilled, StarOutlined } from '@ant-design/icons-vue'
+import { Marked } from 'marked'
+import { markedHighlight } from 'marked-highlight'
+import 'highlight.js/styles/default.min.css'
+import hljs from 'highlight.js'
 
 const route = useRoute()
 const notePath = route.query.path
@@ -59,6 +63,39 @@ const unpinNote = function() {
   unpin(notePath)
   isPinnedNote.value = false
 }
+
+const renderer = {
+  link(href, title, text) {
+    const link = marked.Renderer.prototype.link.call(this, href, title, text)
+    return link.replace('<a', '<a target=\'_blank\' rel=\'noreferrer\' ')
+  }
+}
+const marked = new Marked({
+    breaks: true,
+    renderer: renderer
+  },
+  markedHighlight({
+    emptyLangClass: 'hljs',
+    langPrefix: 'hljs language-',
+    highlight(code, lang, info) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext'
+      return hljs.highlight(code, { language }).value
+    }
+  })
+)
+
+const markdownHtml = function() {
+  const renderer = new marked.Renderer()
+  const linkRenderer = renderer.link
+  renderer.link = (href, title, text) => {
+    const html = linkRenderer.call(renderer, href, title, text)
+    return html.replace(/^<a /, '<a target="_blank" rel="nofollow noreferrer" ')
+  }
+  renderer.paragraph = (text) => {
+    return `<p>${text.replace(/\n/g, '<br><br><br>')}</p>`
+  }
+  return marked.parse(noteContent.value)
+}
 </script>
 
 <template>
@@ -77,8 +114,12 @@ const unpinNote = function() {
     <template #extra>
       <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
     </template>
-    <div v-if="!editMode" style="white-space: pre-wrap; word-wrap: anywhere;">
-      {{ noteContent }}
+    <div class="markdown">
+      <!--<div v-if="!editMode" style="white-space: pre-wrap; word-wrap: anywhere;">-->
+      <!--  {{ noteContent }}-->
+      <!--</div>-->
+      <div v-if="!editMode" style="" v-html="markdownHtml()">
+      </div>
     </div>
     <a-textarea v-if="editMode" :autoSize="true" v-model:value="noteContentEdit" :showCount="true">
     </a-textarea>
@@ -127,5 +168,28 @@ const unpinNote = function() {
 
 .fixed-title * {
   /*font-weight: bold;*/
+}
+
+.markdown :deep(blockquote) {
+  border-left: 4px solid #ffe58f;
+  background: #fffbe6;
+  padding: 12px 16px;
+  margin: 12px 0;
+  color: #8c6d1f;
+  font-style: italic;
+}
+
+.markdown :deep(p) {
+  margin-bottom: 10px;
+}
+
+.markdown :deep(table) {
+  border-collapse: collapse;
+}
+
+.markdown :deep(table th), .markdown :deep(table td) {
+  border: 1px solid #8c8c8c;
+  padding: 4px;
+  white-space: nowrap;
 }
 </style>
