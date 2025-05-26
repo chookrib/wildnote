@@ -1,13 +1,14 @@
 import axios from 'axios'
+import { getLocalAccessToken } from '@/utils/localStorageUtil'
 import { message } from 'ant-design-vue'
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL
   //baseURL: "/"
 })
 
 instance.interceptors.request.use(config => {
-  const accessToken = localStorage.getItem('accessToken')
+  const accessToken = getLocalAccessToken()
   config.headers['Access-Token'] = accessToken
   return config
 })
@@ -32,8 +33,7 @@ instance.interceptors.response.use(response => {
     //router.push('/login')
     window.location.href = '/login.html'
     throw new Error(response.data.message)
-  }
-  else {
+  } else {
     //alert(response.data.message)
     message.error(response.data.message)
     throw new Error(response.data.message)

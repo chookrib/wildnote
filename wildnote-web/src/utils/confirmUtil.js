@@ -2,7 +2,7 @@ import { Modal } from 'ant-design-vue'
 import { createVNode } from 'vue'
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
 
-const confirm = function (content, onOk, onCancel) {
+const showConfirm = function (content, onOk, onCancel) {
   Modal.confirm({
     title: '操作确认',
     icon: createVNode(ExclamationCircleOutlined),
@@ -22,4 +22,4 @@ const confirm = function (content, onOk, onCancel) {
   })
 }
 
-export { confirm }
+export { showConfirm }

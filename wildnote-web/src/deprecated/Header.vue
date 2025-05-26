@@ -1,8 +1,9 @@
 <script setup>
-import router from '../router'
+import router from '@/router'
 import { createVNode } from 'vue'
-import { Modal } from 'ant-design-vue';
+import { Modal } from 'ant-design-vue'
 import { LogoutOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { removeLocalAccessToken } from '@/utils/localStorageUtil'
 
 function logout() {
   Modal.confirm({
@@ -11,12 +12,12 @@ function logout() {
     content: '确定要注销吗？',
     okText: '确认',
     cancelText: '取消',
-    onOk: function () {
-      localStorage.removeItem('accessToken')
+    onOk: function() {
+      removeLocalAccessToken()
       router.push('/login')
     },
-    onCancel: function () {
-    },
+    onCancel: function() {
+    }
   })
 }
 </script>
@@ -27,14 +28,15 @@ function logout() {
       <img src="/img/logo1.png" alt="" style="height: 20px; filter: brightness(100);">
     </div>
     <div style="flex-grow: 1; display: flex; align-items: center; white-space: nowrap; gap: 10px;">
-      <slot> </slot>
+      <slot></slot>
     </div>
     <div>
       <a-button @click=logout>
         <template #icon>
           <LogoutOutlined />
         </template>
-        注销</a-button>
+        注销
+      </a-button>
     </div>
   </a-layout-header>
 </template>

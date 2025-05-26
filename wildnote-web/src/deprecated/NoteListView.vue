@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted } from 'vue'
-import axios from '../utils/axios'
-import router from '../router'
+import axios from '@/utils/axiosUtil'
+import router from '@/router'
 import { ref, computed } from 'vue'
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons-vue'
-import { showDateTime } from '@/utils/dateTime'
+import { showDateTime } from '@/utils/dateTimeUtil'
 
 const notes = ref([])
 const searchKey = ref('')

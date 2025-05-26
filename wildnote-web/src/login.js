@@ -1,7 +1,7 @@
-import './assets/main.css'
+import '@/assets/main.css'
 
 import { createApp } from 'vue'
-import Login from './Login.vue'
+import Login from '@/Login.vue'
 
 const app = createApp(Login)
 

@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import axios from '../utils/axios'
+import axios from '@/utils/axiosUtil'
 import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue'
-import { showDateTime } from '@/utils/dateTime'
+import { showDateTime } from '@/utils/dateTimeUtil'
 import { RouterLink } from 'vue-router'
 
 const dataSource = ref([])
@@ -60,7 +60,7 @@ const columns = [
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'relPath'">
           <RouterLink v-if="record.directory" :to="{path:'/explore', query: {path: record.relPath + '\\'}}">
-            <FolderFilled :style="{ color: '#F7C427'}" />
+            <FolderFilled :style="{ color: '#f7c427'}" />
             {{ record.relPath }}
           </RouterLink>
           <RouterLink v-if="!record.directory" :to="{path:'/note', query: {path: record.relPath}}">
@@ -78,7 +78,7 @@ const columns = [
 
 <style scoped>
 .fixed-title {
-  background-color: #FFFBE6;
+  background-color: #fffbe6;
   /*font-weight: bold;*/
   padding-left: 24px;
   padding-right: 24px;

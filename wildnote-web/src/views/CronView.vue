@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import axios from '../utils/axios'
+import axios from '@/utils/axiosUtil'
 import { RouterLink } from 'vue-router'
-import { showDateTime, showTime } from '@/utils/dateTime.js'
+import { showDateTime, showTime } from '@/utils/dateTimeUtil'
 
 const dataSource = ref([])
 

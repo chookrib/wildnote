@@ -1,10 +1,10 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import axios from '../utils/axios'
-import { showDateTime } from '@/utils/dateTime'
+import axios from '@/utils/axiosUtil'
+import { showDateTime } from '@/utils/dateTimeUtil'
 import { RouterLink, useRoute } from 'vue-router'
 import { FolderFilled, FileTextOutlined, StarFilled, StarOutlined } from '@ant-design/icons-vue'
-import { isPinned, pin, unpin } from '@/utils/pinnedPath'
+import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utils/localStorageUtil'
 
 const route = useRoute()
 const path = route.query.path || '\\'
@@ -15,7 +15,7 @@ onMounted(() => {
   axios.get('/api/note/all').then(response => {
     dataSource.value = response.data.data
   })
-  isPinnedFolder.value = isPinned(path)
+  isPinnedFolder.value = isLocalPinnedPath(path)
 })
 
 const sorterParam = ref({})
@@ -68,12 +68,12 @@ const columns = [
 ]
 
 const pinFolder = function() {
-  pin(path)
+  localPinPath(path)
   isPinnedFolder.value = true
 }
 
 const unpinFolder = function() {
-  unpin(path)
+  localUnpinPath(path)
   isPinnedFolder.value = false
 }
 </script>
@@ -101,7 +101,7 @@ const unpinFolder = function() {
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'relPath'">
           <RouterLink v-if="record.directory" :to="{path:'/explore', query: {path: record.relPath + '\\'}}">
-            <FolderFilled :style="{ color: '#F7C427'}" />
+            <FolderFilled :style="{ color: '#f7c427'}" />
             {{ record.name }}
           </RouterLink>
           <RouterLink v-if="!record.directory" :to="{path:'/note', query: {path: record.relPath}}">
@@ -129,7 +129,7 @@ const unpinFolder = function() {
 
 <style scoped>
 .fixed-title {
-  background-color: #FFFBE6;
+  background-color: #fffbe6;
   /*font-weight: bold;*/
   padding-left: 24px;
   padding-right: 24px;

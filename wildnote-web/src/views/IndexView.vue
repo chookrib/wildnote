@@ -1,17 +1,17 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { FolderFilled, FileTextOutlined } from '@ant-design/icons-vue'
-import { getAllPinned, unpin, movePinned } from '@/utils/pinnedPath'
+import { getLocalPinnedPaths, localUnpinPath, localMovePinnedPath } from '@/utils/localStorageUtil'
 import { RouterLink } from 'vue-router'
-import { confirm } from '../utils/confirm'
-import axios from '@/utils/axios.js'
+import { showConfirm } from '@/utils/confirmUtil'
+import axios from '@/utils/axiosUtil'
 
 const pinnedPaths = ref([])
 let remindLog = ref('')
 let dragIndex = null
 
 onMounted(() => {
-  pinnedPaths.value = getAllPinned()
+  pinnedPaths.value = getLocalPinnedPaths()
   axios.get('/api/note/remind').then(response => {
     remindLog.value = response.data.data
   })
@@ -22,15 +22,15 @@ const onDragStart = (index) => {
 }
 
 const onDrop = (dropIndex) => {
-  movePinned(dragIndex, dropIndex)
+  localMovePinnedPath(dragIndex, dropIndex)
   dragIndex = null
-  pinnedPaths.value = getAllPinned()
+  pinnedPaths.value = getLocalPinnedPaths()
 }
 
 const unpinPath = function(path) {
-  confirm(`确定取消在首页固定 ${path} 吗？`, function() {
-    unpin(path)
-    pinnedPaths.value = getAllPinned()
+  showConfirm(`确定取消在首页固定 ${path} 吗？`, function() {
+    localUnpinPath(path)
+    pinnedPaths.value = getLocalPinnedPaths()
   })
 }
 </script>
@@ -45,10 +45,11 @@ const unpinPath = function(path) {
              @dragstart="onDragStart(index)"
              @dragover.prevent
              @drop="onDrop(index)"
-             closable @close.prevent="unpinPath(path)">
+             closable
+             @close.prevent="unpinPath(path)">
         <template #icon>
           <template v-if="path.endsWith('\\')">
-            <FolderFilled :style="{ color: '#F7C427'}" />
+            <FolderFilled :style="{ color: '#f7c427'}" />
           </template>
           <template v-if="!path.endsWith('\\')">
             <FileTextOutlined />

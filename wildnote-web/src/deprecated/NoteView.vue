@@ -1,13 +1,13 @@
 <script setup>
 import { onMounted } from 'vue'
-import axios from '../utils/axios'
-import router from '../router'
+import axios from '@/utils/axiosUtil'
+import router from '@/router'
 import 'cherry-markdown/dist/cherry-markdown.css'
 import Cherry from 'cherry-markdown';
 import { ref } from 'vue'
 import { message } from "ant-design-vue"
 import { useRoute } from 'vue-router'
-import { showDateTime } from '@/utils/dateTime';
+import { showDateTime } from '@/utils/dateTimeUtil';
 
 const route = useRoute()
 const notePath = route.query.path

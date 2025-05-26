@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import axios from '../utils/axios'
-import { isPinned, pin, unpin } from '../utils/pinnedPath'
+import axios from '@/utils/axiosUtil'
+import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utils/localStorageUtil'
 import { message } from 'ant-design-vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { showDateTime } from '@/utils/dateTime'
+import { showDateTime } from '@/utils/dateTimeUtil'
 import { EditFilled, RollbackOutlined, SaveFilled, StarFilled, StarOutlined } from '@ant-design/icons-vue'
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
@@ -17,7 +17,6 @@ const noteContent = ref('')
 const noteContentEdit = ref('')
 const editMode = ref(false)
 const isPinnedNote = ref(false)
-
 const lastSaveTime = ref(null)
 
 onMounted(() => {
@@ -29,7 +28,7 @@ const loadNote = function() {
     path: notePath
   }).then(response => {
     noteContent.value = response.data.data
-    isPinnedNote.value = isPinned(notePath)
+    isPinnedNote.value = isLocalPinnedPath(notePath)
   })
 }
 
@@ -55,12 +54,12 @@ const cancelEditNote = function() {
 }
 
 const pinNote = function() {
-  pin(notePath)
+  localPinPath(notePath)
   isPinnedNote.value = true
 }
 
 const unpinNote = function() {
-  unpin(notePath)
+  localUnpinPath(notePath)
   isPinnedNote.value = false
 }
 
@@ -76,6 +75,9 @@ const renderer = {
   //   }
   //   return marked.Renderer.prototype.paragraph.call(this, text)
   // }
+  table(...args) {
+    return `<div class="markdown-table-wrapper">${marked.Renderer.prototype.table.apply(this, args)}</div>`;
+  }
 }
 const marked = new Marked({
     breaks: true,
@@ -151,7 +153,7 @@ const markdownHtml = function() {
 
 <style scoped>
 .fixed-title {
-  background-color: #FFFBE6;
+  background-color: #fffbe6;
   /*font-weight: bold;*/
   padding-left: 24px;
   padding-right: 24px;
@@ -188,6 +190,10 @@ const markdownHtml = function() {
 .markdown :deep(h5),
 .markdown :deep(h6) {
   margin-top: 10px;
+}
+
+.markdown :deep(.markdown-table-wrapper) {
+  overflow-x: auto;
 }
 
 .markdown :deep(table) {

@@ -1,9 +1,9 @@
 <script setup>
 
-import axios from './utils/axios'
+import axios from '@/utils/axiosUtil'
 import { reactive } from 'vue'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
-
+import { setLocalAccessToken } from '@/utils/localStorageUtil'
 const loginForm = reactive({ username: '', password: '' })
 
 const login = function() {
@@ -11,7 +11,7 @@ const login = function() {
     username: loginForm.username,
     password: loginForm.password
   }).then(response => {
-    localStorage.setItem('accessToken', response.data.data)
+    setLocalAccessToken(response.data.data)
     //router.push('/')
     window.location.href = '/'
   })
