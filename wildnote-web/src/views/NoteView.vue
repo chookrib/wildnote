@@ -211,6 +211,7 @@ const markdownHtml = function() {
 .markdown :deep(h5),
 .markdown :deep(h6) {
   margin-top: 10px;
+  font-weight: bold;
 }
 
 .markdown :deep(.markdown-table-wrapper) {
