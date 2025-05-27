@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import axios from '@/utils/axiosUtil'
 import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utils/localStorageUtil'
 import { message } from 'ant-design-vue'
@@ -11,6 +11,13 @@ import { markedHighlight } from 'marked-highlight'
 import 'highlight.js/styles/default.min.css'
 import hljs from 'highlight.js'
 
+import { EditorState } from '@codemirror/state'
+import { EditorView, keymap, lineNumbers, highlightWhitespace, highlightActiveLine, drawSelection } from '@codemirror/view'
+import { syntaxHighlighting, defaultHighlightStyle, foldGutter } from '@codemirror/language'
+import { defaultKeymap, history, undo, redo } from '@codemirror/commands'
+import { highlightSelectionMatches } from '@codemirror/search'
+import { markdown } from '@codemirror/lang-markdown'
+
 const route = useRoute()
 const notePath = route.query.path
 const noteContent = ref('')
@@ -19,8 +26,34 @@ const editMode = ref(false)
 const isPinnedNote = ref(false)
 const lastSaveTime = ref(null)
 
+const editorRef = ref(null)
+let view
 onMounted(() => {
   loadNote()
+
+  view = new EditorView({
+    state: EditorState.create({
+      //doc: noteContentEdit.value,
+      extensions: [
+        lineNumbers(),
+        foldGutter(),
+        history(),
+        drawSelection(),
+        syntaxHighlighting(defaultHighlightStyle),
+        highlightActiveLine(),
+        highlightSelectionMatches(),
+        keymap.of([
+          ...defaultKeymap,
+          { key: "Mod-z", run: undo },
+          { key: "Mod-y", run: redo },
+          { key: "Shift-Mod-z", run: redo }
+        ]),
+        highlightWhitespace(),
+        markdown(),
+      ]
+    }),
+    parent: editorRef.value
+  })
 })
 
 const loadNote = function() {
@@ -35,12 +68,24 @@ const loadNote = function() {
 const editNote = function() {
   noteContentEdit.value = noteContent.value
   editMode.value = true
+  view.dispatch({
+    changes: {
+      from: 0,
+      to: view.state.doc.length,
+      insert: noteContentEdit.value
+    }
+  })
 }
+
+onUnmounted(() => {
+  if (view) view.destroy()
+})
 
 const saveNote = function() {
   axios.post('/api/note/save', {
     path: notePath,
-    content: noteContentEdit.value
+    //content: noteContentEdit.value
+    content: view.state.doc.toString()
   }).then(response => {
     lastSaveTime.value = new Date()
     message.success('保存成功')
@@ -79,6 +124,7 @@ const renderer = {
     return `<div class="markdown-table-wrapper">${marked.Renderer.prototype.table.apply(this, args)}</div>`;
   }
 }
+
 const marked = new Marked({
     breaks: true,
     renderer: renderer
@@ -109,19 +155,18 @@ const markdownHtml = function() {
         </RouterLink>\</template>
       <template v-if="index === notePath.split('\\').length - 2">{{ segment }}</template>
     </template>
-    <span v-if="lastSaveTime">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
+    <span v-if="lastSaveTime" style="font-size: 12px; margin-left: 20px;">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
   </div>
-  <div style="margin-top: 40px; height: calc(100% - 40px); background-color: #fff; overflow: hidden;">
-    <div v-if="!editMode" class="markdown" style="padding: 20px; height: 100%; overflow: scroll;">
-      <!--<div v-if="!editMode" style="white-space: pre-wrap; word-wrap: anywhere;">-->
+  <div v-if="!editMode" style="margin-top: 40px; height: calc(100% - 40px); background-color: #fff; overflow: hidden;">
+      <!--<div style="padding: 20px; height: 100%; overflow: scroll; white-space: pre-wrap; word-wrap: anywhere;">-->
       <!--  {{ noteContent }}-->
       <!--</div>-->
-      <div v-html="markdownHtml()">
+      <div class="markdown" style="padding: 20px; height: 100%; overflow: scroll;" v-html="markdownHtml()">
       </div>
-    </div>
-    <a-textarea v-if="editMode" v-model:value="noteContentEdit" wrap="off"
-      style="height: 100%;">
-    </a-textarea>
+  </div>
+  <div v-show="editMode" style="margin-top: 40px; height: calc(100% - 40px); background-color: #fff; overflow: hidden;">
+    <!--<a-textarea v-model:value="noteContentEdit" wrap="off" style="height: 100%;"></a-textarea>-->
+    <div ref="editorRef" style="height: 100%"></div>
   </div>
   <a-float-button type="default" @click="pinNote" v-if="!editMode&&!isPinnedNote" style="right: 80px;">
     <template #icon>
@@ -158,9 +203,9 @@ const markdownHtml = function() {
   font-style: normal;
 }
 
-:global(textarea) {
+/*:global(textarea) {
   font-family: 'Maple Mono NF CN'!important;
-}
+}*/
 
 /*@font-face {
   font-family: 'Sarasa Mono SC';
@@ -172,6 +217,19 @@ const markdownHtml = function() {
 :global(textarea) {
   font-family: 'Sarasa Mono SC'!important;
 }*/
+
+:deep(.cm-editor) {
+  height: 100%;
+}
+
+:deep(.cm-editor *) {
+  font-family: 'Maple Mono NF CN';
+}
+
+:deep(.cm-scroller) {
+  overflow: auto;
+  height: 100%;
+}
 
 .fixed-title {
   background-color: #fffbe6;

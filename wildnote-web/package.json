@@ -11,8 +11,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@codemirror/lang-markdown": "^6.3.2",
     "ant-design-vue": "^4.2.5",
     "axios": "^1.7.7",
+    "codemirror": "^6.0.1",
     "highlight.js": "^11.11.1",
     "marked": "^15.0.12",
     "marked-highlight": "^2.2.1",

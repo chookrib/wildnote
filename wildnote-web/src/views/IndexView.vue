@@ -13,7 +13,9 @@ let dragIndex = null
 onMounted(() => {
   pinnedPaths.value = getLocalPinnedPaths()
   axios.get('/api/note/remind').then(response => {
-    remindLog.value = response.data.data
+    //remindLog.value = response.data.data
+    //remindLog.value = response.data.data.replace(/(\\[^|]+)/g, '<a href="#/note?path=$1">$1</a>')
+    remindLog.value = response.data.data.replace(/(\\[^|]+)/g, (match, p1) => `<a href="#/note?path=${encodeURIComponent(p1.trim())}">${p1}</a>`)
   })
 })
 
@@ -72,8 +74,7 @@ const unpinPath = function(path) {
     <template #title>
       最新提醒
     </template>
-    <div class="log">
-      {{ remindLog }}
+    <div class="log" v-html="remindLog">
     </div>
   </a-card>
 </template>
