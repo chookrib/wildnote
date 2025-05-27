@@ -117,7 +117,18 @@ public class NoteController {
             raf.readFully(buffer);
 
             String result = new String(buffer, StandardCharsets.UTF_8);
+            //去除被载断的行
             result = result.substring(result.indexOf("\\n") + 1);
+            //反转行顺序
+            result = result.lines()
+                    .filter(line -> !line.trim().isEmpty())
+                    .collect(java.util.stream.Collectors.collectingAndThen(
+                            java.util.stream.Collectors.toList(),
+                            list -> {
+                                java.util.Collections.reverse(list);
+                                return String.join("\n", list);
+                            }
+                    ));
             return Result.successData(result);
         } catch (Exception e) {
             return Result.successData(e.getMessage());
