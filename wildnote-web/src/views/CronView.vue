@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, useCssModule } from 'vue'
 import axios from '@/utils/axiosUtil'
 import { RouterLink } from 'vue-router'
 import { showDateTime, showTime } from '@/utils/dateTimeUtil'
@@ -25,7 +25,7 @@ const dataSourceComputed = computed(() => {
           return b.path.localeCompare(a.path)
         }
       })
-    } else if (sorter.field === 'delayTime') {
+    } else if (sorter.field === 'delayTime' || sorter.field === 'cronDetail') {
       return [...dataSource.value].sort((a, b) => {
         if (sorter.order === 'ascend') {
           return Number(a.delayTime) > Number(b.delayTime) ? 1 : -1
@@ -43,6 +43,8 @@ const handleTableChange = function(pagination, filters, sorter) {
   sorterParam.value = sorter
 }
 
+const styles = useCssModule()
+//console.log(styles)
 const columns = [
   {
     title: '笔记文件路径',
@@ -52,31 +54,49 @@ const columns = [
   {
     title: '行',
     dataIndex: 'lineNumber',
-    align: 'center'
+    align: 'center',
+    responsive: ['sm']
   },
   {
     title: 'Cron表达式',
-    dataIndex: 'cron'
+    dataIndex: 'cronDetail',
+    sorter: true,
+    customCell: (record, rowIndex, column) => { return { class: styles['cell-hide-on-sm-up'] + ' ' + styles['col-cron-detail']  } },
+    customHeaderCell: (column) => { return { class: styles['cell-hide-on-sm-up'] } },
   },
   {
-    title: '提醒消息',
-    dataIndex: 'message',
-    ellipsis: true
+    title: 'Cron表达式',
+    dataIndex: 'cron',
+    responsive: ['sm'],
+    //customCell: (record, rowIndex, column) => { return { class: styles['cell-hide-on-xs'] } },
+    //customHeaderCell: (column) => { return { class: styles['cell-hide-on-xs'] } }
   },
   {
     title: '下次执行时间',
     dataIndex: 'nextTime',
     align: 'center',
-    ellipsis: true
+    //ellipsis: true,
+    responsive: ['sm'],
+    //customCell: (record, rowIndex, column) => { return { class: styles['cell-hide-on-xs'] } },
+    //customHeaderCell: (column) => { return { class: styles['cell-hide-on-xs'] } }
   },
   {
     title: '等待时间',
     dataIndex: 'delayTime',
     align: 'right',
     ellipsis: true,
-    sorter: true
+    sorter: true,
+    responsive: ['sm'],
+    //customCell: (record, rowIndex, column) => { return { class: styles['cell-hide-on-xs'] } },
+    //customHeaderCell: (column) => { return { class: styles['cell-hide-on-xs'] } }
+  },
+  {
+    title: '提醒消息',
+    dataIndex: 'message',
+    //ellipsis: true
   }
 ]
+
 </script>
 
 <template>
@@ -104,10 +124,35 @@ const columns = [
         <template v-if="column.dataIndex === 'delayTime'">
           {{ showTime(record.delayTime) }}
         </template>
+        <template v-if="column.dataIndex === 'cronDetail'">
+          <a-tag>
+            {{ record.cron }}
+          </a-tag>
+          <br>{{ showDateTime(record.nextTime) }}
+          <br>{{ showTime(record.delayTime) }}
+        </template>
       </template>
     </a-table>
   </a-card>
 </template>
 
 <style scoped>
+</style>
+
+<style module>
+  .cell-hide-on-xs {
+    @media (max-width: 575.98px) {
+        display: none;
+    }
+  }
+  .cell-hide-on-sm-up {
+    @media (min-width: 576px) {
+      display: none;
+    }
+  }
+  .col-cron-detail {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 12px;
+  }
 </style>

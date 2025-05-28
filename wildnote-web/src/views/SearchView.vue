@@ -33,7 +33,8 @@ const columns = [
     title: '修改时间',
     dataIndex: 'lastModifiedTime',
     width: '160px',
-    align: 'center'
+    align: 'center',
+    responsive: ['sm']
   }
 ]
 </script>
