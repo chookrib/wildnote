@@ -36,12 +36,12 @@ call npm run build
 cd ..
 
 set mvn_path=..\apache-maven-3.9.9\bin\mvn.cmd
-call %mvn_path% package -Dmaven.test.skip=true -f .\wildnote-svc
+call %mvn_path% package -Dmaven.test.skip=true -f .\wildnote-server
 
-if not exist ".\wildnote-svc\target\*.jar" (
+if not exist ".\wildnote-server\target\*.jar" (
     echo Wildnote jar file not found, please build first.
 ) else (
-    for /f "delims=" %%i in ('dir .\wildnote-svc\target\*.jar /b /o:-n') do (
+    for /f "delims=" %%i in ('dir .\wildnote-server\target\*.jar /b /o:-n') do (
         rem call :runjar %%i "%arg_wildnote_root_path%" "%arg_wildnote_username%" "%arg_wildnote_password%" "%arg_server_port%"
         call :runjar %%i %params%
     )
@@ -49,10 +49,10 @@ if not exist ".\wildnote-svc\target\*.jar" (
 goto :EOF
 
 :runjar
-rem set run_wildnote_cmd=java -jar ".\wildnote-svc\target\%1" --spring.config.location="%cd%\..\wildnote.properties"
-rem set run_wildnote_cmd=java -jar .\wildnote-svc\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %~2 %~3 %~4 %~5
-rem set run_wildnote_cmd=java -jar .\wildnote-svc\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %*
-set run_wildnote_cmd=java -jar .\wildnote-svc\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %2 %3 %4 %5 %6 %7 %8 %9
+rem set run_wildnote_cmd=java -jar ".\wildnote-server\target\%1" --spring.config.location="%cd%\..\wildnote.properties"
+rem set run_wildnote_cmd=java -jar .\wildnote-server\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %~2 %~3 %~4 %~5
+rem set run_wildnote_cmd=java -jar .\wildnote-server\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %*
+set run_wildnote_cmd=java -jar .\wildnote-server\target\%1 --spring.web.resources.static-locations=file:.\wildnote-web\dist %2 %3 %4 %5 %6 %7 %8 %9
 echo %run_wildnote_cmd%
 %run_wildnote_cmd%
 goto :EOF

@@ -1,8 +1,8 @@
-package cool.done.wildnotesvc.adapter.driving;
+package cool.done.wildnote.server.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import cool.done.wildnotesvc.common.util.JacksonUtils;
-import cool.done.wildnotesvc.domain.AuthService;
+import cool.done.wildnote.server.common.util.JacksonUtils;
+import cool.done.wildnote.server.domain.AuthService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

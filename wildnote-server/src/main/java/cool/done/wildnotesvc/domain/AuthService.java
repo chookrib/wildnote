@@ -1,4 +1,4 @@
-package cool.done.wildnotesvc.domain;
+package cool.done.wildnote.server.domain;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

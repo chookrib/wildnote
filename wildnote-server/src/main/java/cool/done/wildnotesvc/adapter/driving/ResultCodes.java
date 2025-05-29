@@ -1,4 +1,4 @@
-package cool.done.wildnotesvc.adapter.driving;
+package cool.done.wildnote.server.adapter.driving;
 
 /**
  * Json返回码定义

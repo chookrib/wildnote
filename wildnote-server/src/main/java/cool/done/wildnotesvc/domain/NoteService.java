@@ -1,4 +1,4 @@
-package cool.done.wildnotesvc.domain;
+package cool.done.wildnote.server.domain;
 
 import io.methvin.watcher.DirectoryWatcher;
 import org.apache.commons.lang3.StringUtils;

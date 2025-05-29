@@ -1,4 +1,4 @@
-package cool.done.wildnotesvc.adapter.driving;
+package cool.done.wildnote.server.adapter.driving;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;

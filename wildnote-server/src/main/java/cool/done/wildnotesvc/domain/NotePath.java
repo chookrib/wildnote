@@ -1,4 +1,4 @@
-package cool.done.wildnotesvc.domain;
+package cool.done.wildnote.server.domain;
 
 /**
  * 笔记节点

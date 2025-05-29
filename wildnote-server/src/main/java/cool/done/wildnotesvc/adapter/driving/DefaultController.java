@@ -1,6 +1,6 @@
-package cool.done.wildnotesvc.adapter.driving;
+package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnotesvc.WildnoteSvcApplication;
+import cool.done.wildnote.server.WildnoteServerApplication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +22,9 @@ public class DefaultController {
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
     public String info() {
-        return "File-Name: " + WildnoteSvcApplication.getFileName() +
+        return "File-Name: " + WildnoteServerApplication.getFileName() +
                 System.lineSeparator() +
-                "Build-Time: " + WildnoteSvcApplication.getBuildTime() +
+                "Build-Time: " + WildnoteServerApplication.getBuildTime() +
                 System.lineSeparator();
     }
 

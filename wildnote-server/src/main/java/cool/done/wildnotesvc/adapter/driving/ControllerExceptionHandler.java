@@ -1,7 +1,7 @@
-package cool.done.wildnotesvc.adapter.driving;
+package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnotesvc.domain.NotLoginException;
-import cool.done.wildnotesvc.domain.ValidationException;
+import cool.done.wildnote.server.domain.NotLoginException;
+import cool.done.wildnote.server.domain.ValidationException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

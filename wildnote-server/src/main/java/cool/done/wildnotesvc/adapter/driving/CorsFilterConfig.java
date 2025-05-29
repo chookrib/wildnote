@@ -1,4 +1,4 @@
-package cool.done.wildnotesvc.adapter.driving;
+package cool.done.wildnote.server.adapter.driving;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

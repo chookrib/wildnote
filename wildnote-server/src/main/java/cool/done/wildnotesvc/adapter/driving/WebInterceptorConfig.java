@@ -1,7 +1,7 @@
-package cool.done.wildnotesvc.adapter.driving;
+package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnotesvc.domain.AuthService;
-import cool.done.wildnotesvc.domain.NotLoginException;
+import cool.done.wildnote.server.domain.AuthService;
+import cool.done.wildnote.server.domain.NotLoginException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

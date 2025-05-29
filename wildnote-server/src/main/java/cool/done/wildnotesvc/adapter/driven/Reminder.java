@@ -1,6 +1,6 @@
-package cool.done.wildnotesvc.adapter.driven;
+package cool.done.wildnote.server.adapter.driven;
 
-import cool.done.wildnotesvc.domain.IReminder;
+import cool.done.wildnote.server.domain.IReminder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

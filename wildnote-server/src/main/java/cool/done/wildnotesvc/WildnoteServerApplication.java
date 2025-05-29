@@ -1,4 +1,4 @@
-package cool.done.wildnotesvc;
+package cool.done.wildnote.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,14 +13,14 @@ import java.util.Properties;
 
 @SpringBootApplication
 @EnableScheduling
-public class WildnoteSvcApplication {
+public class WildnoteServerApplication {
 
-    private static final Logger logger = LoggerFactory.getLogger(WildnoteSvcApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(WildnoteServerApplication.class);
 
     public static ConfigurableApplicationContext applicationContext;
 
     public static void main(String[] args) {
-        applicationContext = SpringApplication.run(WildnoteSvcApplication.class, args);
+        applicationContext = SpringApplication.run(WildnoteServerApplication.class, args);
         logger.info("Started File-Name: {} Build-Time: {}", getFileName(), getBuildTime());
     }
 
