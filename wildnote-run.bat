@@ -35,7 +35,7 @@ call npm install
 call npm run build
 cd ..
 
-set mvn_path=..\apache-maven-3.9.9\bin\mvn.cmd
+set mvn_path=..\wildnote-tools\apache-maven-3.9.9\bin\mvn.cmd
 call %mvn_path% package -Dmaven.test.skip=true -f .\wildnote-server
 
 if not exist ".\wildnote-server\target\*.jar" (
@@ -58,6 +58,6 @@ echo %run_wildnote_cmd%
 goto :EOF
 
 :usage
-echo Usage: %0 wildnote_path wildnote_username wildnote_password [server_port]
+echo Usage: %0 wildnote_path [spring-boot-command-line-option-arguments-1] [spring-boot-command-line-option-arguments-2] ...
 goto :EOF
 
