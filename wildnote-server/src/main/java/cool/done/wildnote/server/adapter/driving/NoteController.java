@@ -118,7 +118,7 @@ public class NoteController {
 
             String result = new String(buffer, StandardCharsets.UTF_8);
             //去除被载断的行
-            result = result.substring(result.indexOf("\\n") + 1);
+            result = result.substring(result.indexOf("\n") + 1);
             //反转行顺序
             result = result.lines()
                     .filter(line -> !line.trim().isEmpty())
