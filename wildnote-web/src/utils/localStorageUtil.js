@@ -1,22 +1,22 @@
 
-let accessToken = localStorage.getItem('accessToken') || ''
+let accessToken = localStorage.getItem('access_token') || ''
 
 const getLocalAccessToken = function() {
   return accessToken
 }
 
 const setLocalAccessToken = function(accessToken) {
-  localStorage.setItem('accessToken', accessToken)
-  accessToken = accessToken
+  localStorage.setItem('access_token', accessToken)
+  this.accessToken = accessToken
 }
 
 const removeLocalAccessToken = function() {
-  localStorage.removeItem('accessToken')
+  localStorage.removeItem('access_token')
   accessToken = ''
 }
 
-const pinnedPaths = localStorage.getItem('pinnedPaths') ?
-  JSON.parse(localStorage.getItem('pinnedPaths')) : []
+const pinnedPaths = localStorage.getItem('pinned_paths') ?
+  JSON.parse(localStorage.getItem('pinned_paths')) : []
 
 const getLocalPinnedPaths = function() {
   // const pinnedPaths = localStorage.getItem('pinnedPaths')
@@ -40,7 +40,7 @@ const localPinPath = function(path) {
   // }
   if (!pinnedPaths.includes(path)) {
     pinnedPaths.push(path)
-    localStorage.setItem('pinnedPaths', JSON.stringify(pinnedPaths))
+    localStorage.setItem('pinned_paths', JSON.stringify(pinnedPaths))
   }
 }
 
@@ -52,7 +52,7 @@ const localUnpinPath = function(path) {
   // }
   if (pinnedPaths.includes(path)) {
     pinnedPaths.splice(pinnedPaths.indexOf(path), 1)
-    localStorage.setItem('pinnedPaths', JSON.stringify(pinnedPaths))
+    localStorage.setItem('pinned_paths', JSON.stringify(pinnedPaths))
   }
 }
 
@@ -60,7 +60,7 @@ const localMovePinnedPath = function(dragIndex, dropIndex){
   if (dragIndex === null || dragIndex === dropIndex) return
   const moved = pinnedPaths.splice(dragIndex, 1)[0]
   pinnedPaths.splice(dropIndex, 0, moved)
-  localStorage.setItem('pinnedPaths', JSON.stringify(pinnedPaths))
+  localStorage.setItem('pinned_paths', JSON.stringify(pinnedPaths))
 }
 
 export {
