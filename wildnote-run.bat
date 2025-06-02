@@ -58,6 +58,6 @@ echo %run_wildnote_cmd%
 goto :EOF
 
 :usage
-echo Usage: %0 wildnote_path "[spring-boot-command-line-option-arguments-1]" "[spring-boot-command-line-option-arguments-2]" ...
+echo Usage: %0 "[spring-boot-command-line-option-arguments-1]" "[spring-boot-command-line-option-arguments-2]" ...
 goto :EOF
 
