@@ -5,9 +5,9 @@ const getLocalAccessToken = function() {
   return accessToken
 }
 
-const setLocalAccessToken = function(accessToken) {
-  localStorage.setItem('access_token', accessToken)
-  this.accessToken = accessToken
+const setLocalAccessToken = function(newAccessToken) {
+  localStorage.setItem('access_token', newAccessToken)
+  accessToken = newAccessToken
 }
 
 const removeLocalAccessToken = function() {
