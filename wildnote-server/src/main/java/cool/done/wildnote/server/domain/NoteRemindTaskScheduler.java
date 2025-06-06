@@ -20,12 +20,12 @@ import java.util.concurrent.TimeUnit;
 public class NoteRemindTaskScheduler implements INoteRemindScheduler {
     private static final Logger logger = LoggerFactory.getLogger(NoteRemindTaskScheduler.class);
 
-    private final IReminder reminder;
+    private final IRemindHandler remindHandler;
     private final TaskScheduler taskScheduler;
     private Map<String, ScheduledFuture<?>> scheduleMap = new ConcurrentHashMap<>();
 
-    public NoteRemindTaskScheduler(IReminder reminder, TaskScheduler taskScheduler) {
-        this.reminder = reminder;
+    public NoteRemindTaskScheduler(IRemindHandler remindHandler, TaskScheduler taskScheduler) {
+        this.remindHandler = remindHandler;
         this.taskScheduler = taskScheduler;
     }
 
@@ -44,7 +44,7 @@ public class NoteRemindTaskScheduler implements INoteRemindScheduler {
         }
 
         ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(() -> {
-                    reminder.remind(path + " | " + lineNumber + " | " + cron + " | " + message);
+                    remindHandler.remind(path + " | " + lineNumber + " | " + cron + " | " + message);
                 },
                 cronTrigger
         );

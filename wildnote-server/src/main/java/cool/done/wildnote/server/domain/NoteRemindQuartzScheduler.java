@@ -19,18 +19,18 @@ import java.util.Set;
 public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
     private static final Logger logger = LoggerFactory.getLogger(NoteRemindQuartzScheduler.class);
 
-    private final IReminder reminder;
+    private final IRemindHandler remindHandler;
     private final Scheduler scheduler;
 
-    public NoteRemindQuartzScheduler(IReminder reminder) {
-        this.reminder = reminder;
+    public NoteRemindQuartzScheduler(IRemindHandler remindHandler) {
+        this.remindHandler = remindHandler;
         try {
             this.scheduler = StdSchedulerFactory.getDefaultScheduler();
             this.scheduler.setJobFactory((bundle, scheduler) ->
                     (context) -> {
                         JobDataMap data = context.getJobDetail().getJobDataMap();
                         String message = data.getString("remindMessage");
-                        this.reminder.remind(message);
+                        this.remindHandler.remind(message);
                     });
             this.scheduler.start();
         } catch (SchedulerException e) {

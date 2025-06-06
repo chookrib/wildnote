@@ -12,10 +12,11 @@ let dragIndex = null
 
 onMounted(() => {
   pinnedPaths.value = getLocalPinnedPaths()
-  axios.get('/api/note/remind').then(response => {
+  axios.get('/api/system/remind/recent-log').then(response => {
     //remindLog.value = response.data.data
     //remindLog.value = response.data.data.replace(/(\\[^|]+)/g, '<a href="#/note?path=$1">$1</a>')
-    remindLog.value = response.data.data.replace(/(\s\\[^|]+)/g, (match, p1) => `<a href="#/note?path=${encodeURIComponent(p1.trim())}">${p1}</a>`)
+    remindLog.value = response.data.data.replace(/(\s\\[^|]+)/g,
+      (match, p1) => `<a href="#/note?path=${encodeURIComponent(p1.trim())}">${p1}</a>`)
   })
 })
 

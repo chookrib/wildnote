@@ -1,6 +1,6 @@
 package cool.done.wildnote.server.adapter.driven;
 
-import cool.done.wildnote.server.domain.IReminder;
+import cool.done.wildnote.server.domain.IRemindHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,23 +14,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * 提醒器
+ * 提醒处理器
  */
 @Component
-public class Reminder implements IReminder {
-    private static final Logger logger = LoggerFactory.getLogger(Reminder.class);
+public class RemindHandler implements IRemindHandler {
+    private static final Logger logger = LoggerFactory.getLogger(RemindHandler.class);
 
-    @Value("${wildnote.note-remind-url:}")
-    private String noteRemindUrl;
+    @Value("${wildnote.remind-url:}")
+    private String remindUrl;
 
-    private final String noteRemindLog;
+    private final String remindLog;
 
-    public Reminder(@Value("${wildnote.note-remind-log:}") String noteRemindLog) {
-        this.noteRemindLog = noteRemindLog;
-        if (!noteRemindLog.isEmpty()) {
-            File logDir = new File(noteRemindLog).getParentFile();
-            if (logDir != null && !logDir.exists()) {
-                logDir.mkdirs();
+    public RemindHandler(@Value("${wildnote.remind-log:}") String remindLog) {
+        this.remindLog = remindLog;
+        if (!remindLog.isEmpty()) {
+            File remindLogDir = new File(remindLog).getParentFile();
+            if (remindLogDir != null && !remindLogDir.exists()) {
+                remindLogDir.mkdirs();
             }
         }
     }
@@ -40,7 +40,7 @@ public class Reminder implements IReminder {
 
         String log = "";
         try {
-            String url = noteRemindUrl + message;
+            String url = remindUrl + message;
             new RestTemplate().getForObject(url, String.class);
             //logger.info("笔记提醒成功: {}", message);
             log = String.format("笔记提醒成功: %s", message);
@@ -51,12 +51,12 @@ public class Reminder implements IReminder {
         }
 
         try {
-            FileWriter fileWriter = new FileWriter(noteRemindLog, StandardCharsets.UTF_8, true);
+            FileWriter fileWriter = new FileWriter(remindLog, StandardCharsets.UTF_8, true);
             fileWriter.write(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + log + "\n");
             fileWriter.close();
         }
         catch (Exception e) {
-            logger.error("记录笔记提醒日志失败: {}", e.getMessage());
+            logger.error("笔记提醒写日志失败: {}", e.getMessage());
         }
     }
 }

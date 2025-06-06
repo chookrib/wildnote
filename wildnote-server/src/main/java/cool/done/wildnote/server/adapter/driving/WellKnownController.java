@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * 应用信息Controller
+ * Well Known Controller
  */
 @Controller
-public class DefaultController {
-    private static final Logger logger = LoggerFactory.getLogger(DefaultController.class);
+public class WellKnownController {
+    private static final Logger logger = LoggerFactory.getLogger(WellKnownController.class);
 
     /**
      * 应用信息
      */
-    @RequestMapping(value = "/info", method = RequestMethod.GET, produces = "text/plain")
+    @RequestMapping(value = "/.well-known/info", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
     public String info() {
         return "File-Name: " + WildnoteServerApplication.getFileName() +
@@ -29,12 +29,22 @@ public class DefaultController {
     }
 
     /**
-     * reminder测试
+     * 测试remind
      */
-    @RequestMapping(value = "/reminder", method = RequestMethod.GET)
+    @RequestMapping(value = "/.well-known/test/remind", method = RequestMethod.GET)
     @ResponseBody
-    public Result reminder(String message){
-        logger.info("Reminder收到消息: {}", message);
+    public Result testRemind(String message){
+        logger.info("模拟remind-url收到数据: message={}", message);
+        return Result.success(message);
+    }
+
+    /**
+     * 测试sms
+     */
+    @RequestMapping(value = "/.well-known/test/sms", method = RequestMethod.GET)
+    @ResponseBody
+    public Result testSms(String mobile, String message){
+        logger.info("模拟sms-url收到数据: mobile={}, message={}", mobile, message);
         return Result.success(message);
     }
 }
