@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { FolderFilled, FileTextOutlined } from '@ant-design/icons-vue'
-import { getLocalPinnedPaths, localUnpinPath, localMovePinnedPath } from '@/utils/localStorageUtil'
+import { getLocalPinnedPaths, localUnpinPath, localMovePinnedPath } from '@/utility/local-storage-utility.js'
 import { RouterLink } from 'vue-router'
-import { showConfirm } from '@/utils/confirmUtil'
-import axios from '@/utils/axiosUtil'
+import { showConfirm } from '@/utility/confirm-utility.js'
+import axios from '@/utility/axios-utility.js'
 
 const pinnedPaths = ref([])
 let remindLog = ref('')
@@ -73,7 +73,7 @@ const unpinPath = function(path) {
   </a-card>
   <a-card>
     <template #title>
-      最新提醒
+      最新提醒日志
     </template>
     <div class="log" v-html="remindLog">
     </div>

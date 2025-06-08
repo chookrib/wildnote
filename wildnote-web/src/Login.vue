@@ -1,9 +1,10 @@
 <script setup>
 
-import axios from '@/utils/axiosUtil'
+import axios from '@/utility/axios-utility.js'
 import { reactive } from 'vue'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
-import { setLocalAccessToken } from '@/utils/localStorageUtil'
+import { setLocalAccessToken } from '@/utility/local-storage-utility.js'
+
 const loginForm = reactive({ username: '', password: '' })
 
 const login = function() {

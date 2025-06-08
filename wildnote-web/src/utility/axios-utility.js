@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { getLocalAccessToken } from '@/utils/localStorageUtil'
+import { getLocalAccessToken } from '@/utility/local-storage-utility.js'
 import { message } from 'ant-design-vue'
 
 const instance = axios.create({

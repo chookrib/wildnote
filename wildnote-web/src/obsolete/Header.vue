@@ -3,7 +3,7 @@ import router from '@/router'
 import { createVNode } from 'vue'
 import { Modal } from 'ant-design-vue'
 import { LogoutOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
-import { removeLocalAccessToken } from '@/utils/localStorageUtil'
+import { removeLocalAccessToken } from '@/utility/local-storage-utility.js'
 
 function logout() {
   Modal.confirm({
@@ -25,7 +25,7 @@ function logout() {
 <template>
   <a-layout-header>
     <div style="display: flex; align-items: center;">
-      <img src="/img/logo1.png" alt="" style="height: 20px; filter: brightness(100);">
+      <img src="/img/logo192c.png" alt="" style="height: 20px; filter: brightness(100);">
     </div>
     <div style="flex-grow: 1; display: flex; align-items: center; white-space: nowrap; gap: 10px;">
       <slot></slot>

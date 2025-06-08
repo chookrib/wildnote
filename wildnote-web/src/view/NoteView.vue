@@ -1,10 +1,10 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import axios from '@/utils/axiosUtil'
-import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utils/localStorageUtil'
+import axios from '@/utility/axios-utility.js'
+import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utility/local-storage-utility.js'
 import { message } from 'ant-design-vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { showDateTime } from '@/utils/dateTimeUtil'
+import { showDateTime } from '@/utility/datetime-utility.js'
 import { EditFilled, RollbackOutlined, SaveFilled, StarFilled, StarOutlined } from '@ant-design/icons-vue'
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'

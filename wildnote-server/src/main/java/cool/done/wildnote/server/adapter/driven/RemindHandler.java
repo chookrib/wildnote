@@ -56,7 +56,7 @@ public class RemindHandler implements IRemindHandler {
             fileWriter.close();
         }
         catch (Exception e) {
-            logger.error("笔记提醒写日志失败: {}", e.getMessage());
+            logger.error("笔记提醒写日志失败: {} {}", log, e.getMessage());
         }
     }
 }

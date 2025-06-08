@@ -1,10 +1,10 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import axios from '@/utils/axiosUtil'
-import { showDateTime } from '@/utils/dateTimeUtil'
+import axios from '@/utility/axios-utility.js'
+import { showDateTime } from '@/utility/datetime-utility.js'
 import { RouterLink, useRoute } from 'vue-router'
 import { FolderFilled, FileTextOutlined, StarFilled, StarOutlined } from '@ant-design/icons-vue'
-import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utils/localStorageUtil'
+import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utility/local-storage-utility.js'
 
 const route = useRoute()
 const path = route.query.path || '\\'

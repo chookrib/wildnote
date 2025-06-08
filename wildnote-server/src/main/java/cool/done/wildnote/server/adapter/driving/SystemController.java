@@ -1,5 +1,10 @@
 package cool.done.wildnote.server.adapter.driving;
 
+import cool.done.wildnote.server.domain.IRemindHandler;
+import cool.done.wildnote.server.domain.ISmsHandler;
+import cool.done.wildnote.server.domain.NoteService;
+import cool.done.wildnote.server.domain.ValidationException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,6 +22,16 @@ public class SystemController {
 
     @Value("${wildnote.sms-log:}")
     private String smsLog;
+
+    private final IRemindHandler remindHandler;
+
+    private final ISmsHandler smsHandler;
+
+
+    public SystemController(IRemindHandler remindHandler, ISmsHandler smsHandler) {
+        this.remindHandler = remindHandler;
+        this.smsHandler = smsHandler;
+    }
 
     /**
      * 取最新提醒日志
@@ -52,6 +67,18 @@ public class SystemController {
     }
 
     /**
+     * 测试提醒功能
+     */
+    @RequestMapping(value = "/api/system/remind/test", method = RequestMethod.GET)
+    public Result systemRemindTest(@RequestParam String message) {
+        if(StringUtils.isEmpty(message)) {
+            throw new ValidationException("提醒消息不能为空");
+        }
+        this.remindHandler.remind(message);
+        return Result.success();
+    }
+
+    /**
      * 取最新短信日志
      */
     @RequestMapping(value = "/api/system/sms/recent-log", method = RequestMethod.GET)
@@ -82,5 +109,20 @@ public class SystemController {
         } catch (Exception e) {
             return Result.successData(e.getMessage());
         }
+    }
+
+    /**
+     * 测试短信功能
+     */
+    @RequestMapping(value = "/api/system/sms/test", method = RequestMethod.GET)
+    public Result systemSmsTest(@RequestParam String mobile, @RequestParam String message) {
+        if(StringUtils.isEmpty(mobile)) {
+            throw new ValidationException("手机号码不能为空");
+        }
+        if(StringUtils.isEmpty(message)) {
+            throw new ValidationException("短信消息不能为空");
+        }
+        this.smsHandler.send(mobile, message);
+        return Result.success();
     }
 }

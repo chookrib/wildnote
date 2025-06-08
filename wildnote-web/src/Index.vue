@@ -1,8 +1,8 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
-import { showConfirm } from '@/utils/confirmUtil'
-import { removeLocalAccessToken } from '@/utils/localStorageUtil'
+import { showConfirm } from '@/utility/confirm-utility.js'
+import { removeLocalAccessToken } from '@/utility/local-storage-utility.js'
 
 console.log(import.meta.env)
 
@@ -27,6 +27,7 @@ const logout = function() {
         <RouterLink to="/explore">浏览</RouterLink>
         <RouterLink to="/search">搜索</RouterLink>
         <RouterLink to="/cron">提醒</RouterLink>
+        <RouterLink to="/system">系统</RouterLink>
         <div style="flex-grow: 1"></div>
         <a href="javascript:void(0)" @click="logout">注销</a>
       </a-layout-header>

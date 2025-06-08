@@ -4,6 +4,7 @@ import cool.done.wildnote.server.domain.ISmsHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.util.Date;
 /**
  * 短信处理器
  */
+@Component
 public class SmsHandler implements ISmsHandler {
     private static final Logger logger = LoggerFactory.getLogger(SmsHandler.class);
 
@@ -40,10 +42,10 @@ public class SmsHandler implements ISmsHandler {
         try {
             String url = smsUrl.replace("<mobile>", mobile).replace("<message>", message);
             new RestTemplate().getForObject(url, String.class);
-            log = String.format("短信发送成功: %s", message);
+            log = String.format("短信发送成功: %s %s", mobile, message);
         }
         catch (Exception e) {
-            log = String.format("短信发送失败: %s", e.getMessage());
+            log = String.format("短信发送失败: %s %s", mobile, e.getMessage());
         }
 
         try {
@@ -52,7 +54,7 @@ public class SmsHandler implements ISmsHandler {
             fileWriter.close();
         }
         catch (Exception e) {
-            logger.error("短信发送写日志失败: {}", e.getMessage());
+            logger.error("短信发送写日志失败: {} {}", log, e.getMessage());
         }
     }
 }
