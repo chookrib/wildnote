@@ -1,15 +1,33 @@
 <!doctype html>
 <html>
   <head>
-    <title></title>
+    <title>WildNote</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="/favicon.ico" />
     <!--<link rel="icon" sizes="192x192" href="/img/logo192c.png">-->
     <!--<link rel="apple-touch-icon" sizes="192x192" href="/img/logo192c.png">-->
-    <link rel="manifest" href="/manifest.json" />
+    <!--<link rel="manifest" href="/manifest.json" />-->
     <meta name="theme-color" content="#001529">
     <!--<meta name="mobile-web-app-capable" content="yes">-->
+    <script>
+      console.log(window.location);
+
+      const hostname = window.location.hostname;
+
+      let manifestUrl = '/manifest.json';
+
+      if (hostname.startsWith('cm.')) {
+        manifestUrl = '/manifest-cm.json';
+      } else if (hostname.startsWith('ct.')) {
+        manifestUrl = '/manifest-ct.json';
+      }
+
+      const link = document.createElement('link');
+      link.rel = 'manifest';
+      link.href = manifestUrl;
+      document.head.appendChild(link);
+    </script>
   </head>
   <body>
     <div id="app"></div>
