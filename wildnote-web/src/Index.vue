@@ -6,7 +6,7 @@ import { removeLocalAccessToken } from '@/utility/local-storage-utility.js'
 
 console.log(import.meta.env)
 
-const title = window.location.host
+const title = window.location.hostname
 
 const logout = function() {
   showConfirm('确定要注销吗？', function() {
