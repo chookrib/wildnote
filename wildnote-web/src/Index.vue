@@ -6,7 +6,7 @@ import { removeLocalAccessToken } from '@/utility/local-storage-utility.js'
 
 console.log(import.meta.env)
 
-const title = window.location.href
+const title = window.location.host
 
 const logout = function() {
   showConfirm('确定要注销吗？', function() {
@@ -59,6 +59,7 @@ const logout = function() {
 }
 
 .ant-layout-header a {
+  white-space: nowrap;
   color: #ffffff;
 
   &:hover {
