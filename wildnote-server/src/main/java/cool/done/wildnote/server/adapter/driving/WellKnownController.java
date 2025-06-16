@@ -29,11 +29,20 @@ public class WellKnownController {
     }
 
     /**
+     * 测试异常
+     */
+    @RequestMapping(value = "/.well-known/exception", method = RequestMethod.GET)
+    @ResponseBody
+    public Result exception() {
+        throw new RuntimeException("测试异常");
+    }
+
+    /**
      * 测试remind-url
      */
     @RequestMapping(value = "/.well-known/mock-remind-url", method = RequestMethod.GET)
     @ResponseBody
-    public Result testRemindUrl(String message){
+    public Result mockRemindUrl(String message){
         logger.info("模拟remind-url收到数据: message={}", message);
         return Result.success(message);
     }
@@ -43,7 +52,7 @@ public class WellKnownController {
      */
     @RequestMapping(value = "/.well-known/mock-sms-url", method = RequestMethod.GET)
     @ResponseBody
-    public Result testSmsUrl(String mobile, String message){
+    public Result mockSmsUrl(String mobile, String message){
         logger.info("模拟sms-url收到数据: mobile={}, message={}", mobile, message);
         return Result.success(message);
     }
