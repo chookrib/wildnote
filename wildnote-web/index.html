@@ -15,18 +15,21 @@
 
       const hostname = window.location.hostname;
 
-      let manifestUrl = '/manifest.json';
-
-      if (hostname.startsWith('cm.')) {
-        manifestUrl = '/manifest-cm.json';
-      } else if (hostname.startsWith('ct.')) {
-        manifestUrl = '/manifest-ct.json';
-      }
+      let manifestUrl = '/manifest-' + hostname + '.json';
+      fetch(manifestUrl)
+        .then((response) => {
+          if (response.ok) {
+          }
+        })
+        .catch((error) => {
+          manifestUrl = '/manifest.json';
+        });
 
       const link = document.createElement('link');
       link.rel = 'manifest';
       link.href = manifestUrl;
       document.head.appendChild(link);
+
     </script>
   </head>
   <body>
