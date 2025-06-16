@@ -6,6 +6,8 @@ import { removeLocalAccessToken } from '@/utility/local-storage-utility.js'
 
 console.log(import.meta.env)
 
+const title = window.location.hostname
+
 const logout = function() {
   showConfirm('确定要注销吗？', function() {
     removeLocalAccessToken()
@@ -23,12 +25,12 @@ const logout = function() {
           alt=""
           style="height: 20px; filter: brightness(0) invert(1);"
         />
+        <div style="flex-grow: 1">{{title}}</div>
         <RouterLink to="/">首页</RouterLink>
         <RouterLink to="/explore">浏览</RouterLink>
         <RouterLink to="/search">搜索</RouterLink>
         <RouterLink to="/cron">提醒</RouterLink>
         <RouterLink to="/system">系统</RouterLink>
-        <div style="flex-grow: 1"></div>
         <a href="javascript:void(0)" @click="logout">注销</a>
       </a-layout-header>
       <a-layout-content style="margin-top: 40px; height: 100%;">
@@ -50,6 +52,10 @@ const logout = function() {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.ant-layout-header > div {
+  color: #ffffff;
 }
 
 .ant-layout-header a {
