@@ -61,8 +61,10 @@ const loadNote = function() {
     path: notePath
   }).then(response => {
     noteContent.value = response.data.data
-    isPinnedNote.value = isLocalPinnedPath(notePath)
+    //isPinnedNote.value = isLocalPinnedPath(notePath)
   })
+  // 当笔记不存在时可以取消收藏
+  isPinnedNote.value = isLocalPinnedPath(notePath)
 }
 
 const editNote = function() {
