@@ -67,7 +67,7 @@ public class HookController {
         Path notePath = noteService.combineAbsPath(note);
         try (FileWriter writer = new FileWriter(notePath.toFile(),StandardCharsets.UTF_8, true)) {
             writer.write(String.format("\n\n%s %s",
-                    new SimpleDateFormat("yyyyMMdd").format(new Date()),
+                    new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
                     content));
         } catch (IOException e) {
             return Result.error(ResultCodes.ERROR_DEFAULT);
