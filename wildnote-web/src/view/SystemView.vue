@@ -1,10 +1,11 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from '@/utility/axios-utility.js'
+import { message } from 'ant-design-vue'
 
 const remindMessage = ref('')
 const smsMobile = ref('')
-const smsMessage = ref('')
+const smsCode = ref('')
 
 const remindLog = ref('')
 const smsLog = ref('')
@@ -52,8 +53,8 @@ const testSms = () => {
   axios.get(
     '/api/system/sms/test?mobile=' +
       smsMobile.value +
-      '&message=' +
-      smsMessage.value,
+      '&code=' +
+      smsCode.value,
   ).then(response => {
     modalSmsOpen.value = false
     loadSmsLog()
@@ -62,6 +63,20 @@ const testSms = () => {
 </script>
 
 <template>
+  <a-card>
+    <template #title> 分享</template>
+    <template #extra>
+      <a-button type="primary" @click="message.info('待开发')">添加</a-button>
+    </template>
+  </a-card>
+
+  <a-card>
+    <template #title> Http Hook</template>
+    <template #extra>
+      <a-button type="primary" @click="message.info('待开发')">添加</a-button>
+    </template>
+  </a-card>
+
   <a-card>
     <template #title> 最新提醒日志</template>
     <template #extra>
@@ -90,13 +105,13 @@ const testSms = () => {
     <div class="log" v-html="smsLog"></div>
   </a-card>
 
-  <a-modal v-model:open="modalSmsOpen" title="测试发送短信消息" @ok="testSms">
+  <a-modal v-model:open="modalSmsOpen" title="测试发送短信验证码" @ok="testSms">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item label="手机">
         <a-input v-model:value="smsMobile"></a-input>
       </a-form-item>
-      <a-form-item label="短信内容">
-        <a-input v-model:value="smsMessage"></a-input>
+      <a-form-item label="验证码">
+        <a-input v-model:value="smsCode"></a-input>
       </a-form-item>
     </a-form>
   </a-modal>

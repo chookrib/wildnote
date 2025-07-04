@@ -1,4 +1,5 @@
 /log/
+.run
 
 HELP.md
 target/

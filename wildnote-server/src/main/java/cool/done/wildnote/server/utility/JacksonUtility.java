@@ -19,4 +19,15 @@ public class JacksonUtility {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * 将对象转换为Json字符串
+     */
+    public static String writeValueAsString(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

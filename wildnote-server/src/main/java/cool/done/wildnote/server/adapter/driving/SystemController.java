@@ -115,14 +115,14 @@ public class SystemController {
      * 测试短信功能
      */
     @RequestMapping(value = "/api/system/sms/test", method = RequestMethod.GET)
-    public Result systemSmsTest(@RequestParam String mobile, @RequestParam String message) {
+    public Result systemSmsTest(@RequestParam String mobile, @RequestParam String code) {
         if(StringUtils.isEmpty(mobile)) {
-            throw new ValidationException("手机号码不能为空");
+            throw new ValidationException("mobile不能为空");
         }
-        if(StringUtils.isEmpty(message)) {
-            throw new ValidationException("短信消息不能为空");
+        if(StringUtils.isEmpty(code)) {
+            throw new ValidationException("code不能为空");
         }
-        this.smsHandler.send(mobile, message);
+        this.smsHandler.sendCode(mobile, code);
         return Result.success();
     }
 }
