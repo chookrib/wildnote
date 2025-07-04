@@ -16,10 +16,22 @@
 - 进入`wildnote\wildnote-server`目录；
 - 运行`mvn pakage`打包后端程序；
 
-3. 启动程序，启动后使用浏览器访问`http://localhost:端口`进行使用。
+3. 设置用户名密码
+- 在配置项`wildnote.note-root-path`指定的目录下创建配置项`wildnote.site-config-path`指定的文件（默认为`site.json`）
+- 在文件中添加用户名密码配置
+```
+{
+    "auth": {
+        "username": "admin",
+        "password": "admin"
+    }
+}
+```
+
+4. 启动程序，启动后使用浏览器访问`http://localhost:端口`进行使用。
 - 运行`wildnote\wildnote-run.bat`启动程序；
 - 脚本支持传入参数覆盖`application.properties`中的配置，参数需用双引号包裹。
   - 如：`wildnote-run.bat "--server.port=8888" "--wildnote.username=admin" "--wildnote.password=password" "--wildnote.note-root-path=D:\note"`
 
-4. 备份脚本，可设定计划任务进行自动备份。
+5. 备份脚本，可设定计划任务进行自动备份。
 - 运行`wildnote\bak-wildnote.bat 笔记目录路径 备份目录路径`；
