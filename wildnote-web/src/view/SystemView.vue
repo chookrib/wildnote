@@ -80,7 +80,10 @@ const testSms = () => {
   <a-card>
     <template #title> 最新提醒日志</template>
     <template #extra>
-      <a-button type="primary" @click="openRemindModal">测试</a-button>
+      <a-space>
+        <a-button type="primary" @click="message.info('待开发')">外部访问提醒路由</a-button>
+        <a-button type="primary" @click="openRemindModal">测试</a-button>
+      </a-space>
     </template>
     <div class="log" v-html="remindLog"></div>
   </a-card>
