@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -57,8 +56,6 @@ public class HookController {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(content))
             return Result.error(ResultCodes.ERROR_DEFAULT);
 
-        content = URLDecoder.decode(content, StandardCharsets.UTF_8);
-
         String note = settingService.getHookRecordNote(name);
         if(StringUtils.isEmpty(note))
             return Result.error(ResultCodes.ERROR_DEFAULT);
@@ -68,7 +65,7 @@ public class HookController {
         //    return Result.error(ResultCodes.ERROR_DEFAULT);
 
         Path notePath = noteService.combineAbsPath(note);
-        try (FileWriter writer = new FileWriter(notePath.toFile(), true)) {
+        try (FileWriter writer = new FileWriter(notePath.toFile(),StandardCharsets.UTF_8, true)) {
             writer.write(String.format("\n\n%s %s",
                     new SimpleDateFormat("yyyyMMdd").format(new Date()),
                     content));
