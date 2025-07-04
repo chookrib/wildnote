@@ -7,13 +7,21 @@ const remindMessage = ref('')
 const smsMobile = ref('')
 const smsCode = ref('')
 
+const siteConfig = ref('')
 const remindLog = ref('')
 const smsLog = ref('')
 
 onMounted(() => {
+  loadSiteConfig()
   loadRemindLog()
   loadSmsLog()
 })
+
+const loadSiteConfig = () => {
+  axios.get('/api/system/site-config').then(response => {
+    siteConfig.value = response.data.data
+  })
+}
 
 const loadRemindLog = () => {
   axios.get('/api/system/remind/recent-log').then(response => {
@@ -64,24 +72,23 @@ const testSms = () => {
 
 <template>
   <a-card>
-    <template #title> 分享</template>
+    <template #title>站点配置</template>
+    <template #extra>
+    </template>
+    <div class="json">{{siteConfig}}</div>
+  </a-card>
+
+  <a-card>
+    <template #title>分享</template>
     <template #extra>
       <a-button type="primary" @click="message.info('待开发')">添加</a-button>
     </template>
   </a-card>
-
+  
   <a-card>
-    <template #title> Http Hook</template>
-    <template #extra>
-      <a-button type="primary" @click="message.info('待开发')">添加</a-button>
-    </template>
-  </a-card>
-
-  <a-card>
-    <template #title> 最新提醒日志</template>
+    <template #title>最新提醒日志</template>
     <template #extra>
       <a-space>
-        <a-button type="primary" @click="message.info('待开发')">外部访问提醒路由</a-button>
         <a-button type="primary" @click="openRemindModal">测试</a-button>
       </a-space>
     </template>
@@ -101,11 +108,11 @@ const testSms = () => {
   </a-modal>
 
   <a-card>
-    <template #title> 最新短信日志</template>
+    <template #title>最新短信日志</template>
     <template #extra>
       <a-button type="primary" @click="openSmsModal">测试</a-button>
     </template>
-    <div class="log" v-html="smsLog"></div>
+    <div class="log">{{smsLog}}</div>
   </a-card>
 
   <a-modal v-model:open="modalSmsOpen" title="测试发送短信验证码" @ok="testSms">
@@ -122,6 +129,11 @@ const testSms = () => {
 
 <style scoped>
 .log {
+  white-space: pre-wrap;
+  word-wrap: anywhere;
+  font-size: 12px;
+}
+.json {
   white-space: pre-wrap;
   word-wrap: anywhere;
   font-size: 12px;
