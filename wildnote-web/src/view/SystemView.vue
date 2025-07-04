@@ -7,19 +7,19 @@ const remindMessage = ref('')
 const smsMobile = ref('')
 const smsCode = ref('')
 
-const siteConfig = ref('')
+const setting = ref('')
 const remindLog = ref('')
 const smsLog = ref('')
 
 onMounted(() => {
-  loadSiteConfig()
+  loadSetting()
   loadRemindLog()
   loadSmsLog()
 })
 
-const loadSiteConfig = () => {
-  axios.get('/api/system/site-config').then(response => {
-    siteConfig.value = response.data.data
+const loadSetting = () => {
+  axios.get('/api/system/setting').then(response => {
+    setting.value = response.data.data
   })
 }
 
@@ -72,10 +72,10 @@ const testSms = () => {
 
 <template>
   <a-card>
-    <template #title>站点配置</template>
+    <template #title>系统设置</template>
     <template #extra>
     </template>
-    <div class="json">{{siteConfig}}</div>
+    <div class="json">{{setting}}</div>
   </a-card>
 
   <a-card>
@@ -84,7 +84,7 @@ const testSms = () => {
       <a-button type="primary" @click="message.info('待开发')">添加</a-button>
     </template>
   </a-card>
-  
+
   <a-card>
     <template #title>最新提醒日志</template>
     <template #extra>
