@@ -52,7 +52,6 @@ public class HookController {
      */
     @RequestMapping(value = "/hook/record/{name}", method = RequestMethod.GET)
     public Result record(@PathVariable String name, @RequestParam String content) {
-
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(content))
             return Result.error(ResultCodes.ERROR_DEFAULT);
 
