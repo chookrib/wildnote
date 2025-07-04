@@ -164,6 +164,9 @@ public class NoteService {
      * 移除笔记路径对象
      */
     private void removeNotePath(File file) {
+        if (file.isFile() && !isValidExtension(file)) {
+            return;
+        }
         notePathMap.remove(file.getPath());
     }
 
@@ -200,13 +203,11 @@ public class NoteService {
      * 处理笔记文件中的提醒
      */
     private void processCron(File file) {
-
-        String path = file.getPath().substring(noteRootAbsPath.length());
-
         if (!file.isFile() || !isValidCronExtension(file)) {
             return;
         }
 
+        String path = file.getPath().substring(noteRootAbsPath.length());
         try (var lines = Files.lines(file.toPath())) {
             // cron = lines.findFirst().orElse("");
             int lineNumber = 0;
@@ -242,6 +243,10 @@ public class NoteService {
      * 删除提醒计划任务
      */
     private void removeCron(File file) {
+        if (!file.isFile() || !isValidCronExtension(file)) {
+            return;
+        }
+
         String path = file.getPath().substring(noteRootAbsPath.length());
         remindScheduler.remove(path);
         logger.info("移除笔记提醒成功: {}", path);
