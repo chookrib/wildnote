@@ -42,8 +42,8 @@ public class SmsHandler implements ISmsHandler {
     @Value("${wildnote.sms-aliyun-template:}")
     private String smsAliyunTemplate;
 
-    public SmsHandler(@Value("${wildnote.sms-log:}") String smsLog) {
-        smsLogPath = smsLog;
+    public SmsHandler(@Value("${wildnote.sms-log-path:}") String smsLogPath) {
+        this.smsLogPath = smsLogPath;
         if (!smsLogPath.isEmpty()) {
             File smsLogDir = new File(smsLogPath).getParentFile();
             if (smsLogDir != null && !smsLogDir.exists()) {

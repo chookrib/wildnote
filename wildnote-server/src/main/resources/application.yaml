@@ -14,22 +14,20 @@ logging:
     name: log\log.log
 
 wildnote:
-  username: admin
-  password: admin
   # 笔记根路径，支持绝对路径和相对路径
   # note-root-path: C:\note
   note-root-path: .\src
   note-extensions: .md,.txt
-  db: db.json
+  site-config-path: site.json
 
-  remind-log: log\remind.log
+  remind-log-path: log\remind.log
   # remind-url: http://localhost:${server.port}/.well-known/mock-remind-url?message=
   # 使用钉钉发送提醒消息
   remind-dingtalk-key:
   remind-dingtalk-secret:
   remind-dingtalk-chatid:
 
-  sms-log: log\sms.log
+  sms-log-path: log\sms.log
   # sms-url: http://localhost:${server.port}/.well-known/mock-sms-url?mobile=<mobile>&message=<message>
   # 使用阿里云短信服务发送短信
   sms-aliyun-key:

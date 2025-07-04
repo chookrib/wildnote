@@ -64,6 +64,13 @@ public class NoteService {
     }
 
     /**
+     * 获取笔记根路径
+     */
+    public String getNoteRootAbsPath() {
+        return noteRootAbsPath;
+    }
+
+    /**
      * 应用启动后运行
      */
     @EventListener(ApplicationReadyEvent.class)
@@ -316,9 +323,9 @@ public class NoteService {
     }
 
     /**
-     * 拼接绝对路径
+     * 拼接路径并返回绝对路径
      */
-    private Path combineAbsPath(String relPath) {
+    public Path combineAbsPath(String relPath) {
         Path path = Path.of(noteRootAbsPath, relPath);
         String absPath = path.normalize().toAbsolutePath().toString();
         if (!absPath.startsWith(noteRootAbsPath)) {
@@ -338,7 +345,6 @@ public class NoteService {
      * 读取笔记
      */
     public String getNote(String relPath) {
-
         try {
             return Files.readString(combineAbsPath(relPath));
         } catch (IOException e) {

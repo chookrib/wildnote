@@ -38,8 +38,8 @@ public class RemindHandler implements IRemindHandler {
     @Value("${wildnote.remind-dingtalk-chatid:}")
     private String remindDingtalkChatId;
 
-    public RemindHandler(@Value("${wildnote.remind-log:}") String remindLog) {
-        remindLogPath = remindLog;
+    public RemindHandler(@Value("${wildnote.remind-log-path:}") String remindLogPath) {
+        this.remindLogPath = remindLogPath;
         if (!remindLogPath.isEmpty()) {
             File remindLogDir = new File(remindLogPath).getParentFile();
             if (remindLogDir != null && !remindLogDir.exists()) {
