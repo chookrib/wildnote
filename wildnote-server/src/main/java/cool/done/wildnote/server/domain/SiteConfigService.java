@@ -29,7 +29,7 @@ public class SiteConfigService {
     /**
      * 获取配置JSON
      */
-    private JsonNode getConfigJson(){
+    public JsonNode getConfigJson(){
         String config = "";
         try {
             config = Files.readString(noteService.combineAbsPath(siteConfigPath), StandardCharsets.UTF_8);

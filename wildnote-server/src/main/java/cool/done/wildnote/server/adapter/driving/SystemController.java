@@ -1,9 +1,7 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnote.server.domain.IRemindHandler;
-import cool.done.wildnote.server.domain.ISmsHandler;
-import cool.done.wildnote.server.domain.NoteService;
-import cool.done.wildnote.server.domain.ValidationException;
+import com.fasterxml.jackson.databind.JsonNode;
+import cool.done.wildnote.server.domain.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,20 +15,20 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class SystemController {
 
-    @Value("${wildnote.remind-log:}")
-    private String remindLog;
+    @Value("${wildnote.remind-log-path:}")
+    private String remindLogPath;
 
-    @Value("${wildnote.sms-log:}")
-    private String smsLog;
+    @Value("${wildnote.sms-log-path:}")
+    private String smsLogPath;
 
     private final IRemindHandler remindHandler;
-
     private final ISmsHandler smsHandler;
+    private final SiteConfigService siteConfigService;
 
-
-    public SystemController(IRemindHandler remindHandler, ISmsHandler smsHandler) {
+    public SystemController(IRemindHandler remindHandler, ISmsHandler smsHandler, SiteConfigService siteConfigService) {
         this.remindHandler = remindHandler;
         this.smsHandler = smsHandler;
+        this.siteConfigService = siteConfigService;
     }
 
     /**
@@ -38,7 +36,7 @@ public class SystemController {
      */
     @RequestMapping(value = "/api/system/remind/recent-log", method = RequestMethod.GET)
     public Result systemRemindRecentLog(@RequestParam(defaultValue = "1024") int size) {
-        try (RandomAccessFile raf = new RandomAccessFile(remindLog, "r")) {
+        try (RandomAccessFile raf = new RandomAccessFile(remindLogPath, "r")) {
             long fileLength = raf.length();
             long start = Math.max(0, fileLength - size);
             raf.seek(start);
@@ -83,7 +81,7 @@ public class SystemController {
      */
     @RequestMapping(value = "/api/system/sms/recent-log", method = RequestMethod.GET)
     public Result systemSmsRecentLog(@RequestParam(defaultValue = "1024") int size) {
-        try (RandomAccessFile raf = new RandomAccessFile(smsLog, "r")) {
+        try (RandomAccessFile raf = new RandomAccessFile(smsLogPath, "r")) {
             long fileLength = raf.length();
             long start = Math.max(0, fileLength - size);
             raf.seek(start);
@@ -124,5 +122,14 @@ public class SystemController {
         }
         this.smsHandler.sendCode(mobile, code);
         return Result.success();
+    }
+
+    /**
+     * 取站点配置
+     */
+    @RequestMapping(value = "/api/system/site-config", method = RequestMethod.GET)
+    public Result systemSiteConfig() {
+        JsonNode configJson = siteConfigService.getConfigJson();
+        return Result.successData(configJson);
     }
 }
