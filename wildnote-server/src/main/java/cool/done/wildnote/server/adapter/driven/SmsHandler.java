@@ -82,6 +82,7 @@ public class SmsHandler implements ISmsHandler {
                 .setAccessKeySecret(smsAliyunSecret)
                 ;
         //config.endpoint = "dysmsapi.aliyuncs.com";
+        //logger.info(smsAliyunSign);
         try {
             Client client = new Client(config);
             SendSmsRequest request = new SendSmsRequest()
