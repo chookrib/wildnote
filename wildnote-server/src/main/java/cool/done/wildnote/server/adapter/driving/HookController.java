@@ -2,7 +2,7 @@ package cool.done.wildnote.server.adapter.driving;
 
 import cool.done.wildnote.server.domain.IRemindHandler;
 import cool.done.wildnote.server.domain.NoteService;
-import cool.done.wildnote.server.domain.SiteConfigService;
+import cool.done.wildnote.server.domain.SettingService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +22,12 @@ public class HookController {
     private static final Logger logger = LoggerFactory.getLogger(HookController.class);
 
     private final NoteService noteService;
-    private final SiteConfigService siteConfigService;
+    private final SettingService settingService;
     private final IRemindHandler remindHandler;
 
-    public HookController(NoteService noteService, SiteConfigService siteConfigService, IRemindHandler remindHandler) {
+    public HookController(NoteService noteService, SettingService settingService, IRemindHandler remindHandler) {
         this.noteService = noteService;
-        this.siteConfigService = siteConfigService;
+        this.settingService = settingService;
         this.remindHandler = remindHandler;
     }
 
@@ -39,9 +39,7 @@ public class HookController {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(message))
             return Result.error(ResultCodes.ERROR_DEFAULT);
 
-        logger.info(siteConfigService.getHookRemindName());
-
-        if (!name.equals(siteConfigService.getHookRemindName()))
+        if (!name.equals(settingService.getHookRemindName()))
             return Result.error(ResultCodes.ERROR_DEFAULT);
 
         remindHandler.remind(String.format("HOOK %s %s", name, message));
@@ -57,7 +55,7 @@ public class HookController {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(content))
             return Result.error(ResultCodes.ERROR_DEFAULT);
 
-        String note = siteConfigService.getHookRecordNote(name);
+        String note = settingService.getHookRecordNote(name);
         if(StringUtils.isEmpty(note))
             return Result.error(ResultCodes.ERROR_DEFAULT);
 

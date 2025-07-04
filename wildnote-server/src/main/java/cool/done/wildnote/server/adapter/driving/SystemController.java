@@ -23,12 +23,12 @@ public class SystemController {
 
     private final IRemindHandler remindHandler;
     private final ISmsHandler smsHandler;
-    private final SiteConfigService siteConfigService;
+    private final SettingService settingService;
 
-    public SystemController(IRemindHandler remindHandler, ISmsHandler smsHandler, SiteConfigService siteConfigService) {
+    public SystemController(IRemindHandler remindHandler, ISmsHandler smsHandler, SettingService settingService) {
         this.remindHandler = remindHandler;
         this.smsHandler = smsHandler;
-        this.siteConfigService = siteConfigService;
+        this.settingService = settingService;
     }
 
     /**
@@ -125,11 +125,11 @@ public class SystemController {
     }
 
     /**
-     * 取站点配置
+     * 取设置
      */
-    @RequestMapping(value = "/api/system/site-config", method = RequestMethod.GET)
-    public Result systemSiteConfig() {
-        JsonNode configJson = siteConfigService.getConfigJson();
-        return Result.successData(configJson);
+    @RequestMapping(value = "/api/system/setting", method = RequestMethod.GET)
+    public Result systemSetting() {
+        JsonNode settingJson = settingService.getSettingJson();
+        return Result.successData(settingJson);
     }
 }

@@ -14,7 +14,7 @@ import java.util.Date;
 @Service
 public class AuthService {
 
-    //private final SiteConfigService siteConfigService;
+    //private final SettingService settingService;
 
     @Value("${wildnote.username:}")
     private String noteUsername;
@@ -25,8 +25,8 @@ public class AuthService {
     //访问令牌
     //private String accessToken;
 
-    //public AuthService(SiteConfigService siteConfigService) {
-    //    this.siteConfigService = siteConfigService;
+    //public AuthService(SettingService settingService) {
+    //    this.settingService = settingService;
     //}
 
     /**
@@ -41,7 +41,7 @@ public class AuthService {
             throw new ValidationException("用户名或密码错误");
         }
 
-        //if (!siteConfigService.auth(username, password)) {
+        //if (!settingService.auth(username, password)) {
         //    throw new ValidationException("用户名或密码错误");
         //}
 
