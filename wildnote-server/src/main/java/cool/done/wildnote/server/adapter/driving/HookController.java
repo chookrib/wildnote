@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,6 +56,8 @@ public class HookController {
     public Result record(@PathVariable String name, @RequestParam String content) {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(content))
             return Result.error(ResultCodes.ERROR_DEFAULT);
+
+        content = URLDecoder.decode(content, StandardCharsets.UTF_8);
 
         String note = settingService.getHookRecordNote(name);
         if(StringUtils.isEmpty(note))
