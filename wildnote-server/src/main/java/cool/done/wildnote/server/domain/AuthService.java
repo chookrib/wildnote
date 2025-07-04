@@ -14,20 +14,20 @@ import java.util.Date;
 @Service
 public class AuthService {
 
-    private final SiteConfigService siteConfigService;
+    //private final SiteConfigService siteConfigService;
 
-    //@Value("${wildnote.username:}")
-    //private String noteUsername;
-    //
-    //@Value("${wildnote.password:}")
-    //private String notePassword;
+    @Value("${wildnote.username:}")
+    private String noteUsername;
+
+    @Value("${wildnote.password:}")
+    private String notePassword;
 
     //访问令牌
     //private String accessToken;
 
-    public AuthService(SiteConfigService siteConfigService) {
-        this.siteConfigService = siteConfigService;
-    }
+    //public AuthService(SiteConfigService siteConfigService) {
+    //    this.siteConfigService = siteConfigService;
+    //}
 
     /**
      * 登录
@@ -37,13 +37,13 @@ public class AuthService {
             throw new ValidationException("用户名或密码不能为空");
         }
 
-        //if (!noteUsername.equals(username) || !notePassword.equals(password)) {
-        //    throw new ValidationException("用户名或密码错误");
-        //}
-
-        if (!siteConfigService.auth(username, password)) {
+        if (!noteUsername.equals(username) || !notePassword.equals(password)) {
             throw new ValidationException("用户名或密码错误");
         }
+
+        //if (!siteConfigService.auth(username, password)) {
+        //    throw new ValidationException("用户名或密码错误");
+        //}
 
         //令牌不存在时创建令牌
         //if (StringUtils.isEmpty(accessToken)) {

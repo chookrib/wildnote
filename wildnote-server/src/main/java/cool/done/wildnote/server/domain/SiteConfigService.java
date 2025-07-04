@@ -39,15 +39,15 @@ public class SiteConfigService {
         return JacksonUtility.readTree(config);
     }
 
-    /**
-     * 认证
-     */
-    public boolean auth(String username, String password) {
-        JsonNode configJson = getConfigJson();
-        String configUsername = configJson.path("auth").path("username").asText();
-        String configPassword = configJson.path("auth").path("password").asText();
-        return configUsername.equals(username) && configPassword.equals(password);
-    }
+    ///**
+    // * 认证
+    // */
+    //public boolean auth(String username, String password) {
+    //    JsonNode configJson = getConfigJson();
+    //    String configUsername = configJson.path("auth").path("username").asText();
+    //    String configPassword = configJson.path("auth").path("password").asText();
+    //    return configUsername.equals(username) && configPassword.equals(password);
+    //}
 
     /**
      * 获取提醒钩子名称
