@@ -93,7 +93,7 @@ public class SmsHandler implements ISmsHandler {
                     ;
             SendSmsResponse response = client.sendSms(request);
             //String requestId = response.body.requestId;
-            log = String.format("验证码短信发送成功: %s %s %s", mobile, code, JacksonUtility.writeValueAsString(response.body));
+            log = String.format("验证码短信发送结果: %s %s %s", mobile, code, JacksonUtility.writeValueAsString(response.body));
         }
         catch (Exception e) {
             log = String.format("验证码短信发送失败: %s %s", mobile, e.getMessage());

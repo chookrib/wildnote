@@ -74,9 +74,9 @@ public class RemindHandler implements IRemindHandler {
 
         String log = "";
         try {
-            dingTalkChatSend(message);
+            String response = dingTalkChatSend(message);
             //logger.info("笔记提醒成功: {}", message);
-            log = String.format("笔记提醒成功: %s", message);
+            log = String.format("笔记提醒结果: %s %s", message, response);
         }
         catch (Exception e) {
             //logger.error("笔记提醒失败: {}", e.getMessage());
@@ -117,7 +117,7 @@ public class RemindHandler implements IRemindHandler {
     /**
      * 发送钉钉群消息
      */
-    private void dingTalkChatSend(String message){
+    private String dingTalkChatSend(String message){
         if (DING_TALK_ACCESS_TOKEN_EXPIRE_TIME == null || DING_TALK_ACCESS_TOKEN_EXPIRE_TIME.before(new Date())) {
             dingTalkAccessTokenRefresh();
         }
@@ -132,6 +132,6 @@ public class RemindHandler implements IRemindHandler {
 
         String url = String.format("https://oapi.dingtalk.com/chat/send?access_token=%s", DING_TALK_ACCESS_TOKEN);
         String responseBody = new RestTemplate().postForObject(url, requestBody, String.class);
-        //logger.info(responseBody);
+        return responseBody;
     }
 }
