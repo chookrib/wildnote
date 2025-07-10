@@ -16,13 +16,13 @@ import java.util.Set;
  * 使用 Quartz 实现
  */
 @Component
-public class NoteRemindQuartzScheduler implements INoteRemindScheduler {
+public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
     private static final Logger logger = LoggerFactory.getLogger(NoteRemindQuartzScheduler.class);
 
-    private final IRemindHandler remindHandler;
+    private final RemindHandler remindHandler;
     private final Scheduler scheduler;
 
-    public NoteRemindQuartzScheduler(IRemindHandler remindHandler) {
+    public NoteRemindQuartzScheduler(RemindHandler remindHandler) {
         this.remindHandler = remindHandler;
         try {
             this.scheduler = StdSchedulerFactory.getDefaultScheduler();

@@ -4,13 +4,12 @@ import com.aliyun.dysmsapi20170525.Client;
 import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import com.aliyun.teaopenapi.models.Config;
-import cool.done.wildnote.server.domain.ISmsHandler;
+import cool.done.wildnote.server.domain.SmsHandler;
 import cool.done.wildnote.server.utility.JacksonUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -19,11 +18,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * 短信处理器
+ * 阿里云短信处理器
  */
 @Component
-public class SmsHandler implements ISmsHandler {
-    private static final Logger logger = LoggerFactory.getLogger(SmsHandler.class);
+public class AliyunSmsHandler implements SmsHandler {
+    private static final Logger logger = LoggerFactory.getLogger(AliyunSmsHandler.class);
 
     //@Value("${wildnote.sms-url:}")
     //private String smsUrl;
@@ -42,7 +41,7 @@ public class SmsHandler implements ISmsHandler {
     @Value("${wildnote.sms-aliyun-template:}")
     private String smsAliyunTemplate;
 
-    public SmsHandler(@Value("${wildnote.sms-log-path:}") String smsLogPath) {
+    public AliyunSmsHandler(@Value("${wildnote.sms-log-path:}") String smsLogPath) {
         this.smsLogPath = smsLogPath;
         if (!smsLogPath.isEmpty()) {
             File smsLogDir = new File(smsLogPath).getParentFile();

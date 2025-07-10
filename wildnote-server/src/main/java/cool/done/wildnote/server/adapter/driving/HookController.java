@@ -1,6 +1,6 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnote.server.domain.IRemindHandler;
+import cool.done.wildnote.server.domain.RemindHandler;
 import cool.done.wildnote.server.domain.NoteService;
 import cool.done.wildnote.server.domain.SettingService;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +24,9 @@ public class HookController {
 
     private final NoteService noteService;
     private final SettingService settingService;
-    private final IRemindHandler remindHandler;
+    private final RemindHandler remindHandler;
 
-    public HookController(NoteService noteService, SettingService settingService, IRemindHandler remindHandler) {
+    public HookController(NoteService noteService, SettingService settingService, RemindHandler remindHandler) {
         this.noteService = noteService;
         this.settingService = settingService;
         this.remindHandler = remindHandler;

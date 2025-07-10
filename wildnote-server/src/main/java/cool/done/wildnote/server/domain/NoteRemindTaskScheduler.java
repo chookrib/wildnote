@@ -17,14 +17,14 @@ import java.util.concurrent.TimeUnit;
  * 使用 TaskScheduler 实现
  */
 @Component
-public class NoteRemindTaskScheduler implements INoteRemindScheduler {
+public class NoteRemindTaskScheduler implements NoteRemindScheduler {
     private static final Logger logger = LoggerFactory.getLogger(NoteRemindTaskScheduler.class);
 
-    private final IRemindHandler remindHandler;
+    private final RemindHandler remindHandler;
     private final TaskScheduler taskScheduler;
     private Map<String, ScheduledFuture<?>> scheduleMap = new ConcurrentHashMap<>();
 
-    public NoteRemindTaskScheduler(IRemindHandler remindHandler, TaskScheduler taskScheduler) {
+    public NoteRemindTaskScheduler(RemindHandler remindHandler, TaskScheduler taskScheduler) {
         this.remindHandler = remindHandler;
         this.taskScheduler = taskScheduler;
     }

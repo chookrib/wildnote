@@ -3,7 +3,7 @@ package cool.done.wildnote.server.domain;
 /**
  * 提醒接口
  */
-public interface IRemindHandler {
+public interface RemindHandler {
     /**
      * 发送提醒消息
      */

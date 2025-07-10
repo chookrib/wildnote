@@ -1,7 +1,7 @@
 package cool.done.wildnote.server.adapter.driven;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import cool.done.wildnote.server.domain.IRemindHandler;
+import cool.done.wildnote.server.domain.RemindHandler;
 import cool.done.wildnote.server.utility.JacksonUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 提醒处理器
+ * 钉钉提醒处理器
  */
 @Component
-public class RemindHandler implements IRemindHandler {
-    private static final Logger logger = LoggerFactory.getLogger(RemindHandler.class);
+public class DingTalkRemindHandler implements RemindHandler {
+    private static final Logger logger = LoggerFactory.getLogger(DingTalkRemindHandler.class);
 
     @Value("${wildnote.remind-url:}")
     private String remindUrl;
@@ -30,15 +30,15 @@ public class RemindHandler implements IRemindHandler {
     private final String remindLogPath;
 
     @Value("${wildnote.remind-dingtalk-key:}")
-    private String remindDingtalkKey;
+    private String remindDingTalkKey;
 
     @Value("${wildnote.remind-dingtalk-secret:}")
-    private String remindDingtalkSecret;
+    private String remindDingTalkSecret;
 
     @Value("${wildnote.remind-dingtalk-chatid:}")
-    private String remindDingtalkChatId;
+    private String remindDingTalkChatId;
 
-    public RemindHandler(@Value("${wildnote.remind-log-path:}") String remindLogPath) {
+    public DingTalkRemindHandler(@Value("${wildnote.remind-log-path:}") String remindLogPath) {
         this.remindLogPath = remindLogPath;
         if (!remindLogPath.isEmpty()) {
             File remindLogDir = new File(remindLogPath).getParentFile();
@@ -93,16 +93,16 @@ public class RemindHandler implements IRemindHandler {
         }
     }
 
-    private static String DING_TALK_ACCESS_TOKEN = "";
-    private static Date DING_TALK_ACCESS_TOKEN_EXPIRE_TIME = null;
+    private static String DINGTALK_ACCESS_TOKEN = "";
+    private static Date DINGTALK_ACCESS_TOKEN_EXPIRE_TIME = null;
 
     /**
      * 刷新钉钉AccessToken
      */
     private void dingTalkAccessTokenRefresh() {
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("appKey", remindDingtalkKey);
-        requestBody.put("appSecret", remindDingtalkSecret);
+        requestBody.put("appKey", remindDingTalkKey);
+        requestBody.put("appSecret", remindDingTalkSecret);
         String responseBody = new RestTemplate().postForObject("https://api.dingtalk.com/v1.0/oauth2/accessToken",
                 requestBody, String.class
         );
@@ -110,19 +110,19 @@ public class RemindHandler implements IRemindHandler {
         JsonNode responseJson = JacksonUtility.readTree(responseBody);
         String accessToken = responseJson.path("accessToken").asText();
         int expireIn = responseJson.path("expiresIn").asInt();
-        DING_TALK_ACCESS_TOKEN = accessToken;
-        DING_TALK_ACCESS_TOKEN_EXPIRE_TIME = new Date(System.currentTimeMillis() + (expireIn - 600) * 1000L);
+        DINGTALK_ACCESS_TOKEN = accessToken;
+        DINGTALK_ACCESS_TOKEN_EXPIRE_TIME = new Date(System.currentTimeMillis() + (expireIn - 600) * 1000L);
     }
 
     /**
      * 发送钉钉群消息
      */
     private String dingTalkChatSend(String message){
-        if (DING_TALK_ACCESS_TOKEN_EXPIRE_TIME == null || DING_TALK_ACCESS_TOKEN_EXPIRE_TIME.before(new Date())) {
+        if (DINGTALK_ACCESS_TOKEN_EXPIRE_TIME == null || DINGTALK_ACCESS_TOKEN_EXPIRE_TIME.before(new Date())) {
             dingTalkAccessTokenRefresh();
         }
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("chatid", remindDingtalkChatId);
+        requestBody.put("chatid", remindDingTalkChatId);
         Map<String, Object> requestBodyMsg = new HashMap<>();
         requestBodyMsg.put("msgtype", "text");
         Map<String, String> requestBodyMsgText = new HashMap<>();
@@ -130,7 +130,7 @@ public class RemindHandler implements IRemindHandler {
         requestBodyMsg.put("text", requestBodyMsgText);
         requestBody.put("msg", requestBodyMsg);
 
-        String url = String.format("https://oapi.dingtalk.com/chat/send?access_token=%s", DING_TALK_ACCESS_TOKEN);
+        String url = String.format("https://oapi.dingtalk.com/chat/send?access_token=%s", DINGTALK_ACCESS_TOKEN);
         String responseBody = new RestTemplate().postForObject(url, requestBody, String.class);
         return responseBody;
     }

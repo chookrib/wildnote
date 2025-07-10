@@ -33,12 +33,12 @@ public class NoteService {
     private DirectoryWatcher watcher = null;
     private Map<String, NotePath> notePathMap = new ConcurrentHashMap<>();
 
-    private final INoteRemindScheduler remindScheduler;
+    private final NoteRemindScheduler remindScheduler;
 
     public NoteService(@Value("${wildnote.note-root-path}") String noteRootPath,
                        @Value("${wildnote.note-extensions}") String noteExtensions,
-                       //@Qualifier("noteRemindTaskScheduler") INoteRemindScheduler remindScheduler,
-                       @Qualifier("noteRemindQuartzScheduler") INoteRemindScheduler remindScheduler
+                       //@Qualifier("noteRemindTaskScheduler") NoteRemindScheduler remindScheduler,
+                       @Qualifier("noteRemindQuartzScheduler") NoteRemindScheduler remindScheduler
     ) {
 
         if (StringUtils.isEmpty(noteRootPath)) {

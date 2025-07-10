@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 记提醒计划任务接口
  */
-public interface INoteRemindScheduler {
+public interface NoteRemindScheduler {
     /**
      * 添加提醒计划任务
      */

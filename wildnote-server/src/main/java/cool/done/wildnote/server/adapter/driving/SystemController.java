@@ -21,11 +21,11 @@ public class SystemController {
     @Value("${wildnote.sms-log-path:}")
     private String smsLogPath;
 
-    private final IRemindHandler remindHandler;
-    private final ISmsHandler smsHandler;
+    private final RemindHandler remindHandler;
+    private final SmsHandler smsHandler;
     private final SettingService settingService;
 
-    public SystemController(IRemindHandler remindHandler, ISmsHandler smsHandler, SettingService settingService) {
+    public SystemController(RemindHandler remindHandler, SmsHandler smsHandler, SettingService settingService) {
         this.remindHandler = remindHandler;
         this.smsHandler = smsHandler;
         this.settingService = settingService;
