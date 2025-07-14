@@ -140,7 +140,7 @@ public class NoteService {
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("重新加载笔记异常", e);
         }
 
         //files.sort((file1, file2) -> {
@@ -267,7 +267,7 @@ public class NoteService {
     }
 
     /**
-     * 开始监控笔记文件变化
+     * 启动监控笔记文件变化
      */
     public void startWatch() {
         try {
@@ -303,7 +303,7 @@ public class NoteService {
                     .fileHashing(true)
                     .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("启动笔记监控异常", e);
         }
 
         watcher.watchAsync();
@@ -317,7 +317,7 @@ public class NoteService {
             try {
                 watcher.close();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("停止笔记监控异常", e);
             }
         }
     }
@@ -348,7 +348,7 @@ public class NoteService {
         try {
             return Files.readString(combineAbsPath(relPath));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("获取笔记异常", e);
         }
     }
 
@@ -359,7 +359,7 @@ public class NoteService {
         try {
             Files.writeString(combineAbsPath(relPath), content);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("保存笔记异常", e);
         }
     }
 
@@ -369,11 +369,11 @@ public class NoteService {
     public void createNote(String relPath) {
         Path path = combineAbsPath(relPath);
         if (Files.exists(path))
-            throw new RuntimeException("笔记文件已存在");
+            throw new RuntimeException("创建笔记异常: 笔记文件已存在");
         try {
             Files.writeString(path, "");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("创建笔记异常", e);
         }
     }
 
@@ -384,7 +384,7 @@ public class NoteService {
         try {
             Files.delete(combineAbsPath(relPath));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("删除笔记异常", e);
         }
     }
 }

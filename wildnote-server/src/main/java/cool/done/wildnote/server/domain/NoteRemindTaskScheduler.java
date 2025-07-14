@@ -40,7 +40,7 @@ public class NoteRemindTaskScheduler implements NoteRemindScheduler {
         try {
             cronTrigger = new CronTrigger(cron);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("添加笔记 %s 提醒计划任务异常", path), e);
         }
 
         ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(() -> {

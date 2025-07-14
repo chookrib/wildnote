@@ -16,7 +16,7 @@ public class JacksonUtility {
         try {
             return new ObjectMapper().readTree(json);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("解析json字符串异常", e);
         }
     }
 
@@ -27,7 +27,7 @@ public class JacksonUtility {
         try {
             return new ObjectMapper().writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("生成json字符串异常", e);
         }
     }
 }

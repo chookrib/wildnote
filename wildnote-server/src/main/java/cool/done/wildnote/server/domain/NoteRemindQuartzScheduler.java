@@ -53,7 +53,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
                     .build();
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("添加笔记 %s 提醒计划任务异常", path), e);
         }
     }
 
@@ -62,7 +62,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
         try {
             scheduler.clear();
         } catch (SchedulerException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("清除所有提醒计划任务异常", e);
         }
         //try {
         //    scheduler.standby();
@@ -72,7 +72,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
         //        }
         //    }
         //} catch (SchedulerException e) {
-        //    throw new RuntimeException(e);
+        //    throw new RuntimeException("清除所有提醒计划任务异常", e);
         //}
     }
 
@@ -84,7 +84,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
             List<JobKey> jobKeyList = new ArrayList<>(jobKeySet);
             scheduler.deleteJobs(jobKeyList);
         } catch (SchedulerException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(String.format("删除笔记 %s 提醒计划任务异常", path), e);
         }
 
         //try {
@@ -97,7 +97,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
         //        }
         //    }
         //} catch (SchedulerException e) {
-        //    throw new RuntimeException(e);
+        //    throw new RuntimeException(String.format("删除笔记 %s 提醒计划任务异常", path), e);
         //}
     }
 
@@ -145,7 +145,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
                 }
             }
         } catch (SchedulerException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("取所有提醒计划任务异常", e);
         }
 
         return result;
