@@ -34,7 +34,7 @@ public class SettingService {
         try {
             config = Files.readString(noteService.combineAbsPath(settingPath), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new ValidationException(String.format("读取配置文件 %s 异常", settingPath), e);
+            throw new RuntimeException(String.format("读取配置文件 %s 异常", settingPath), e);
         }
         return JacksonUtility.readTree(config);
     }
