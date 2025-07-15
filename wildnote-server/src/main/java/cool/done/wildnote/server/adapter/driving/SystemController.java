@@ -70,7 +70,7 @@ public class SystemController {
     @RequestMapping(value = "/api/system/remind/test", method = RequestMethod.GET)
     public Result systemRemindTest(@RequestParam String message) {
         if(StringUtils.isEmpty(message)) {
-            throw new ValidationException("提醒消息不能为空");
+            throw new ValidationException("参数message不能为空");
         }
         this.remindHandler.remind(message);
         return Result.success();
@@ -115,10 +115,10 @@ public class SystemController {
     @RequestMapping(value = "/api/system/sms/test", method = RequestMethod.GET)
     public Result systemSmsTest(@RequestParam String mobile, @RequestParam String code) {
         if(StringUtils.isEmpty(mobile)) {
-            throw new ValidationException("mobile不能为空");
+            throw new ValidationException("参数mobile不能为空");
         }
         if(StringUtils.isEmpty(code)) {
-            throw new ValidationException("code不能为空");
+            throw new ValidationException("参数code不能为空");
         }
         this.smsHandler.sendCode(mobile, code);
         return Result.success();

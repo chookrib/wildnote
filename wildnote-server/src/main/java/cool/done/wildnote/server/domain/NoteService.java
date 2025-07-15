@@ -48,7 +48,7 @@ public class NoteService {
         try {
             noteRootRealPath = Path.of(noteRootPath).toRealPath();
         } catch (IOException e) {
-            throw new RuntimeException(String.format("笔记根路径无效: %s", e.getMessage()));
+            throw new RuntimeException(String.format("笔记根路径非法"), e);
         }
         //if (!Files.exists(noteRootRealPath)) {
         //    throw new RuntimeException("笔记根路径不存在");

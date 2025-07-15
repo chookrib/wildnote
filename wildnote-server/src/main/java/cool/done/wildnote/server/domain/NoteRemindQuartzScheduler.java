@@ -34,7 +34,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
                     });
             this.scheduler.start();
         } catch (SchedulerException e) {
-            throw new RuntimeException("NoteRemindQuartzScheduler初始化失败", e);
+            throw new RuntimeException("NoteRemindQuartzScheduler初始化异常", e);
         }
     }
 
