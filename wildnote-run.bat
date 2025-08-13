@@ -58,7 +58,7 @@ rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-loc
 rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web\dist %*
 set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web\dist %2 %3 %4 %5 %6 %7 %8 %9
 echo %run_wildnote_cmd%
-%run_wildnote_cmd%
+start /wait %run_wildnote_cmd%
 goto :EOF
 
 :usage
