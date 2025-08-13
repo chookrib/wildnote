@@ -48,6 +48,7 @@ if not exist ".\target\*.jar" (
     for /f "delims=" %%i in ('dir .\target\*.jar /b /o:-n') do (
         rem call :runjar %%i "%arg_wildnote_root_path%" "%arg_wildnote_username%" "%arg_wildnote_password%" "%arg_server_port%"
         call :runjar %%i %params%
+        goto :EOF
     )
 )
 goto :EOF
@@ -58,7 +59,7 @@ rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-loc
 rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web\dist %*
 set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web\dist %2 %3 %4 %5 %6 %7 %8 %9
 echo %run_wildnote_cmd%
-start /wait %run_wildnote_cmd%
+%run_wildnote_cmd%
 goto :EOF
 
 :usage
