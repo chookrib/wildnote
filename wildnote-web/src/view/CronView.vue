@@ -125,7 +125,7 @@ const columnsFailed = [
 
 <template>
   <a-card>
-    <template #title>运行中提醒</template>
+    <template #title>注册成功的提醒</template>
     <a-table
       :columns="columns"
       :row-key="record => record.path + record.lineNumber"
@@ -160,7 +160,7 @@ const columnsFailed = [
     </a-table>
   </a-card>
   <a-card>
-    <template #title>失败的提醒</template>
+    <template #title>注册失败的提醒</template>
     <a-table
       :columns="columnsFailed"
       :row-key="record => record.path + record.lineNumber"
