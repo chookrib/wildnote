@@ -34,7 +34,7 @@ git --version
 echo %cd%
 
 rem git checkout main
-git pull
+git pull > git_output.txt 2>&1
 
 cd wildnote-web
 call npm install
