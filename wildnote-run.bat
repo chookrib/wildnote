@@ -24,6 +24,8 @@ rem if not "%4" == "" (
 rem    set arg_server_port=--server.port=%4
 rem )
 
+cd /d "%~dp0"
+
 set params=%*
 rem set params=%1 %2 %3 %4 %5 %6 %7 %8 %9
 
