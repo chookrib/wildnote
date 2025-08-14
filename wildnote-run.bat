@@ -29,6 +29,9 @@ cd /d "%~dp0"
 set params=%*
 rem set params=%1 %2 %3 %4 %5 %6 %7 %8 %9
 
+echo %PATH%
+git --version
+
 git checkout main
 git pull
 
