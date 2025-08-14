@@ -1,15 +1,13 @@
 package cool.done.wildnote.server.domain;
 
 /**
- * 笔记提醒计划任务
+ * 笔记提醒计划任务，添加失败的
  */
-public class NoteRemindCron {
+public class NoteRemindCronFailed {
     private String path;
     private String lineNumber;
     private String cron;
     private String message;
-    private Long nextTime;
-    private long delayTime;
 
     public String getPath() { return this.path; }
 
@@ -19,17 +17,10 @@ public class NoteRemindCron {
 
     public String getMessage() { return this.message; }
 
-    public Long getNextTime() { return this.nextTime; }
-
-    public long getDelayTime() { return this.delayTime; }
-
-    public NoteRemindCron(String path, String lineNumber, String cron, String message,
-                          Long nextTime, long delayTime) {
+    public NoteRemindCronFailed(String path, String lineNumber, String cron, String message) {
         this.path = path;
         this.lineNumber = lineNumber;
         this.cron = cron;
         this.message = message;
-        this.nextTime = nextTime;
-        this.delayTime = delayTime;
     }
 }

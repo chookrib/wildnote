@@ -53,7 +53,7 @@ public class NoteRemindQuartzScheduler implements NoteRemindScheduler {
                     .build();
             scheduler.scheduleJob(jobDetail, trigger);
         } catch (Exception e) {
-            throw new RuntimeException(String.format("添加笔记 %s 提醒计划任务异常", path), e);
+            throw new RuntimeException(String.format("添加笔记 %s 提醒计划任务异常: %s", path, e.getMessage()));
         }
     }
 

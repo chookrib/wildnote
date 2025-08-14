@@ -34,6 +34,7 @@ public class NoteService {
     private Map<String, NotePath> notePathMap = new ConcurrentHashMap<>();
 
     private final NoteRemindScheduler remindScheduler;
+    private List<NoteRemindCronFailed> cronFailedList = new ArrayList<>();  // 失败的提醒计划任务
 
     public NoteService(@Value("${wildnote.note-root-path}") String noteRootPath,
                        @Value("${wildnote.note-extensions}") String noteExtensions,
@@ -236,6 +237,7 @@ public class NoteService {
                     remindScheduler.add(path, lineNumber, cron, message);
                     logger.info("处理笔记提醒成功: {} {} {}", path, lineNumber, cron);
                 } catch (Exception e) {
+                    cronFailedList.add(new NoteRemindCronFailed(path, String.valueOf(lineNumber), cron, message));
                     logger.error("处理笔记提醒失败: {} {} {} {}", path, lineNumber, cron, e.getMessage());
                     continue;
                 }
@@ -255,7 +257,10 @@ public class NoteService {
         }
 
         String path = file.getPath().substring(noteRootAbsPath.length());
+        // 删除提醒计划任务
         remindScheduler.remove(path);
+        // 删除失败的提醒计划任务
+        cronFailedList.removeIf(cronFailed -> cronFailed.getPath().equals(path));
         logger.info("移除笔记提醒成功: {}", path);
     }
 
@@ -264,6 +269,13 @@ public class NoteService {
      */
     public List<NoteRemindCron> getAllCron() {
         return remindScheduler.getAll();
+    }
+
+    /**
+     * 取所有失败的提醒计划任务
+     */
+    public List<NoteRemindCronFailed> getAllCronFailed() {
+        return cronFailedList;
     }
 
     /**

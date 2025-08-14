@@ -1,6 +1,7 @@
 package cool.done.wildnote.server.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import cool.done.wildnote.server.domain.NoteRemindCronFailed;
 import cool.done.wildnote.server.utility.JacksonUtility;
 import cool.done.wildnote.server.domain.NotePath;
 import cool.done.wildnote.server.domain.NoteRemindCron;
@@ -98,4 +99,12 @@ public class NoteController {
         return Result.successData(result);
     }
 
+    /**
+     * 取所有失败的定时任务
+     */
+    @RequestMapping(value = "/api/note/cron/failed", method = RequestMethod.GET)
+    public Result getCronFailed() {
+        List<NoteRemindCronFailed> result = noteService.getAllCronFailed();
+        return Result.successData(result);
+    }
 }
