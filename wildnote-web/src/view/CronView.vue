@@ -5,10 +5,14 @@ import { RouterLink } from 'vue-router'
 import { showDateTime, showTime } from '@/utility/datetime-utility.js'
 
 const dataSource = ref([])
+const dataSourceFailed = ref([])
 
 onMounted(() => {
   axios.get('/api/note/cron').then(response => {
     dataSource.value = response.data.data
+  })
+  axios.get('/api/note/cron/failed').then(response => {
+    dataSourceFailed.value = response.data.data
   })
 })
 
@@ -96,11 +100,32 @@ const columns = [
     //ellipsis: true
   }
 ]
-
+const columnsFailed = [
+  {
+    title: '笔记文件路径',
+    dataIndex: 'path',
+    // sorter: true
+  },
+  {
+    title: '行',
+    dataIndex: 'lineNumber',
+    align: 'center',
+  },
+  {
+    title: 'Cron表达式',
+    dataIndex: 'cron',
+  },
+  {
+    title: '提醒消息',
+    dataIndex: 'message',
+    //ellipsis: true
+  }
+]
 </script>
 
 <template>
   <a-card>
+    <template #title>运行中提醒</template>
     <a-table
       :columns="columns"
       :row-key="record => record.path + record.lineNumber"
@@ -130,6 +155,27 @@ const columns = [
           </a-tag>
           <br>{{ showDateTime(record.nextTime) }}
           <br>{{ showTime(record.delayTime) }}
+        </template>
+      </template>
+    </a-table>
+  </a-card>
+  <a-card>
+    <template #title>失败的提醒</template>
+    <a-table
+      :columns="columnsFailed"
+      :row-key="record => record.path + record.lineNumber"
+      :data-source="dataSourceFailed"
+      :pagination="false"
+      size="small"
+    >
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.dataIndex === 'path'">
+          <RouterLink :to="{path:'/note', query: {path: record.path}}">{{ record.path }}</RouterLink>
+        </template>
+        <template v-if="column.dataIndex === 'cron'">
+          <a-tag>
+            {{ record.cron }}
+          </a-tag>
         </template>
       </template>
     </a-table>
