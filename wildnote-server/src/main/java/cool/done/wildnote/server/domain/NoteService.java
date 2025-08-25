@@ -253,6 +253,7 @@ public class NoteService {
      */
     private void removeCron(File file) {
         if (!file.isFile() || !isValidCronExtension(file)) {
+            logger.info("移除笔记提醒忽略: {} {}", file.isFile(), !isValidCronExtension(file));
             return;
         }
 
@@ -304,6 +305,7 @@ public class NoteService {
                                 processCron(file);
                                 break;
                             case DELETE:
+                                logger.info("DELETE: {}", event.eventType());
                                 removeNotePath(file);
                                 removeCron(file);
                                 break;
