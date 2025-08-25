@@ -172,9 +172,10 @@ public class NoteService {
      * 移除笔记路径对象
      */
     private void removeNotePath(File file) {
-        if (file.isFile() && !isValidExtension(file)) {
-            return;
-        }
+        // 文件不存在时 file.isFile 返回 false
+        //if (file.isFile() && !isValidExtension(file)) {
+        //    return;
+        //}
         notePathMap.remove(file.getPath());
     }
 
@@ -252,10 +253,11 @@ public class NoteService {
      * 删除提醒计划任务
      */
     private void removeCron(File file) {
-        if (!file.isFile() || !isValidCronExtension(file)) {
-            logger.info("移除笔记提醒忽略: isFile={} isValidCronExtension={}", file.isFile(), isValidCronExtension(file));
-            return;
-        }
+        // 文件不存在时 file.isFile 返回 false
+        //if (!file.isFile() || !isValidCronExtension(file)) {
+        //    logger.info("移除笔记提醒忽略: isFile={} isValidCronExtension={}", file.isFile(), isValidCronExtension(file));
+        //    return;
+        //}
 
         String path = file.getPath().substring(noteRootAbsPath.length());
         // 删除提醒计划任务
