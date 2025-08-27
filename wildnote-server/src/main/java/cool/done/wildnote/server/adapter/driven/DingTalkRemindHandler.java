@@ -77,8 +77,7 @@ public class DingTalkRemindHandler implements RemindHandler {
             String response = dingTalkChatSend(message);
             //logger.info("笔记提醒成功: {}", message);
             log = String.format("笔记提醒结果: %s %s", message, response);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //logger.error("笔记提醒失败: {}", e.getMessage());
             log = String.format("笔记提醒失败: %s", e.getMessage());
         }
@@ -87,8 +86,7 @@ public class DingTalkRemindHandler implements RemindHandler {
             FileWriter fileWriter = new FileWriter(remindLogPath, StandardCharsets.UTF_8, true);
             fileWriter.write(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + log + "\n");
             fileWriter.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             logger.error("笔记提醒写日志失败: {} {}", log, e.getMessage());
         }
     }
@@ -117,7 +115,7 @@ public class DingTalkRemindHandler implements RemindHandler {
     /**
      * 发送钉钉群消息
      */
-    private String dingTalkChatSend(String message){
+    private String dingTalkChatSend(String message) {
         if (DINGTALK_ACCESS_TOKEN_EXPIRE_TIME == null || DINGTALK_ACCESS_TOKEN_EXPIRE_TIME.before(new Date())) {
             dingTalkAccessTokenRefresh();
         }
