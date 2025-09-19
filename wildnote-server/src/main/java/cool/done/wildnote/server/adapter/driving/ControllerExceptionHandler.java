@@ -47,7 +47,7 @@ public class ControllerExceptionHandler {
     public Result defaultExceptionHandler(HttpServletResponse response, Exception e) {
         logger.error("捕捉到未处理的异常: {}", e.getMessage());
 
-        // 404异常设置状态码
+        // NoResourceFoundException异常设置状态码404
         if(e instanceof NoResourceFoundException) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         }

@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Web配置
+ * Web拦截器配置
  */
 @Configuration
 public class WebInterceptorConfig implements WebMvcConfigurer {
