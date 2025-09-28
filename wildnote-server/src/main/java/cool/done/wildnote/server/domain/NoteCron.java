@@ -1,7 +1,5 @@
 package cool.done.wildnote.server.domain;
 
-import java.util.UUID;
-
 /**
  * 笔记计划任务
  */

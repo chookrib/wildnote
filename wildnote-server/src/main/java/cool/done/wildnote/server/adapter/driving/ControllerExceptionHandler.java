@@ -1,6 +1,5 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnote.server.application.ExtraLogService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +19,6 @@ public class ControllerExceptionHandler {
 
     protected static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
-    private final ExtraLogService extraLogService;
-
-    public ControllerExceptionHandler(ExtraLogService extraLogService) {
-        this.extraLogService = extraLogService;
-    }
-
     /**
      * NotLoginException 异常处理器
      */
@@ -41,14 +34,11 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result defaultExceptionHandler(HttpServletResponse response, Exception e) {
-        extraLogService.systemError(String.format("捕捉到未处理的异常: %s", e.getMessage()), logger);
-
         // NoResourceFoundException 设置状态码 404
         if (e instanceof NoResourceFoundException)
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         //else
         //    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
 
         //String message = e.getMessage();
         String message = e.toString();

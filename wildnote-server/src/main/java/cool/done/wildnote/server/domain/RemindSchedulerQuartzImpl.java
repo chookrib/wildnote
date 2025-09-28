@@ -1,8 +1,11 @@
 package cool.done.wildnote.server.domain;
 
+import cool.done.wildnote.server.application.NoteRemindService;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -13,6 +16,8 @@ import java.util.*;
  */
 @Component
 public class RemindSchedulerQuartzImpl implements RemindScheduler {
+
+    private static final Logger logger = LoggerFactory.getLogger(NoteRemindService.class);
 
     private final RemindGateway remindGateway;
     private final Scheduler scheduler;

@@ -42,7 +42,7 @@ public class NoteRemindService {
     }
 
     /**
-     * 取笔记提醒计划任务已调度作业
+     * 取笔记提醒计划任务已调度作业，返回值 key=计划任务作业Id，value=下次执行的时间戳
      */
     public Map<String, Long> getCronJobMap() {
         return remindScheduler.getAllJob();

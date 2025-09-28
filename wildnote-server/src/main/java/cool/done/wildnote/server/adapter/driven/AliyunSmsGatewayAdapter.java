@@ -26,8 +26,6 @@ public class AliyunSmsGatewayAdapter implements SmsGateway {
 
     private static final Logger logger = LoggerFactory.getLogger(AliyunSmsGatewayAdapter.class);
 
-    private final String smsLogPath;
-
     @Value("${wildnote.sms-aliyun-key:}")
     private String smsAliyunKey;
 

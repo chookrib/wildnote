@@ -1,17 +1,17 @@
 package cool.done.wildnote.server.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import cool.done.wildnote.server.application.ExtraLogService;
+import cool.done.wildnote.server.application.ExtraLogType;
 import cool.done.wildnote.server.application.SettingService;
 import cool.done.wildnote.server.domain.*;
 import cool.done.wildnote.server.utility.ValueUtility;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * 系统 Controller
@@ -19,113 +19,17 @@ import java.nio.charset.StandardCharsets;
 @RestController
 public class SystemController {
 
-    @Value("${wildnote.remind-log-path:}")
-    private String remindLogPath;
-
-    @Value("${wildnote.sms-log-path:}")
-    private String smsLogPath;
-
     private final RemindGateway remindGateway;
     private final SmsGateway smsGateway;
     private final SettingService settingService;
+    private final ExtraLogService extraLogService;
 
-    public SystemController(RemindGateway remindGateway, SmsGateway smsGateway, SettingService settingService) {
+    public SystemController(RemindGateway remindGateway, SmsGateway smsGateway,
+                            SettingService settingService, ExtraLogService extraLogService) {
         this.remindGateway = remindGateway;
         this.smsGateway = smsGateway;
         this.settingService = settingService;
-    }
-
-    /**
-     * 取最新提醒日志
-     */
-    @RequestMapping(value = "/api/system/remind/recent-log", method = RequestMethod.GET)
-    public Result remindRecentLog(@RequestParam(defaultValue = "1024") int size) {
-        try (RandomAccessFile raf = new RandomAccessFile(remindLogPath, "r")) {
-            long fileLength = raf.length();
-            long start = Math.max(0, fileLength - size);
-            raf.seek(start);
-            byte[] buffer = new byte[(int)Math.min(size, fileLength)];
-            raf.readFully(buffer);
-
-            String result = new String(buffer, StandardCharsets.UTF_8);
-            if(start > 0) {
-                //去除被载断的行
-                result = result.substring(result.indexOf("\n") + 1);
-            }
-            //反转行顺序
-            result = result.lines()
-                    .filter(line -> !line.trim().isEmpty())
-                    .collect(java.util.stream.Collectors.collectingAndThen(
-                            java.util.stream.Collectors.toList(),
-                            list -> {
-                                java.util.Collections.reverse(list);
-                                return String.join("\n", list);
-                            }
-                    ));
-            return Result.okData(result);
-        } catch (Exception e) {
-            return Result.okData(e.getMessage());
-        }
-    }
-
-    /**
-     * 测试提醒功能
-     */
-    @RequestMapping(value = "/api/system/remind/test", method = RequestMethod.GET)
-    public Result remindTest(@RequestParam String message) {
-        if(ValueUtility.isBlank(message)) {
-            throw new ControllerException("参数message不能为空");
-        }
-        this.remindGateway.remind(message);
-        return Result.ok();
-    }
-
-    /**
-     * 取最新短信日志
-     */
-    @RequestMapping(value = "/api/system/sms/recent-log", method = RequestMethod.GET)
-    public Result smsRecentLog(@RequestParam(defaultValue = "1024") int size) {
-        try (RandomAccessFile raf = new RandomAccessFile(smsLogPath, "r")) {
-            long fileLength = raf.length();
-            long start = Math.max(0, fileLength - size);
-            raf.seek(start);
-            byte[] buffer = new byte[(int)Math.min(size, fileLength)];
-            raf.readFully(buffer);
-
-            String result = new String(buffer, StandardCharsets.UTF_8);
-            if(start > 0) {
-                //去除被载断的行
-                result = result.substring(result.indexOf("\n") + 1);
-            }
-            //反转行顺序
-            result = result.lines()
-                    .filter(line -> !line.trim().isEmpty())
-                    .collect(java.util.stream.Collectors.collectingAndThen(
-                            java.util.stream.Collectors.toList(),
-                            list -> {
-                                java.util.Collections.reverse(list);
-                                return String.join("\n", list);
-                            }
-                    ));
-            return Result.okData(result);
-        } catch (Exception e) {
-            return Result.okData(e.getMessage());
-        }
-    }
-
-    /**
-     * 测试短信功能
-     */
-    @RequestMapping(value = "/api/system/sms/test", method = RequestMethod.GET)
-    public Result smsTest(@RequestParam String mobile, @RequestParam String code) {
-        if(ValueUtility.isBlank(mobile)) {
-            throw new ControllerException("参数mobile不能为空");
-        }
-        if(ValueUtility.isBlank(code)) {
-            throw new ControllerException("参数code不能为空");
-        }
-        this.smsGateway.sendCode(mobile, code);
-        return Result.ok();
+        this.extraLogService = extraLogService;
     }
 
     /**
@@ -135,5 +39,52 @@ public class SystemController {
     public Result setting() {
         JsonNode settingJson = settingService.getSettingJson();
         return Result.okData(settingJson);
+    }
+
+    /**
+     * 取最新提醒日志
+     */
+    @RequestMapping(value = "/api/system/log/type", method = RequestMethod.GET)
+    public Result logType() {
+        return Result.okData(
+                Map.of("list", java.util.Arrays.asList(ExtraLogType.values()))
+        );
+    }
+
+    /**
+     * 取最新短信日志
+     */
+    @RequestMapping(value = "/api/system/log/get", method = RequestMethod.GET)
+    public Result smsLogGet(@RequestParam String type,
+                               @RequestParam(defaultValue = "0") long offset) {
+        ExtraLogService.ReadLogResult logResult = extraLogService.readLog(ExtraLogType.parse(type), offset);
+        return Result.okData(Map.of("result", logResult));
+    }
+
+    /**
+     * 测试提醒功能
+     */
+    @RequestMapping(value = "/api/system/remind/test", method = RequestMethod.GET)
+    public Result remindTest(@RequestParam String message) {
+        if (ValueUtility.isBlank(message)) {
+            throw new ControllerException("参数message不能为空");
+        }
+        this.remindGateway.remind(message);
+        return Result.ok();
+    }
+
+    /**
+     * 测试短信功能
+     */
+    @RequestMapping(value = "/api/system/sms/test", method = RequestMethod.GET)
+    public Result smsTest(@RequestParam String mobile, @RequestParam String code) {
+        if (ValueUtility.isBlank(mobile)) {
+            throw new ControllerException("参数mobile不能为空");
+        }
+        if (ValueUtility.isBlank(code)) {
+            throw new ControllerException("参数code不能为空");
+        }
+        this.smsGateway.sendCode(mobile, code);
+        return Result.ok();
     }
 }

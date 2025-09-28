@@ -48,6 +48,7 @@ public class NoteExploreService {
         }
         Path path;
         try {
+            // toRealPath 会解析符号链接，并返回规范化后的绝对路径，同时会检查路径是否真实存在。如果路径不存在或无权限，会抛出异常
             path = Path.of(noteRootPath).toRealPath();
         } catch (IOException e) {
             throw new ApplicationException(String.format("笔记根路径非法 %s", e.getMessage()));
@@ -323,7 +324,7 @@ public class NoteExploreService {
                     .fileHashing(true)
                     .build();
             watcher.watchAsync();
-            extraLogService.logNoteError(String.format("启动笔记监控成功: %s", noteRootAbsPath), logger);
+            extraLogService.logNoteInfo(String.format("启动笔记监控成功: %s", noteRootAbsPath), logger);
         } catch (IOException e) {
             extraLogService.logNoteError(String.format("启动笔记监控异常: %s %s", noteRootAbsPath, e.getMessage()), logger);
         }
@@ -336,7 +337,7 @@ public class NoteExploreService {
         if (watcher != null) {
             try {
                 watcher.close();
-                extraLogService.logNoteError(String.format("停止笔记监控成功"), logger);
+                extraLogService.logNoteInfo(String.format("停止笔记监控成功"), logger);
             } catch (IOException e) {
                 extraLogService.logNoteError(String.format("停止笔记监控异常: %s", e.getMessage()), logger);
             }
