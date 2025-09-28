@@ -12,7 +12,7 @@ const login = function() {
     username: loginForm.username,
     password: loginForm.password
   }).then(response => {
-    setLocalAccessToken(response.data.data)
+    setLocalAccessToken(response.data.data.accessToken)
     //router.push('/')
     window.location.href = '/'
   })

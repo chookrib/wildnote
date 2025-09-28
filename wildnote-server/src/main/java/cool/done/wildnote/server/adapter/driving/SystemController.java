@@ -1,8 +1,9 @@
 package cool.done.wildnote.server.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import cool.done.wildnote.server.application.SettingService;
 import cool.done.wildnote.server.domain.*;
-import org.apache.commons.lang3.StringUtils;
+import cool.done.wildnote.server.utility.ValueUtility;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * 系统 Controller
+ */
 @RestController
 public class SystemController {
 
@@ -21,13 +25,13 @@ public class SystemController {
     @Value("${wildnote.sms-log-path:}")
     private String smsLogPath;
 
-    private final RemindHandler remindHandler;
-    private final SmsHandler smsHandler;
+    private final RemindGateway remindGateway;
+    private final SmsGateway smsGateway;
     private final SettingService settingService;
 
-    public SystemController(RemindHandler remindHandler, SmsHandler smsHandler, SettingService settingService) {
-        this.remindHandler = remindHandler;
-        this.smsHandler = smsHandler;
+    public SystemController(RemindGateway remindGateway, SmsGateway smsGateway, SettingService settingService) {
+        this.remindGateway = remindGateway;
+        this.smsGateway = smsGateway;
         this.settingService = settingService;
     }
 
@@ -35,7 +39,7 @@ public class SystemController {
      * 取最新提醒日志
      */
     @RequestMapping(value = "/api/system/remind/recent-log", method = RequestMethod.GET)
-    public Result systemRemindRecentLog(@RequestParam(defaultValue = "1024") int size) {
+    public Result remindRecentLog(@RequestParam(defaultValue = "1024") int size) {
         try (RandomAccessFile raf = new RandomAccessFile(remindLogPath, "r")) {
             long fileLength = raf.length();
             long start = Math.max(0, fileLength - size);
@@ -58,9 +62,9 @@ public class SystemController {
                                 return String.join("\n", list);
                             }
                     ));
-            return Result.successData(result);
+            return Result.okData(result);
         } catch (Exception e) {
-            return Result.successData(e.getMessage());
+            return Result.okData(e.getMessage());
         }
     }
 
@@ -68,19 +72,19 @@ public class SystemController {
      * 测试提醒功能
      */
     @RequestMapping(value = "/api/system/remind/test", method = RequestMethod.GET)
-    public Result systemRemindTest(@RequestParam String message) {
-        if(StringUtils.isEmpty(message)) {
-            throw new ValidationException("参数message不能为空");
+    public Result remindTest(@RequestParam String message) {
+        if(ValueUtility.isBlank(message)) {
+            throw new ControllerException("参数message不能为空");
         }
-        this.remindHandler.remind(message);
-        return Result.success();
+        this.remindGateway.remind(message);
+        return Result.ok();
     }
 
     /**
      * 取最新短信日志
      */
     @RequestMapping(value = "/api/system/sms/recent-log", method = RequestMethod.GET)
-    public Result systemSmsRecentLog(@RequestParam(defaultValue = "1024") int size) {
+    public Result smsRecentLog(@RequestParam(defaultValue = "1024") int size) {
         try (RandomAccessFile raf = new RandomAccessFile(smsLogPath, "r")) {
             long fileLength = raf.length();
             long start = Math.max(0, fileLength - size);
@@ -103,9 +107,9 @@ public class SystemController {
                                 return String.join("\n", list);
                             }
                     ));
-            return Result.successData(result);
+            return Result.okData(result);
         } catch (Exception e) {
-            return Result.successData(e.getMessage());
+            return Result.okData(e.getMessage());
         }
     }
 
@@ -113,23 +117,23 @@ public class SystemController {
      * 测试短信功能
      */
     @RequestMapping(value = "/api/system/sms/test", method = RequestMethod.GET)
-    public Result systemSmsTest(@RequestParam String mobile, @RequestParam String code) {
-        if(StringUtils.isEmpty(mobile)) {
-            throw new ValidationException("参数mobile不能为空");
+    public Result smsTest(@RequestParam String mobile, @RequestParam String code) {
+        if(ValueUtility.isBlank(mobile)) {
+            throw new ControllerException("参数mobile不能为空");
         }
-        if(StringUtils.isEmpty(code)) {
-            throw new ValidationException("参数code不能为空");
+        if(ValueUtility.isBlank(code)) {
+            throw new ControllerException("参数code不能为空");
         }
-        this.smsHandler.sendCode(mobile, code);
-        return Result.success();
+        this.smsGateway.sendCode(mobile, code);
+        return Result.ok();
     }
 
     /**
-     * 取设置
+     * 取配置
      */
     @RequestMapping(value = "/api/system/setting", method = RequestMethod.GET)
-    public Result systemSetting() {
+    public Result setting() {
         JsonNode settingJson = settingService.getSettingJson();
-        return Result.successData(settingJson);
+        return Result.okData(settingJson);
     }
 }

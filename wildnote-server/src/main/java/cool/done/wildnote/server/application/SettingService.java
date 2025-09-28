@@ -1,40 +1,41 @@
-package cool.done.wildnote.server.domain;
+package cool.done.wildnote.server.application;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import cool.done.wildnote.server.utility.JacksonUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
- * 设置Service
+ * 配置 Service
  */
-@Service
+@Component
 public class SettingService {
+
     private static final Logger logger = LoggerFactory.getLogger(SettingService.class);
 
     private final String settingPath;
-    private final NoteService noteService;
+    private final NoteExploreService noteExploreService;
 
-    public SettingService(@Value("${wildnote.setting-path:}") String settingPath, NoteService noteService) {
+    public SettingService(@Value("${wildnote.setting-path:}") String settingPath, NoteExploreService noteExploreService) {
         this.settingPath = settingPath;
-        this.noteService = noteService;
+        this.noteExploreService = noteExploreService;
     }
 
     /**
-     * 获取设置JSON
+     * 获取配置文件 JSON 内容
      */
-    public JsonNode getSettingJson(){
+    public JsonNode getSettingJson() {
         String config = "";
         try {
-            config = Files.readString(noteService.combineAbsPath(settingPath), StandardCharsets.UTF_8);
+            config = Files.readString(noteExploreService.combineAbsPath(settingPath), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("读取配置文件 %s 异常", settingPath), e);
+            throw new ApplicationException(String.format("读取配置文件 %s 异常: %s", settingPath, e.getMessage()));
         }
         return JacksonUtility.readTree(config);
     }
@@ -50,18 +51,18 @@ public class SettingService {
     //}
 
     /**
-     * 获取提醒钩子名称
+     * 获取提醒 Webhook 配置
      */
-    public String getHookRemindName() {
+    public String getRemindWebhook(String name) {
         JsonNode settingJson = getSettingJson();
-        return settingJson.path("hook").path("remind").asText();
+        return settingJson.path("webhook").path("remind").path(name).asText();
     }
 
     /**
-     * 获取记录钩子名称
+     * 获取记录 Webhook 配置
      */
-    public String getHookRecordNote(String name) {
+    public String getRecordWebhook(String name) {
         JsonNode settingJson = getSettingJson();
-        return settingJson.path("hook").path("record").path(name).asText();
+        return settingJson.path("webhook").path("record").path(name).asText();
     }
 }

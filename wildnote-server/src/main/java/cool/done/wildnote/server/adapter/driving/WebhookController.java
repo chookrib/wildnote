@@ -1,0 +1,88 @@
+package cool.done.wildnote.server.adapter.driving;
+
+import cool.done.wildnote.server.application.NoteExploreService;
+import cool.done.wildnote.server.application.SettingService;
+import cool.done.wildnote.server.domain.RemindGateway;
+import cool.done.wildnote.server.utility.ValueUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * Webhook Controller
+ */
+@RestController
+public class WebhookController {
+
+    private static final Logger logger = LoggerFactory.getLogger(WebhookController.class);
+
+    private final ApplicationContext applicationContext;
+    private final NoteExploreService noteExploreService;
+    private final SettingService settingService;
+
+    public WebhookController(
+            ApplicationContext applicationContext,
+            SettingService settingService,
+            NoteExploreService noteExploreService) {
+        this.applicationContext = applicationContext;
+        this.settingService = settingService;
+        this.noteExploreService = noteExploreService;
+    }
+
+    /**
+     * 提醒 Webhook
+     */
+    @RequestMapping(value = "/webhook/remind/{name}", method = RequestMethod.GET)
+    public Result remind(@PathVariable String name, @RequestParam String message) {
+        if (ValueUtility.isBlank(name) || ValueUtility.isBlank(message))
+            throw new ControllerException("remind参数错误");
+
+        String value = settingService.getRemindWebhook(name);
+        if (ValueUtility.isBlank(value))
+            throw new ControllerException(String.format("remind未配置"));
+
+        if (!name.equals(settingService.getRemindWebhook(name)))
+            return Result.error(ResultCodes.ERROR_DEFAULT);
+
+        RemindGateway remindGateway = (RemindGateway) applicationContext.getBean(value);
+        remindGateway.remind(String.format("提醒Webhook %s %s", name, message));
+
+        return Result.ok();
+    }
+
+    /**
+     * 记录 Webhook
+     */
+    @RequestMapping(value = "/webhook/record/{name}", method = RequestMethod.GET)
+    public Result record(@PathVariable String name, @RequestParam String content) {
+        if (ValueUtility.isBlank(name) || ValueUtility.isBlank(content))
+            throw new ControllerException("record参数错误");
+
+        String value = settingService.getRecordWebhook(name);
+        if (ValueUtility.isBlank(value))
+            throw new ControllerException(String.format("record未配置"));
+
+        //File noteFile = new File(notePath);
+        //if (!noteFile.exists())
+        //    throw new ControllerException(String.format("配置的记录路径不存在"));
+
+        Path notePath = noteExploreService.combineAbsPath(value);
+        try (FileWriter writer = new FileWriter(notePath.toFile(), StandardCharsets.UTF_8, true)) {
+            writer.write(String.format("\n\n%s %s",
+                    new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
+                    content));
+        } catch (IOException e) {
+            throw new ControllerException(String.format("record异常: %s", e.getMessage()));
+        }
+
+        return Result.ok();
+    }
+}

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Json返回值定义
+ * Controller 返回结果
  */
 public class Result {
 
@@ -53,35 +53,35 @@ public class Result {
     }
 
     /**
-     * 成功时返回Json值
+     * 成功
      */
-    public static Result success() {
+    public static Result ok() {
         return new Result(ResultCodes.SUCCESS, "");
     }
 
     /**
-     * 成功时返回Json值，指定信息
+     * 成功，指定信息
      */
-    public static Result success(String message) {
+    public static Result ok(String message) {
         return new Result(ResultCodes.SUCCESS, message);
     }
 
     /**
-     * 成功时返回Json值，指定信息和数据
+     * 成功，指定信息和数据
      */
-    public static Result success(String message, Object data) {
+    public static Result ok(String message, Object data) {
         return new Result(ResultCodes.SUCCESS, message, data);
     }
 
     /**
-     * 成功时返回Json值，指定数据
+     * 成功，指定数据
      */
-    public static Result successData(Object data) {
+    public static Result okData(Object data) {
         return new Result(ResultCodes.SUCCESS, "", data);
     }
 
     /**
-     * 失败时返回Json值，指定返回码
+     * 失败，指定返回码
      */
     public static Result error(int code) {
         if (code == ResultCodes.SUCCESS)
@@ -90,7 +90,7 @@ public class Result {
     }
 
     /**
-     * 失败时返回Json值，指定返回码和信息
+     * 失败，指定返回码和信息
      */
     public static Result error(int code, String message) {
         if (code == ResultCodes.SUCCESS)
@@ -99,7 +99,7 @@ public class Result {
     }
 
     /**
-     * 失败时返回Json值，指定返回码、信息和数据
+     * 失败，指定返回码、信息和数据
      */
     public static Result error(int code, String message, Object data) {
         if (code == ResultCodes.SUCCESS)
@@ -108,15 +108,15 @@ public class Result {
     }
 
     /**
-     * 转换为map类型，便于动态添加属性
+     * 转换为Map，便于动态添加属性
      */
     @JsonIgnore
-    public Map<String, Object> getMap() {
+    public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("code", code);
         map.put("message", message);
         map.put("data", data);
-        map.put("isSuccess", isSuccess());
+        map.put("success", isSuccess());
         return map;
     }
 }

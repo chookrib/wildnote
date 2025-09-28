@@ -1,0 +1,23 @@
+### 登录
+POST http://{{host}}/api/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
+
+> {%
+    client.global.set("accessToken", response.body.data);
+%}
+
+### 保存笔记内容GET
+POST http://{{host}}/api/note/save
+Content-Type: application/json
+Access-Token: {{accessToken}}
+
+{
+  "path": "C:\\test\\note\\note1.md",
+  "content": "test"
+}
+

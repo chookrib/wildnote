@@ -13,14 +13,14 @@ import java.util.Properties;
 
 @SpringBootApplication
 @EnableScheduling
-public class WildnoteServerApplication {
+public class Application {
 
-    private static final Logger logger = LoggerFactory.getLogger(WildnoteServerApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static ConfigurableApplicationContext applicationContext;
 
     public static void main(String[] args) {
-        applicationContext = SpringApplication.run(WildnoteServerApplication.class, args);
+        applicationContext = SpringApplication.run(Application.class, args);
         logger.info("Started File-Name: {} Build-Time: {}", getFileName(), getBuildTime());
     }
 
@@ -39,7 +39,7 @@ public class WildnoteServerApplication {
             InputStream inputStream = applicationContext.getClass().getClassLoader()
                     .getResourceAsStream("META-INF/MANIFEST.MF");
 
-            if(inputStream == null) {
+            if (inputStream == null) {
                 logger.warn("获取 Build-Time 失败: META-INF/MANIFEST.MF 文件不存在");
                 return "";
             }
@@ -48,7 +48,7 @@ public class WildnoteServerApplication {
             props.load(inputStream);
 
             for (String key : props.stringPropertyNames()) {
-                if(key.equals("Build-Time")) {
+                if (key.equals("Build-Time")) {
                     return props.getProperty(key);
                 }
             }

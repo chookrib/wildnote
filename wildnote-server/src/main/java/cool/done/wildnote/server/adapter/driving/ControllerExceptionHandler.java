@@ -1,7 +1,6 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnote.server.domain.NotLoginException;
-import cool.done.wildnote.server.domain.ValidationException;
+import cool.done.wildnote.server.application.ExtraLogService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,22 +20,19 @@ public class ControllerExceptionHandler {
 
     protected static final Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
+    private final ExtraLogService extraLogService;
+
+    public ControllerExceptionHandler(ExtraLogService extraLogService) {
+        this.extraLogService = extraLogService;
+    }
+
     /**
-     * NotLoginException异常处理器
+     * NotLoginException 异常处理器
      */
     @ExceptionHandler(value = NotLoginException.class)
     @ResponseBody
     public Result notLoginExceptionHandler(HttpServletResponse response, NotLoginException e) {
         return Result.error(ResultCodes.ERROR_NOT_LOGIN, e.getMessage());
-    }
-
-    /**
-     * ValidationException异常处理器
-     */
-    @ExceptionHandler(value = ValidationException.class)
-    @ResponseBody
-    public Result validationExceptionHandler(HttpServletResponse response, ValidationException e) {
-        return Result.error(ResultCodes.ERROR_VALIDATION, e.getMessage());
     }
 
      /**
@@ -45,12 +41,14 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public Result defaultExceptionHandler(HttpServletResponse response, Exception e) {
-        logger.error("捕捉到未处理的异常: {}", e.getMessage());
+        extraLogService.systemError(String.format("捕捉到未处理的异常: %s", e.getMessage()), logger);
 
-        // NoResourceFoundException异常设置状态码404
-        if(e instanceof NoResourceFoundException) {
+        // NoResourceFoundException 设置状态码 404
+        if (e instanceof NoResourceFoundException)
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
+        //else
+        //    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
 
         //String message = e.getMessage();
         String message = e.toString();

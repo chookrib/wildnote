@@ -1,9 +1,9 @@
 package cool.done.wildnote.server.domain;
 
 /**
- * 短信接口
+ * 短信 Gateway 接口
  */
-public interface SmsHandler {
+public interface SmsGateway {
     /**
      * 发送验证码短信
      */

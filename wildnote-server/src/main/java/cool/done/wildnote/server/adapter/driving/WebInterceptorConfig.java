@@ -1,7 +1,6 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnote.server.domain.AuthService;
-import cool.done.wildnote.server.domain.NotLoginException;
+import cool.done.wildnote.server.application.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +41,8 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthInterceptor getGlobalHandlerInterceptor() {
-        return new AuthInterceptor();
+    public AccessTokenInterceptor getGlobalHandlerInterceptor() {
+        return new AccessTokenInterceptor();
     }
 
     ///**
@@ -62,9 +61,9 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
     //}
 
     /**
-     * 认证拦截器
+     * AccessToken 验证拦截器
      */
-    public class AuthInterceptor implements HandlerInterceptor {
+    public class AccessTokenInterceptor implements HandlerInterceptor {
 
         @Autowired
         private AuthService authService;
@@ -76,7 +75,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
             String accessToken = request.getHeader("Access-Token");
 
             if(!authService.verifyAccessToken(accessToken)) {
-                throw new NotLoginException("未登录");
+                throw new NotLoginException();
             }
 
             return true;

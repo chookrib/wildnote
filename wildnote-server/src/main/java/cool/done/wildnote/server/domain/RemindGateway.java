@@ -1,9 +1,10 @@
 package cool.done.wildnote.server.domain;
 
 /**
- * 提醒接口
+ * 提醒 Gateway 接口
  */
-public interface RemindHandler {
+public interface RemindGateway {
+
     /**
      * 发送提醒消息
      */

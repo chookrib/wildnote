@@ -12,7 +12,7 @@
     <artifactId>wildnote-server</artifactId>
     <version>RELEASE</version>
     <name>wildnote-server</name>
-    <description>wildnote-server</description>
+    <description></description>
     <url/>
     <licenses>
         <license/>
@@ -42,10 +42,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-quartz</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>com.auth0</groupId>

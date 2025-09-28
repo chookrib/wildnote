@@ -1,7 +1,8 @@
 package cool.done.wildnote.server.adapter.driven;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import cool.done.wildnote.server.domain.RemindHandler;
+import cool.done.wildnote.server.application.ExtraLogService;
+import cool.done.wildnote.server.domain.RemindGateway;
 import cool.done.wildnote.server.utility.JacksonUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,25 +10,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 钉钉提醒处理器
+ * 钉钉提醒 Gateway 接口 Adapter
  */
 @Component
-public class DingTalkRemindHandler implements RemindHandler {
-    private static final Logger logger = LoggerFactory.getLogger(DingTalkRemindHandler.class);
+public class DingTalkRemindGatewayAdapter implements RemindGateway {
 
-    @Value("${wildnote.remind-url:}")
-    private String remindUrl;
-
-    private final String remindLogPath;
+    private static final Logger logger = LoggerFactory.getLogger(DingTalkRemindGatewayAdapter.class);
 
     @Value("${wildnote.remind-dingtalk-key:}")
     private String remindDingTalkKey;
@@ -38,56 +31,19 @@ public class DingTalkRemindHandler implements RemindHandler {
     @Value("${wildnote.remind-dingtalk-chatid:}")
     private String remindDingTalkChatId;
 
-    public DingTalkRemindHandler(@Value("${wildnote.remind-log-path:}") String remindLogPath) {
-        this.remindLogPath = remindLogPath;
-        if (!remindLogPath.isEmpty()) {
-            File remindLogDir = new File(remindLogPath).getParentFile();
-            if (remindLogDir != null && !remindLogDir.exists()) {
-                remindLogDir.mkdirs();
-            }
-        }
+    private final ExtraLogService extraLogService;
+
+    public DingTalkRemindGatewayAdapter(ExtraLogService extraLogService) {
+        this.extraLogService = extraLogService;
     }
 
     @Override
     public void remind(String message) {
-
-        //String log = "";
-        //try {
-        //    String url = remindUrl + message;
-        //    new RestTemplate().getForObject(url, String.class);
-        //    //logger.info("笔记提醒成功: {}", message);
-        //    log = String.format("笔记提醒成功: %s", message);
-        //}
-        //catch (Exception e) {
-        //    //logger.error("笔记提醒失败: {}", e.getMessage());
-        //    log = String.format("笔记提醒失败: %s", e.getMessage());
-        //}
-        //
-        //try {
-        //    FileWriter fileWriter = new FileWriter(remindLogPath, StandardCharsets.UTF_8, true);
-        //    fileWriter.write(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + log + "\n");
-        //    fileWriter.close();
-        //}
-        //catch (Exception e) {
-        //    logger.error("笔记提醒写日志失败: {} {}", log, e.getMessage());
-        //}
-
-        String log = "";
         try {
             String response = dingTalkChatSend(message);
-            //logger.info("笔记提醒成功: {}", message);
-            log = String.format("笔记提醒结果: %s %s", message, response);
+            extraLogService.logRemindInfo(String.format("钉钉提醒结果: %s %s", message, response), logger);
         } catch (Exception e) {
-            //logger.error("笔记提醒失败: {}", e.getMessage());
-            log = String.format("笔记提醒失败: %s", e.getMessage());
-        }
-
-        try {
-            FileWriter fileWriter = new FileWriter(remindLogPath, StandardCharsets.UTF_8, true);
-            fileWriter.write(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " " + log + "\n");
-            fileWriter.close();
-        } catch (Exception e) {
-            logger.error("笔记提醒写日志失败: {} {}", log, e.getMessage());
+            extraLogService.logRemindError(String.format("钉钉提醒异常: %s", e.getMessage()), logger);
         }
     }
 
