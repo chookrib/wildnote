@@ -8,11 +8,11 @@ Content-Type: application/json
 }
 
 > {%
-    client.global.set("accessToken", response.body.data);
+    client.global.set("accessToken", response.body.data.accessToken);
 %}
 
 ### 获取笔记列表
-GET http://{{host}}/api/note/index
+GET http://{{host}}/api/note/all
 Access-Token: {{accessToken}}
 
 ### 获取笔记内容POST

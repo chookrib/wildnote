@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 > {%
-    client.global.set("accessToken", response.body.data);
+    client.global.set("accessToken", response.body.data.accessToken);
 %}
 
 ### 保存笔记内容GET
