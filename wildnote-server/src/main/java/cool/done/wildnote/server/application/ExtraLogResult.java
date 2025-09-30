@@ -6,11 +6,11 @@ package cool.done.wildnote.server.application;
 public class ExtraLogResult {
     public final String log;
     public final boolean hasMore;
-    public final long moreOffsetFromEnd;
+    public final long offset;
 
-    public ExtraLogResult(String log, boolean hasMore, long moreOffsetFromEnd) {
+    public ExtraLogResult(String log, boolean hasMore, long offset) {
         this.log = log;
         this.hasMore = hasMore;
-        this.moreOffsetFromEnd = moreOffsetFromEnd;
+        this.offset = offset;
     }
 }

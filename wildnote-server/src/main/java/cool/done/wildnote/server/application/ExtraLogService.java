@@ -126,31 +126,36 @@ public class ExtraLogService {
     /**
      * 读取日志
      */
-    public ExtraLogResult readLog(ExtraLogType logType, long offsetFromEnd) {
-        int size = 1024;
-        if (offsetFromEnd < 0) {
-            offsetFromEnd = 0;
+    public ExtraLogResult readLog(ExtraLogType logType, long negativeOffset) {
+        int size = 4096;
+        if (negativeOffset < 0) {
+            negativeOffset = 0;
         }
         try (RandomAccessFile raf = new RandomAccessFile(combineLogFilePath(logType.getFilename()).toFile(), "r")) {
             long fileLength = raf.length();
             if (fileLength <= 0) {
                 throw new ApplicationException(String.format("没有日志内容"));
             }
-            long start = fileLength - offsetFromEnd - size;
+            if(negativeOffset >= fileLength) {
+                throw new ApplicationException(String.format("没有更多日志内容"));
+            }
+            long start = fileLength - negativeOffset - size;
             if (start < 0) {
                 start = 0;
             }
             raf.seek(start);
-            if (size > fileLength - start) {
-                size = (int) (fileLength - start);
+            if (size > fileLength - negativeOffset) {
+                size = (int) (fileLength - negativeOffset);
             }
             byte[] buffer = new byte[size];
             raf.readFully(buffer);
 
             String result = new String(buffer, StandardCharsets.UTF_8);
 
-            //去除被载断的行
-            result = result.substring(result.indexOf("\n") + 1);
+            // 仅当不是从文件头开始读时，去除第一行，避免返回被截断的行
+            if(start != 0) {
+                result = result.substring(result.indexOf("\n") + 1);
+            }
             int resultLength = result.getBytes(StandardCharsets.UTF_8).length;
 
             //反转行顺序
@@ -163,8 +168,10 @@ public class ExtraLogService {
                                 return String.join("\n", list);
                             }
                     ));
-            long moreOffsetFromEnd = fileLength - (start + (size - resultLength));
-            return new ExtraLogResult(result, moreOffsetFromEnd == fileLength, moreOffsetFromEnd);
+            // 计算下次开始读取日志的负偏移位置
+            long nextNegativeOffset = fileLength - (start + (size - resultLength));
+            // System.out.println(" fileLength: " + fileLength + " nextNegativeOffset: " + nextNegativeOffset);
+            return new ExtraLogResult(result, start > 0, nextNegativeOffset);
         } catch (Exception e) {
             throw new ApplicationException(String.format("读取日志失败: %s %s", logType.getFilename(), e.getMessage()));
         }
