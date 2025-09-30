@@ -150,7 +150,7 @@ const markdownHtml = function() {
 
 <template>
   <div class="fixed-title">
-    <!--<RouterLink :to="{ path: '/explore' }">根</RouterLink>-->
+    <RouterLink :to="{ path: '/explore' }">根</RouterLink>
     \<template v-for="(segment, index) in notePath.split('\\').filter(s => s)" :key="index">
       <template v-if="index < notePath.split('\\').length - 2">
         <RouterLink

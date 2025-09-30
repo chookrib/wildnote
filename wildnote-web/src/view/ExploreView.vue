@@ -80,7 +80,7 @@ const dropFavorite = function() {
 
 <template>
   <div class="fixed-title">
-    <!--<RouterLink :to="{ path: '/explore' }">根</RouterLink>-->
+    <RouterLink :to="{ path: '/explore' }">根</RouterLink>
     \<span v-if="path">
           <template v-for="(segment, index) in path.split('\\').filter(s => s)" :key="index">
           <RouterLink
