@@ -29,7 +29,7 @@ public class NoteTreeNode {
         return directory;
     }
 
-    public long getCreationTime() { return creationTime; }
+    public Long getCreationTime() { return creationTime; }
 
     public long getLastModifiedTime() { return lastModifiedTime; }
 

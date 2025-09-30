@@ -1,9 +1,8 @@
 <script setup>
-import { onMounted } from 'vue'
-import axios from '@/utility/axios-utility.js'
 import router from '@/router'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons-vue'
+import axios from '@/utility/axios-utility.js'
 import { showDateTime } from '@/utility/datetime-utility.js'
 
 const notes = ref([])
@@ -19,7 +18,7 @@ onMounted(() => {
 
 function loadNoteIndex() {
   axios.get('/api/note/all').then(response => {
-    notes.value = response.data.data
+    notes.value = response.data.data.list
   })
 }
 

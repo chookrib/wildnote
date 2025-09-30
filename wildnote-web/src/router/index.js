@@ -25,9 +25,9 @@ const router = createRouter({
       component: () => import('@/view/SearchView.vue')
     },
     {
-      path: '/cron',
-      name: 'cron',
-      component: () => import('@/view/CronView.vue')
+      path: '/remind',
+      name: 'remind',
+      component: () => import('@/view/RemindView.vue')
     },
     {
       path: '/note',
@@ -40,9 +40,14 @@ const router = createRouter({
       component: () => import('@/view/SystemView.vue')
     },
     {
-      path: '/cm',
-      name: 'cm',
-      component: () => import('@/view/CodeMirrorView.vue')
+      path: '/log',
+      name: 'log',
+      component: () => import('@/view/LogView.vue')
+    },
+    {
+      path: '/code-mirror-demo',
+      name: 'code-mirror-demo',
+      component: () => import('@/view/CodeMirrorDemoView.vue')
     }
 
   ]

@@ -23,9 +23,9 @@ public enum ExtraLogType {
     /**
      * 解析日志类型
      */
-    public static ExtraLogType parse(String name) {
+    public static ExtraLogType getByName(String name) {
         for (ExtraLogType type : values()) {
-            if (type.getName().equals(name)) {
+            if (type.getName().equalsIgnoreCase(name)) {
                 return type;
             }
         }

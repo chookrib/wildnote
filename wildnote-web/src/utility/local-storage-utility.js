@@ -1,70 +1,62 @@
 
 let accessToken = localStorage.getItem('access_token') || ''
 
-const getLocalAccessToken = function() {
+const getAccessToken = function() {
   return accessToken
 }
 
-const setLocalAccessToken = function(newAccessToken) {
+const setAccessToken = function(newAccessToken) {
   localStorage.setItem('access_token', newAccessToken)
   accessToken = newAccessToken
 }
 
-const removeLocalAccessToken = function() {
+const dropAccessToken = function() {
   localStorage.removeItem('access_token')
   accessToken = ''
 }
 
-const pinnedPaths = localStorage.getItem('pinned_paths') ?
-  JSON.parse(localStorage.getItem('pinned_paths')) : []
+//======================================================================================================================
 
-const getLocalPinnedPaths = function() {
-  // const pinnedPaths = localStorage.getItem('pinnedPaths')
-  // if (pinnedPaths) {
-  //   return JSON.parse(pinnedPaths)
-  // }
-  // return []
-  return [...pinnedPaths]
+let favoriteNotePaths = localStorage.getItem('favorite_note_path') ?
+  JSON.parse(localStorage.getItem('favorite_note_path')) : []
+
+const getFavoriteNotePaths = function() {
+  return [...favoriteNotePaths]
 }
 
-const isLocalPinnedPath = function(path) {
-  // return getAll().indexOf(path) === -1
-  return pinnedPaths.includes(path)
+const setFavoriteNotePaths = function(paths) {
+  favoriteNotePaths = [...paths]
+  localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths))
 }
 
-const localPinPath = function(path) {
-  // const pinnedPaths = getAll()
-  // if (!pinnedPaths.includes(path)) {
-  //   pinnedPaths.push(path)
-  //   localStorage.setItem('pinnedPaths', JSON.stringify(pinnedPaths))
-  // }
-  if (!pinnedPaths.includes(path)) {
-    pinnedPaths.push(path)
-    localStorage.setItem('pinned_paths', JSON.stringify(pinnedPaths))
+const isFavoriteNotePath = function(path) {
+  return favoriteNotePaths.includes(path)
+}
+
+const addFavoritePath = function(path) {
+  if (!favoriteNotePaths.includes(path)) {
+    favoriteNotePaths.push(path)
+    localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths))
   }
 }
 
-const localUnpinPath = function(path) {
-  // const pinnedPaths = getAll()
-  // if (pinnedPaths.includes(path)) {
-  //   pinnedPaths.splice(pinnedPaths.indexOf(path), 1)
-  //   localStorage.setItem('pinnedPaths', JSON.stringify(pinnedPaths))
-  // }
-  if (pinnedPaths.includes(path)) {
-    pinnedPaths.splice(pinnedPaths.indexOf(path), 1)
-    localStorage.setItem('pinned_paths', JSON.stringify(pinnedPaths))
+const dropFavoriteNotePath = function(path) {
+  if (favoriteNotePaths.includes(path)) {
+    favoriteNotePaths.splice(favoriteNotePaths.indexOf(path), 1)
+    localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths))
   }
 }
 
-const localMovePinnedPath = function(dragIndex, dropIndex){
+const moveFavoritePath = function(dragIndex, dropIndex){
   if (dragIndex === null || dragIndex === dropIndex) return
-  const moved = pinnedPaths.splice(dragIndex, 1)[0]
-  pinnedPaths.splice(dropIndex, 0, moved)
-  localStorage.setItem('pinned_paths', JSON.stringify(pinnedPaths))
+  const moved = favoriteNotePaths.splice(dragIndex, 1)[0]
+  favoriteNotePaths.splice(dropIndex, 0, moved)
+  localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths))
 }
 
 export {
-  getLocalAccessToken, setLocalAccessToken, removeLocalAccessToken,
-  getLocalPinnedPaths, isLocalPinnedPath, localPinPath, localUnpinPath, localMovePinnedPath,
+  getAccessToken, setAccessToken, dropAccessToken,
+  getFavoriteNotePaths, setFavoriteNotePaths,
+  isFavoriteNotePath, addFavoritePath, dropFavoriteNotePath, moveFavoritePath
   //xxx as xxx
 }

@@ -1,0 +1,50 @@
+### 登录
+< {%
+    client.global.clearAll();
+%}
+POST http://{{host}}/api/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin"
+}
+
+> {%
+    client.global.set('accessToken', response.body.data.accessToken);
+%}
+
+### 获取笔记列表
+GET http://{{host}}/api/note/all
+Access-Token: {{accessToken}}
+
+> {%
+    // console.log(response.body.data);
+    const note = response.body.data.list.find(item => item.directory === false);
+    if(note !== undefined){
+        client.global.set('notePath', note.relPath);
+        client.global.set('notePathJson', JSON.stringify(note.relPath));
+    }
+    else{
+        client.global.set('notePath', '');
+        client.global.set('notePathJson', '');
+    }
+%}
+
+### GET获取笔记内容
+GET http://{{host}}/api/note/get?path={{notePath}}
+Access-Token: {{accessToken}}
+
+### POST获取笔记内容
+POST http://{{host}}/api/note/get
+Content-Type: application/json
+Access-Token: {{accessToken}}
+
+{
+  "path": {{notePathJson}}
+}
+
+
+
+
+

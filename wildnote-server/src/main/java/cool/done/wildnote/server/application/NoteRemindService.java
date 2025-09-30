@@ -58,8 +58,8 @@ public class NoteRemindService {
             try {
                 String jobId = remindScheduler.addJob(cronExpression, description);
                 cron.setJobId(jobId);
-                extraLogService.logRemindInfo(String.format("添加笔记提醒计划任务调度作业成功: %s %s %s %s",
-                        path, lineNumber, cronExpression, description
+                extraLogService.logRemindInfo(String.format("添加笔记提醒计划任务调度作业成功: %s %s %s %s %s",
+                        path, lineNumber, cronExpression, description, jobId
                 ), logger);
             } catch (Exception e) {
                 extraLogService.logRemindError(

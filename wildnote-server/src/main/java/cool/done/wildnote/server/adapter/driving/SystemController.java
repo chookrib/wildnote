@@ -1,8 +1,6 @@
 package cool.done.wildnote.server.adapter.driving;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import cool.done.wildnote.server.application.ExtraLogService;
-import cool.done.wildnote.server.application.ExtraLogType;
 import cool.done.wildnote.server.application.SettingService;
 import cool.done.wildnote.server.domain.*;
 import cool.done.wildnote.server.utility.ValueUtility;
@@ -22,14 +20,12 @@ public class SystemController {
     private final RemindGateway remindGateway;
     private final SmsGateway smsGateway;
     private final SettingService settingService;
-    private final ExtraLogService extraLogService;
 
     public SystemController(RemindGateway remindGateway, SmsGateway smsGateway,
-                            SettingService settingService, ExtraLogService extraLogService) {
+                            SettingService settingService) {
         this.remindGateway = remindGateway;
         this.smsGateway = smsGateway;
         this.settingService = settingService;
-        this.extraLogService = extraLogService;
     }
 
     /**
@@ -38,34 +34,14 @@ public class SystemController {
     @RequestMapping(value = "/api/system/setting", method = RequestMethod.GET)
     public Result setting() {
         JsonNode settingJson = settingService.getSettingJson();
-        return Result.okData(settingJson);
-    }
-
-    /**
-     * 取最新提醒日志
-     */
-    @RequestMapping(value = "/api/system/log/type", method = RequestMethod.GET)
-    public Result logType() {
-        return Result.okData(
-                Map.of("list", java.util.Arrays.asList(ExtraLogType.values()))
-        );
-    }
-
-    /**
-     * 取最新短信日志
-     */
-    @RequestMapping(value = "/api/system/log/get", method = RequestMethod.GET)
-    public Result smsLogGet(@RequestParam String type,
-                               @RequestParam(defaultValue = "0") long offset) {
-        ExtraLogService.ReadLogResult logResult = extraLogService.readLog(ExtraLogType.parse(type), offset);
-        return Result.okData(Map.of("result", logResult));
+        return Result.okData(Map.of("content", settingJson));
     }
 
     /**
      * 测试提醒功能
      */
-    @RequestMapping(value = "/api/system/remind/test", method = RequestMethod.GET)
-    public Result remindTest(@RequestParam String message) {
+    @RequestMapping(value = "/api/system/test/remind", method = RequestMethod.GET)
+    public Result testRemind(@RequestParam String message) {
         if (ValueUtility.isBlank(message)) {
             throw new ControllerException("参数message不能为空");
         }
@@ -76,8 +52,8 @@ public class SystemController {
     /**
      * 测试短信功能
      */
-    @RequestMapping(value = "/api/system/sms/test", method = RequestMethod.GET)
-    public Result smsTest(@RequestParam String mobile, @RequestParam String code) {
+    @RequestMapping(value = "/api/system/test/sms", method = RequestMethod.GET)
+    public Result testSms(@RequestParam String mobile, @RequestParam String code) {
         if (ValueUtility.isBlank(mobile)) {
             throw new ControllerException("参数mobile不能为空");
         }

@@ -5,6 +5,8 @@ import cool.done.wildnote.server.domain.NoteCron;
 import cool.done.wildnote.server.utility.ValueUtility;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,7 @@ public class NoteRemindController {
     /**
      * 取所有笔记提醒计划任务
      */
-    @RequestMapping(value = "/api/remind/cron", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/remind/all", method = RequestMethod.GET)
     public Result remindCron() {
         List<NoteCron> cronList = noteRemindService.getCronList();
         Map<String, Long> jobMap = noteRemindService.getCronJobMap();
@@ -36,8 +38,11 @@ public class NoteRemindController {
                     map.put("cronExpression", cron.getCronExpression());
                     map.put("description", cron.getDescription());
                     map.put("jobId", cron.getJobId());
-                    map.put("nextTimestamp",
-                            jobMap.getOrDefault(cron.getJobId(), null)
+                    map.put("nextTime",
+                            ValueUtility.toLocalDateTime(jobMap.getOrDefault(cron.getJobId(), null))
+                    );
+                    map.put("delayTime",
+                            ValueUtility.calcDelayTime(jobMap.getOrDefault(cron.getJobId(), null))
                     );
                     return map;
                 }).toList();
@@ -60,14 +65,15 @@ public class NoteRemindController {
                 .map(entry -> {
                     Map<String, Object> map = new java.util.HashMap<>();
                     map.put("jobId", entry.getKey());
-                    map.put("nextTimestamp", entry.getValue());
+                    map.put("nextTime", ValueUtility.toLocalDateTime(entry.getValue()));
+                    // map.put("delayTime", ValueUtility.calcDelayTime(entry.getValue()));
                     return map;
                 }).toList();
         return Result.okData(Map.of(
-                "scheduled", scheduledCronList,
-                "unscheduled", unscheduledCronList,
+                "scheduledCrons", scheduledCronList,
+                "unscheduledCrons", unscheduledCronList,
                 //"jobMap", jobMap,
-                "isolated", isolatedJobList
+                "remainJobs", isolatedJobList
         ));
     }
 }

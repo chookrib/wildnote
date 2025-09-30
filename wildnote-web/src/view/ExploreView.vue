@@ -1,21 +1,20 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import axios from '@/utility/axios-utility.js'
-import { showDateTime } from '@/utility/datetime-utility.js'
 import { RouterLink, useRoute } from 'vue-router'
 import { FolderFilled, FileTextOutlined, StarFilled, StarOutlined } from '@ant-design/icons-vue'
-import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utility/local-storage-utility.js'
+import axios from '@/utility/axios-utility.js'
+import * as localStorageUtility from '@/utility/local-storage-utility.js'
 
 const route = useRoute()
 const path = route.query.path || '\\'
-const isPinnedFolder = ref(false)
+const isFavorite = ref(false)
 const dataSource = ref([])
 
 onMounted(() => {
   axios.get('/api/note/all').then(response => {
-    dataSource.value = response.data.data
+    dataSource.value = response.data.data.list
   })
-  isPinnedFolder.value = isLocalPinnedPath(path)
+  isFavorite.value = localStorageUtility.isFavoriteNotePath(path)
 })
 
 const sorterParam = ref({})
@@ -68,14 +67,14 @@ const columns = [
   }
 ]
 
-const pinFolder = function() {
-  localPinPath(path)
-  isPinnedFolder.value = true
+const addFavorite = function() {
+  localStorageUtility.addFavoritePath(path)
+  isFavorite.value = true
 }
 
-const unpinFolder = function() {
-  localUnpinPath(path)
-  isPinnedFolder.value = false
+const dropFavorite = function() {
+  localStorageUtility.dropFavoriteNotePath(path)
+  isFavorite.value = false
 }
 </script>
 
@@ -111,17 +110,17 @@ const unpinFolder = function() {
           </RouterLink>
         </template>
         <template v-if="column.dataIndex === 'lastModifiedTime'">
-          {{ showDateTime(record.lastModifiedTime) }}
+          {{ record.lastModifiedTime }}
         </template>
       </template>
     </a-table>
   </a-card>
-  <a-float-button type="default" @click="pinFolder" v-if="!isPinnedFolder">
+  <a-float-button type="default" @click="addFavorite" v-if="!isFavorite">
     <template #icon>
       <StarOutlined />
     </template>
   </a-float-button>
-  <a-float-button type="primary" @click="unpinFolder" v-if="isPinnedFolder">
+  <a-float-button type="primary" @click="dropFavorite" v-if="isFavorite">
     <template #icon>
       <StarFilled />
     </template>

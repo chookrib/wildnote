@@ -1,16 +1,16 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import axios from '@/utility/axios-utility.js'
-import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue'
-import { showDateTime } from '@/utility/datetime-utility.js'
 import { RouterLink } from 'vue-router'
+import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue'
+import axios from '@/utility/axios-utility.js'
+import { showDateTime } from '@/utility/datetime-utility.js'
 
 const dataSource = ref([])
 const searchKey = ref('')
 
 onMounted(() => {
   axios.get('/api/note/all').then(response => {
-    dataSource.value = response.data.data
+    dataSource.value = response.data.data.list
   })
 })
 

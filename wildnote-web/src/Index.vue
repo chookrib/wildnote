@@ -1,8 +1,8 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
+import * as localStorageUtility from '@/utility/local-storage-utility.js'
 import { showConfirm } from '@/utility/confirm-utility.js'
-import { removeLocalAccessToken } from '@/utility/local-storage-utility.js'
 
 console.log(import.meta.env)
 
@@ -10,7 +10,7 @@ const title = window.location.hostname
 
 const logout = function() {
   showConfirm('确定要注销吗？', function() {
-    removeLocalAccessToken()
+    localStorageUtility.dropAccessToken()
     window.location.href = '/login.html'
   })
 }
@@ -29,8 +29,9 @@ const logout = function() {
         <RouterLink to="/">首页</RouterLink>
         <RouterLink to="/explore">浏览</RouterLink>
         <RouterLink to="/search">搜索</RouterLink>
-        <RouterLink to="/cron">提醒</RouterLink>
+        <RouterLink to="/remind">提醒</RouterLink>
         <RouterLink to="/system">系统</RouterLink>
+        <RouterLink to="/log">日志</RouterLink>
         <a href="javascript:void(0)" @click="logout">注销</a>
       </a-layout-header>
       <a-layout-content style="margin-top: 40px; height: 100%;">

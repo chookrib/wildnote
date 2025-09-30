@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { getLocalAccessToken } from '@/utility/local-storage-utility.js'
 import { message } from 'ant-design-vue'
+import * as localStorageUtility from '@/utility/local-storage-utility.js'
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_API_URL
@@ -8,7 +8,7 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use(config => {
-  const accessToken = getLocalAccessToken()
+  const accessToken = localStorageUtility.getAccessToken()
   config.headers['Access-Token'] = accessToken
   return config
 })

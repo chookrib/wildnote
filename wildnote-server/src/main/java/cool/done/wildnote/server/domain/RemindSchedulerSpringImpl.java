@@ -57,8 +57,8 @@ public class RemindSchedulerSpringImpl implements RemindScheduler {
     public Map<String, Long> getAllJob() {
         Map<String, Long> result = new HashMap<>();
         jobMap.forEach((key, scheduledFuture) -> {
-            long delayTime = scheduledFuture.getDelay(TimeUnit.MILLISECONDS);
-            result.put(key, delayTime);
+            long delayMilliSeconds = scheduledFuture.getDelay(TimeUnit.MILLISECONDS);
+            result.put(key, System.currentTimeMillis() + delayMilliSeconds);
         });
         return result;
     }

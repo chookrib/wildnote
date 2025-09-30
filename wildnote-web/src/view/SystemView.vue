@@ -1,81 +1,58 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import axios from '@/utility/axios-utility.js'
 import { message } from 'ant-design-vue'
+import axios from '@/utility/axios-utility.js'
 
 const remindMessage = ref('')
 const smsMobile = ref('')
 const smsCode = ref('')
 
-const setting = ref('')
-const remindLog = ref('')
-const smsLog = ref('')
+const settingContent = ref('')
 
 onMounted(() => {
   loadSetting()
-  loadRemindLog()
-  loadSmsLog()
 })
 
 const loadSetting = () => {
   axios.get('/api/system/setting').then(response => {
-    setting.value = response.data.data
+    settingContent.value = response.data.data.content
   })
 }
 
-const loadRemindLog = () => {
-  axios.get('/api/system/remind/recent-log').then(response => {
-    remindLog.value = response.data.data.replace(
-      /(\s\\[^|]+)/g,
-      (match, p1) =>
-        `<a href="#/note?path=${encodeURIComponent(p1.trim())}">${p1}</a>`,
-    )
-  })
-}
-
-const loadSmsLog = () => {
-  axios.get('/api/system/sms/recent-log').then(response => {
-    smsLog.value = response.data.data
-  })
-}
-
-const modalRemindOpen = ref(false)
-const openRemindModal = () => {
-  modalRemindOpen.value = true
+const remindPanelVisible = ref(false)
+const openRemindPanel = () => {
+  remindPanelVisible.value = true
 }
 
 const testRemind = () => {
   axios.get('/api/system/remind/test?message=' + remindMessage.value)
     .then(response => {
-      modalRemindOpen.value = false
-      loadRemindLog()
+      remindPanelVisible.value = false
+      message.success('测试提醒消息发送成功')
     })
 }
 
-const modalSmsOpen = ref(false)
-const openSmsModal = () => {
-  modalSmsOpen.value = true
+const smsPanelVisible = ref(false)
+const openSmsPanel = () => {
+  smsPanelVisible.value = true
 }
 
 const testSms = () => {
   axios.get(
-    '/api/system/sms/test?mobile=' +
-      smsMobile.value +
-      '&code=' +
-      smsCode.value,
+    '/api/system/sms/test?mobile=' + smsMobile.value + '&code=' + smsCode.value
   ).then(response => {
-    modalSmsOpen.value = false
-    loadSmsLog()
+    smsPanelVisible.value = false
+    message.success('测试短信验证码发送成功')
   })
 }
 </script>
 
 <template>
   <a-card>
-    <template #title>系统设置</template>
+    <template #title>系统配置</template>
     <template #extra>
     </template>
-    <div class="json">{{setting}}</div>
+    <div class="json">{{ settingContent }}</div>
   </a-card>
 
   <a-card>
@@ -86,20 +63,14 @@ const testSms = () => {
   </a-card>
 
   <a-card>
-    <template #title>最新提醒日志</template>
-    <template #extra>
-      <a-space>
-        <a-button type="primary" @click="openRemindModal">测试</a-button>
-      </a-space>
-    </template>
-    <div class="log" v-html="remindLog"></div>
+    <template #title>测试</template>
+    <a-space>
+      <a-button type="primary" @click="openRemindPanel">测试发送提醒消息</a-button>
+      <a-button type="primary" @click="openSmsPanel">测试发送短信验证码</a-button>
+    </a-space>
   </a-card>
 
-  <a-modal
-    v-model:open="modalRemindOpen"
-    title="测试发送提醒消息"
-    @ok="testRemind"
-  >
+  <a-modal v-model:open="remindPanelVisible" title="测试发送提醒消息" @ok="testRemind">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item label="提醒内容">
         <a-input v-model:value="remindMessage"></a-input>
@@ -107,15 +78,7 @@ const testSms = () => {
     </a-form>
   </a-modal>
 
-  <a-card>
-    <template #title>最新短信日志</template>
-    <template #extra>
-      <a-button type="primary" @click="openSmsModal">测试</a-button>
-    </template>
-    <div class="log">{{smsLog}}</div>
-  </a-card>
-
-  <a-modal v-model:open="modalSmsOpen" title="测试发送短信验证码" @ok="testSms">
+  <a-modal v-model:open="smsPanelVisible" title="测试发送短信验证码" @ok="testSms">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item label="手机">
         <a-input v-model:value="smsMobile"></a-input>
@@ -128,11 +91,6 @@ const testSms = () => {
 </template>
 
 <style scoped>
-.log {
-  white-space: pre-wrap;
-  word-wrap: anywhere;
-  font-size: 12px;
-}
 .json {
   white-space: pre-wrap;
   word-wrap: anywhere;

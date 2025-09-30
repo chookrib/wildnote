@@ -303,7 +303,10 @@ public class NoteExploreService {
                         File file = event.path().toFile();
                         // String path = event.path().normalize().toAbsolutePath().toString();
                         String path = file.getPath();
-                        logger.info("监测到笔记文件变化: {} {}", event.eventType(), path);
+                        extraLogService.logNoteInfo(
+                                String.format("监测到笔记文件变化: %s %s", event.eventType(), path),
+                                logger
+                        );
 
                         switch (event.eventType()) {
                             case CREATE:

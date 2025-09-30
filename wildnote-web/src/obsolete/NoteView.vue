@@ -1,18 +1,17 @@
 <script setup>
-import { onMounted } from 'vue'
-import axios from '@/utility/axios-utility.js'
-import router from '@/router'
-import 'cherry-markdown/dist/cherry-markdown.css'
-import Cherry from 'cherry-markdown';
-import { ref } from 'vue'
-import { message } from "ant-design-vue"
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { showDateTime } from '@/utility/datetime-utility.js';
+import Cherry from 'cherry-markdown'
+import 'cherry-markdown/dist/cherry-markdown.css'
+import { message } from 'ant-design-vue'
+import router from '@/router'
+import axios from '@/utility/axios-utility.js'
+import { showDateTime } from '@/utility/datetime-utility.js'
 
 const route = useRoute()
 const notePath = route.query.path
 
-const lastSaveTime = ref(null);
+const lastSaveTime = ref(null)
 
 const cherryInstance = defineModel('cherryInstance')
 
@@ -22,9 +21,9 @@ onMounted(() => {
   }).then(response => {
     cherryInstance.value = new Cherry({
       id: 'markdown-container',
-      value: response.data.data,
+      value: response.data.data.content,
       themeSettings: {
-        mainTheme: 'light',
+        mainTheme: 'light'
       }
     })
   })
@@ -33,7 +32,7 @@ onMounted(() => {
 function saveNote() {
   axios.post('/api/note/save', {
     path: notePath,
-    content: cherryInstance.value.getValue(),
+    content: cherryInstance.value.getValue()
   }).then(response => {
     lastSaveTime.value = new Date()
     message.success('保存成功')
@@ -64,5 +63,6 @@ function noteIndex() {
   height: 100%;
 }
 
-#markdown-container {}
+#markdown-container {
+}
 </style>

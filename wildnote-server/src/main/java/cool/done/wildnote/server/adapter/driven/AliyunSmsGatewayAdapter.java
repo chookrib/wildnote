@@ -6,17 +6,11 @@ import com.aliyun.dysmsapi20170525.models.SendSmsResponse;
 import com.aliyun.teaopenapi.models.Config;
 import cool.done.wildnote.server.application.ExtraLogService;
 import cool.done.wildnote.server.domain.SmsGateway;
-import cool.done.wildnote.server.utility.JacksonUtility;
+import cool.done.wildnote.server.utility.JsonUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * 阿里云短信 Gateway 接口 Adapter
@@ -69,7 +63,7 @@ public class AliyunSmsGatewayAdapter implements SmsGateway {
                             "阿里云短信验证码发送结果: %s %s %s",
                             mobile,
                             code,
-                            JacksonUtility.writeValueAsString(response.body)
+                            JsonUtility.writeValueAsString(response.body)
                     ), logger);
         } catch (Exception e) {
             extraLogService.logSmsError(String.format("阿里云短信验异常: %s %s %s", mobile, code, e.getMessage()), logger);

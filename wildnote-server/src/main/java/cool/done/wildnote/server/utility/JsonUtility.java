@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Jackson Utility
  */
-public class JacksonUtility {
+public class JsonUtility {
 
     /**
      * 读取JsonNode

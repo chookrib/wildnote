@@ -1,9 +1,9 @@
 <script setup>
-import router from '@/router'
 import { createVNode } from 'vue'
 import { Modal } from 'ant-design-vue'
 import { LogoutOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue'
-import { removeLocalAccessToken } from '@/utility/local-storage-utility.js'
+import router from '@/router'
+import * as localStorageUtility from '@/utility/local-storage-utility.js'
 
 function logout() {
   Modal.confirm({
@@ -13,7 +13,7 @@ function logout() {
     okText: '确认',
     cancelText: '取消',
     onOk: function() {
-      removeLocalAccessToken()
+      localStorageUtility.dropAccessToken()
       router.push('/login')
     },
     onCancel: function() {

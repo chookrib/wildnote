@@ -30,7 +30,7 @@ public class WellKnownController {
     /**
      * 测试异常处理
      */
-    @RequestMapping(value = "/.well-known/test-exception", method = RequestMethod.GET)
+    @RequestMapping(value = "/.well-known/test/exception", method = RequestMethod.GET)
     @ResponseBody
     public Result testException() {
         throw new RuntimeException("测试异常");

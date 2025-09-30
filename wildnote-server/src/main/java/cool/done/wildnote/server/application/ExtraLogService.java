@@ -126,7 +126,7 @@ public class ExtraLogService {
     /**
      * 读取日志
      */
-    public ReadLogResult readLog(ExtraLogType logType, long offsetFromEnd) {
+    public ExtraLogResult readLog(ExtraLogType logType, long offsetFromEnd) {
         int size = 1024;
         if (offsetFromEnd < 0) {
             offsetFromEnd = 0;
@@ -164,24 +164,9 @@ public class ExtraLogService {
                             }
                     ));
             long moreOffsetFromEnd = fileLength - (start + (size - resultLength));
-            return new ReadLogResult(result, moreOffsetFromEnd == fileLength, moreOffsetFromEnd);
+            return new ExtraLogResult(result, moreOffsetFromEnd == fileLength, moreOffsetFromEnd);
         } catch (Exception e) {
             throw new ApplicationException(String.format("读取日志失败: %s %s", logType.getFilename(), e.getMessage()));
-        }
-    }
-
-    /**
-     * 读取日志结果
-     */
-    public class ReadLogResult {
-        public final String log;
-        public final boolean hasMore;
-        public final long moreOffsetFromEnd;
-
-        public ReadLogResult(String log, boolean hasMore, long moreOffsetFromEnd) {
-            this.log = log;
-            this.hasMore = hasMore;
-            this.moreOffsetFromEnd = moreOffsetFromEnd;
         }
     }
 }

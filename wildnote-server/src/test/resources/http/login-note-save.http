@@ -1,4 +1,7 @@
 ### 登录
+< {%
+    client.global.clearAll();
+%}
 POST http://{{host}}/api/login
 Content-Type: application/json
 
@@ -8,16 +11,17 @@ Content-Type: application/json
 }
 
 > {%
-    client.global.set("accessToken", response.body.data.accessToken);
+    client.global.set('accessToken', response.body.data.accessToken);
+    client.global.set('content', new Date().toISOString());
 %}
 
-### 保存笔记内容GET
+### 保存笔记内容
 POST http://{{host}}/api/note/save
 Content-Type: application/json
 Access-Token: {{accessToken}}
 
 {
-  "path": "C:\\test\\note\\note1.md",
-  "content": "test"
+  "path": "\\test.md",
+  "content": "{{content}}"
 }
 

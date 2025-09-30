@@ -1,15 +1,13 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import axios from '@/utility/axios-utility.js'
-import { isLocalPinnedPath, localPinPath, localUnpinPath } from '@/utility/local-storage-utility.js'
-import { message } from 'ant-design-vue'
 import { RouterLink, useRoute } from 'vue-router'
-import { showDateTime } from '@/utility/datetime-utility.js'
+import { message } from 'ant-design-vue'
 import { EditFilled, RollbackOutlined, SaveFilled, StarFilled, StarOutlined } from '@ant-design/icons-vue'
+
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
-import 'highlight.js/styles/default.min.css'
 import hljs from 'highlight.js'
+import 'highlight.js/styles/default.min.css'
 
 import { EditorState } from '@codemirror/state'
 import { EditorView, keymap, lineNumbers, highlightWhitespace, highlightActiveLine, drawSelection } from '@codemirror/view'
@@ -18,12 +16,16 @@ import { defaultKeymap, history, undo, redo } from '@codemirror/commands'
 import { highlightSelectionMatches } from '@codemirror/search'
 import { markdown } from '@codemirror/lang-markdown'
 
+import axios from '@/utility/axios-utility.js'
+import * as localStorageUtility from '@/utility/local-storage-utility.js'
+import { showDateTime } from '@/utility/datetime-utility.js'
+
 const route = useRoute()
 const notePath = route.query.path
 const noteContent = ref('')
 const noteContentEdit = ref('')
 const editMode = ref(false)
-const isPinnedNote = ref(false)
+const isFavorite = ref(false)
 const lastSaveTime = ref(null)
 
 const editorRef = ref(null)
@@ -60,11 +62,11 @@ const loadNote = function() {
   axios.post('/api/note/get', {
     path: notePath
   }).then(response => {
-    noteContent.value = response.data.data
-    //isPinnedNote.value = isLocalPinnedPath(notePath)
+    noteContent.value = response.data.data.content
+    //isFavorite.value = localStorageUtility.isFavoriteNotePath(notePath)
   })
   // 当笔记不存在时可以取消收藏
-  isPinnedNote.value = isLocalPinnedPath(notePath)
+  isFavorite.value = localStorageUtility.isFavoriteNotePath(notePath)
 }
 
 const editNote = function() {
@@ -100,14 +102,14 @@ const cancelEditNote = function() {
   editMode.value = false
 }
 
-const pinNote = function() {
-  localPinPath(notePath)
-  isPinnedNote.value = true
+const addFavorite = function() {
+  localStorageUtility.addFavoritePath(notePath)
+  isFavorite.value = true
 }
 
-const unpinNote = function() {
-  localUnpinPath(notePath)
-  isPinnedNote.value = false
+const dropFavorite = function() {
+  localStorageUtility.dropFavoriteNotePath(notePath)
+  isFavorite.value = false
 }
 
 const renderer = {
@@ -170,12 +172,12 @@ const markdownHtml = function() {
     <!--<a-textarea v-model:value="noteContentEdit" wrap="off" style="height: 100%;"></a-textarea>-->
     <div ref="editorRef" style="height: 100%"></div>
   </div>
-  <a-float-button type="default" @click="pinNote" v-if="!editMode&&!isPinnedNote" style="right: 80px;">
+  <a-float-button type="default" @click="addFavorite" v-if="!editMode&&!isFavorite" style="right: 80px;">
     <template #icon>
       <StarOutlined />
     </template>
   </a-float-button>
-  <a-float-button type="primary" @click="unpinNote" v-if="!editMode&&isPinnedNote" style="right: 80px;">
+  <a-float-button type="primary" @click="dropFavorite" v-if="!editMode&&isFavorite" style="right: 80px;">
     <template #icon>
       <StarFilled />
     </template>
@@ -185,14 +187,14 @@ const markdownHtml = function() {
       <EditFilled />
     </template>
   </a-float-button>
-  <a-float-button type="primary" @click="cancelEditNote" v-if="editMode" style="right: 80px;">
-    <template #icon>
-      <RollbackOutlined />
-    </template>
-  </a-float-button>
-  <a-float-button type="primary" @click="saveNote" v-if="editMode">
+  <a-float-button type="primary" @click="saveNote" v-if="editMode" style="right: 80px;">
     <template #icon>
       <SaveFilled />
+    </template>
+  </a-float-button>
+  <a-float-button type="primary" @click="cancelEditNote" v-if="editMode">
+    <template #icon>
+      <RollbackOutlined />
     </template>
   </a-float-button>
 </template>

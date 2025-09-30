@@ -1,28 +1,28 @@
 <script setup>
 import { computed, onMounted, ref, useCssModule } from 'vue'
-import axios from '@/utility/axios-utility.js'
 import { RouterLink } from 'vue-router'
+import axios from '@/utility/axios-utility.js'
 import { showDateTime, showTime } from '@/utility/datetime-utility.js'
 
-const dataSource = ref([])
-const dataSourceFailed = ref([])
+const scheduledCrons = ref([])
+const unscheduledCrons = ref([])
+const remainJobs = ref([])
 
 onMounted(() => {
-  axios.get('/api/note/cron').then(response => {
-    dataSource.value = response.data.data
-  })
-  axios.get('/api/note/cron/failed').then(response => {
-    dataSourceFailed.value = response.data.data
+  axios.get('/api/remind/all').then(response => {
+    scheduledCrons.value = response.data.data.scheduledCrons
+    unscheduledCrons.value = response.data.data.unscheduledCrons
+    remainJobs.value = response.data.data.remainJobs
   })
 })
 
 const sorterParam = ref({})
 
-const dataSourceComputed = computed(() => {
+const scheduledCronsComputed = computed(() => {
   const sorter = sorterParam.value
   if (sorter && sorter.field && sorter.order) {
     if (sorter.field === 'path') {
-      return [...dataSource.value].sort((a, b) => {
+      return [...scheduledCrons.value].sort((a, b) => {
         if (sorter.order === 'ascend') {
           return a.path.localeCompare(b.path)
         } else {
@@ -30,7 +30,7 @@ const dataSourceComputed = computed(() => {
         }
       })
     } else if (sorter.field === 'delayTime' || sorter.field === 'cronDetail') {
-      return [...dataSource.value].sort((a, b) => {
+      return [...scheduledCrons.value].sort((a, b) => {
         if (sorter.order === 'ascend') {
           return Number(a.delayTime) > Number(b.delayTime) ? 1 : -1
         } else {
@@ -39,7 +39,7 @@ const dataSourceComputed = computed(() => {
       })
     }
   }
-  return [...dataSource.value]
+  return [...scheduledCrons.value]
 })
 
 const handleTableChange = function(pagination, filters, sorter) {
@@ -49,7 +49,7 @@ const handleTableChange = function(pagination, filters, sorter) {
 
 const styles = useCssModule()
 //console.log(styles)
-const columns = [
+const scheduledCronColumns = [
   {
     title: '笔记文件路径',
     dataIndex: 'path',
@@ -70,7 +70,7 @@ const columns = [
   },
   {
     title: 'Cron表达式',
-    dataIndex: 'cron',
+    dataIndex: 'cronExpression',
     responsive: ['sm'],
     //customCell: (record, rowIndex, column) => { return { class: styles['cell-hide-on-xs'] } },
     //customHeaderCell: (column) => { return { class: styles['cell-hide-on-xs'] } }
@@ -95,12 +95,12 @@ const columns = [
     //customHeaderCell: (column) => { return { class: styles['cell-hide-on-xs'] } }
   },
   {
-    title: '提醒消息',
-    dataIndex: 'message',
+    title: '描述',
+    dataIndex: 'description',
     //ellipsis: true
   }
 ]
-const columnsFailed = [
+const unscheduledCronColumns = [
   {
     title: '笔记文件路径',
     dataIndex: 'path',
@@ -113,23 +113,36 @@ const columnsFailed = [
   },
   {
     title: 'Cron表达式',
-    dataIndex: 'cron',
+    dataIndex: 'cronExpression',
   },
   {
-    title: '提醒消息',
-    dataIndex: 'message',
+    title: '描述',
+    dataIndex: 'description',
     //ellipsis: true
+  }
+]
+const remainJobColumns = [
+  {
+    title: '作业Id',
+    dataIndex: 'jobId',
+    ellipsis: true,
+  },
+  {
+    title: '下次执行时间',
+    dataIndex: 'nextTime',
+    align: 'center',
+    ellipsis: true,
   }
 ]
 </script>
 
 <template>
   <a-card>
-    <template #title>注册成功的提醒</template>
+    <template #title>已调度提醒计划任务</template>
     <a-table
-      :columns="columns"
+      :columns="scheduledCronColumns"
       :row-key="record => record.path + record.lineNumber"
-      :data-source="dataSourceComputed"
+      :data-source="scheduledCronsComputed"
       :pagination="false"
       @change="handleTableChange"
       size="small"
@@ -140,31 +153,31 @@ const columnsFailed = [
         </template>
         <template v-if="column.dataIndex === 'cron'">
           <a-tag>
-            {{ record.cron }}
+            {{ record.cronExpression }}
           </a-tag>
         </template>
         <template v-if="column.dataIndex === 'nextTime'">
-          {{ showDateTime(record.nextTime) }}
+          {{ record.nextTime }}
         </template>
         <template v-if="column.dataIndex === 'delayTime'">
           {{ showTime(record.delayTime) }}
         </template>
         <template v-if="column.dataIndex === 'cronDetail'">
           <a-tag>
-            {{ record.cron }}
+            {{ record.cronExpression }}
           </a-tag>
-          <br>{{ showDateTime(record.nextTime) }}
+          <br>{{ record.nextTime }}
           <br>{{ showTime(record.delayTime) }}
         </template>
       </template>
     </a-table>
   </a-card>
   <a-card>
-    <template #title>注册失败的提醒</template>
+    <template #title>未调度提醒计划任务</template>
     <a-table
-      :columns="columnsFailed"
+      :columns="unscheduledCronColumns"
       :row-key="record => record.path + record.lineNumber"
-      :data-source="dataSourceFailed"
+      :data-source="unscheduledCrons"
       :pagination="false"
       size="small"
     >
@@ -174,10 +187,21 @@ const columnsFailed = [
         </template>
         <template v-if="column.dataIndex === 'cron'">
           <a-tag>
-            {{ record.cron }}
+            {{ record.cronExpression }}
           </a-tag>
         </template>
       </template>
+    </a-table>
+  </a-card>
+  <a-card v-if="remainJobs.length>0">
+    <template #title>残留提醒计划任务作业</template>
+    <a-table
+      :columns="remainJobColumns"
+      :row-key="record => record.jobId"
+      :data-source="remainJobs"
+      :pagination="false"
+      size="small"
+    >
     </a-table>
   </a-card>
 </template>

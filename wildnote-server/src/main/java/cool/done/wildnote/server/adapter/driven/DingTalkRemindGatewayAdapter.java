@@ -3,7 +3,7 @@ package cool.done.wildnote.server.adapter.driven;
 import com.fasterxml.jackson.databind.JsonNode;
 import cool.done.wildnote.server.application.ExtraLogService;
 import cool.done.wildnote.server.domain.RemindGateway;
-import cool.done.wildnote.server.utility.JacksonUtility;
+import cool.done.wildnote.server.utility.JsonUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +61,7 @@ public class DingTalkRemindGatewayAdapter implements RemindGateway {
                 requestBody, String.class
         );
         //logger.info(responseBody);
-        JsonNode responseJson = JacksonUtility.readTree(responseBody);
+        JsonNode responseJson = JsonUtility.readTree(responseBody);
         String accessToken = responseJson.path("accessToken").asText();
         int expireIn = responseJson.path("expiresIn").asInt();
         DINGTALK_ACCESS_TOKEN = accessToken;

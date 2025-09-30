@@ -2,21 +2,21 @@
 
 ## 项目说明
 
-`wildnote\wildnote-server`为服务端项目，使用 Java 开发
+`wildnote\wildnote-server`为后端项目，使用 Java 开发
 `wildnote\wildnote-web`为前端项目，使用 Vue3 开发  
 
 ## 使用说明
 
-1. 打包（前端项目）
+1. 打包（后端项目）
+- 进入`wildnote\wildnote-server`目录
+- 运行`mvn pakage`打包后端程序
+- 默认生成在`wildnote\wildnote-server\target`目录
+
+2. 打包（前端项目）
 - 进入`wildnote\wildnote-web`目录
 - 运行`npm install`安装依赖
 - 运行`npm run build`打包前端程序
 - 默认生成在`wildnote\wildnote-web\dist`目录
-
-2. 打包（后端程序）
-- 进入`wildnote\wildnote-server`目录
-- 运行`mvn pakage`打包后端程序
-- 默认生成在`wildnote\wildnote-server\target`目录
 
 3. 启动
 - 运行`wildnote\wildnote-run.bat`启动程序

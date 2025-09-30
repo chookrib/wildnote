@@ -91,11 +91,10 @@ public class RemindSchedulerQuartzImpl implements RemindScheduler {
                     }
                 }
 
-                Long delayTime = null;
-                if (nextTime != null) {
-                    delayTime = nextTime.getTime() - System.currentTimeMillis();
-                }
-                result.put(jobKey.getName(), delayTime);
+                if (nextTime != null)
+                    result.put(jobKey.getName(), nextTime.getTime());
+                else
+                    result.put(jobKey.getName(), null);
             }
         } catch (SchedulerException e) {
             throw new DomainException(e.getMessage());
