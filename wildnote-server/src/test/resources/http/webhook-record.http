@@ -1,0 +1,7 @@
+### Webhook record clip
+< {%
+    client.global.clearAll();
+    client.global.set('content', new Date().toISOString());
+%}
+GET http://{{host}}/webhook/record/clip?content={{content}}
+

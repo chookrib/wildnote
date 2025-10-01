@@ -43,17 +43,15 @@ public class WebhookController {
     @RequestMapping(value = "/webhook/remind/{name}", method = RequestMethod.GET)
     public Result remind(@PathVariable String name, @RequestParam String message) {
         if (ValueUtility.isBlank(name) || ValueUtility.isBlank(message))
-            throw new ControllerException("remind参数错误");
+            throw new ControllerException("Webhook remind 参数错误");
 
         String value = settingService.getRemindWebhook(name);
         if (ValueUtility.isBlank(value))
-            throw new ControllerException(String.format("remind未配置"));
+            throw new ControllerException(String.format("Webhook remind 未配置"));
 
-        if (!name.equals(settingService.getRemindWebhook(name)))
-            return Result.error(ResultCodes.ERROR_DEFAULT);
-
+        // RemindGateway remindGateway = applicationContext.getBean(RemindGateway.class);
         RemindGateway remindGateway = (RemindGateway) applicationContext.getBean(value);
-        remindGateway.remind(String.format("提醒Webhook %s %s", name, message));
+        remindGateway.remind(String.format("Webhook remind 成功: %s %s", name, message));
 
         return Result.ok();
     }
@@ -64,11 +62,11 @@ public class WebhookController {
     @RequestMapping(value = "/webhook/record/{name}", method = RequestMethod.GET)
     public Result record(@PathVariable String name, @RequestParam String content) {
         if (ValueUtility.isBlank(name) || ValueUtility.isBlank(content))
-            throw new ControllerException("record参数错误");
+            throw new ControllerException("Webhook record 参数错误");
 
         String value = settingService.getRecordWebhook(name);
         if (ValueUtility.isBlank(value))
-            throw new ControllerException(String.format("record未配置"));
+            throw new ControllerException(String.format("Webhook record 未配置"));
 
         //File noteFile = new File(notePath);
         //if (!noteFile.exists())
@@ -80,7 +78,7 @@ public class WebhookController {
                     new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
                     content));
         } catch (IOException e) {
-            throw new ControllerException(String.format("record异常: %s", e.getMessage()));
+            throw new ControllerException(String.format("Webhook record 异常: %s", e.getMessage()));
         }
 
         return Result.ok();

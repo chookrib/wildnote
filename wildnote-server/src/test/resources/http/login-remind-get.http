@@ -15,7 +15,7 @@ Content-Type: application/json
 %}
 
 ### 获取笔记提醒计划任务
-GET http://{{host}}/api/remind/cron
+GET http://{{host}}/api/remind/all
 Access-Token: {{accessToken}}
 
 
