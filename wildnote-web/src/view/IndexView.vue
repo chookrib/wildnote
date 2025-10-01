@@ -49,10 +49,12 @@ const downloadFavorite = function() {
 }
 
 const uploadFavorite = function() {
-  axios.post('/api/note/favorite/set', {
-    paths: favoriteNotePaths.value
-  }).then(response => {
-    message.success('上传收藏的笔记路径成功')
+  showConfirm(`确定上传收藏的笔记路径吗？（将覆盖服务端收藏的笔记路径）`, function() {
+    axios.post('/api/note/favorite/set', {
+      paths: favoriteNotePaths.value
+    }).then(response => {
+      message.success('上传收藏的笔记路径成功')
+    })
   })
 }
 </script>
