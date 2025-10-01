@@ -225,7 +225,9 @@ public class NoteExploreService {
 
         // 当文件已被删除，file.isFile() 会返回 false，故判断条件中不能用 file.isFile() 来判断
         if (!note.isDirectory() && isCronNoteFile(note.getName())) {
-            noteRemindService.dropCron(file.getPath());
+            noteRemindService.dropCron(
+                    file.getPath().substring(noteRootAbsPath.length())  // 需要与add时一致
+            );
         }
     }
 
