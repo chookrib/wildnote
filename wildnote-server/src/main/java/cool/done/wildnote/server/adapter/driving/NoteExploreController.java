@@ -26,6 +26,15 @@ public class NoteExploreController {
     }
 
     /**
+     * 重新加载所有笔记
+     */
+    @RequestMapping(value = "/api/note/reload", method = RequestMethod.GET)
+    public Result noteReload() {
+        noteExploreService.reloadNote();
+        return Result.ok();
+    }
+
+    /**
      * 取所有笔记
      */
     @RequestMapping(value = "/api/note/all", method = RequestMethod.GET)

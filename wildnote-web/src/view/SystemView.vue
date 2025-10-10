@@ -45,6 +45,12 @@ const testSms = () => {
     message.success('测试短信验证码发送成功')
   })
 }
+
+const reloadNote = () => {
+  axios.get('/api/note/reload').then(response => {
+    message.success('重新加载所有笔记成功')
+  })
+}
 </script>
 
 <template>
@@ -65,6 +71,7 @@ const testSms = () => {
   <a-card>
     <template #title>测试</template>
     <a-space>
+      <a-button type="primary" @click="reloadNote">重新加载所有笔记</a-button>
       <a-button type="primary" @click="openRemindPanel">测试发送提醒消息</a-button>
       <a-button type="primary" @click="openSmsPanel">测试发送短信验证码</a-button>
     </a-space>
