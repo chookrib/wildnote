@@ -21,7 +21,7 @@ wildnote:
   note-root-path: .\src
   note-extensions: .md,.txt
   log-root-path: log\
-  setting-path: setting.json
+  setting-path: wildnote.json
 
   # 使用钉钉发送提醒消息
   remind-dingtalk-key:
