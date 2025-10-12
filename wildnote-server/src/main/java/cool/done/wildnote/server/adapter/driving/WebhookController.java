@@ -68,15 +68,37 @@ public class WebhookController {
         if (ValueUtility.isBlank(value))
             throw new ControllerException(String.format("Webhook record 未配置"));
 
+        Path notePath = noteExploreService.combineAbsPath(value);
+
         //File noteFile = new File(notePath);
         //if (!noteFile.exists())
         //    throw new ControllerException(String.format("配置的记录路径不存在"));
 
-        Path notePath = noteExploreService.combineAbsPath(value);
-        try (FileWriter writer = new FileWriter(notePath.toFile(), StandardCharsets.UTF_8, true)) {
-            writer.write(String.format("\n\n%s %s",
-                    new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
-                    content));
+        // 写入文件末尾
+        //try (FileWriter writer = new FileWriter(notePath.toFile(), StandardCharsets.UTF_8, true)) {
+        //    writer.write(String.format(
+        //            "\n\n%s %s",
+        //            new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
+        //            content)
+        //    );
+        //} catch (IOException e) {
+        //    throw new ControllerException(String.format("Webhook record 异常: %s", e.getMessage()));
+        //}
+
+        // 写入文件开头
+        try {
+            String oldContent = "";
+            if (notePath.toFile().exists()) {
+                oldContent = java.nio.file.Files.readString(notePath, StandardCharsets.UTF_8);
+            }
+            try (FileWriter writer = new FileWriter(notePath.toFile(), StandardCharsets.UTF_8, false)) {
+                writer.write(String.format(
+                        "%s %s\n\n%s",
+                        new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
+                        content,
+                        oldContent.trim())
+                );
+            }
         } catch (IOException e) {
             throw new ControllerException(String.format("Webhook record 异常: %s", e.getMessage()));
         }

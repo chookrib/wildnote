@@ -144,6 +144,9 @@ const marked = new Marked({
 )
 
 const markdownHtml = function() {
+  // 将连续两个及以上的空行替换为 <br> 标签
+  // const md = noteContent.value.replace(/\n{2,}/g, match => '<br>'.repeat(match.length - 1));
+  // return marked.parse(md)
   return marked.parse(noteContent.value)
 }
 </script>
@@ -254,17 +257,18 @@ const markdownHtml = function() {
 }
 
 .markdown :deep(blockquote) {
-  border-left: 4px solid #ffe58f;
+  border-left: 0.25rem solid #ffe58f;
   background: #fffbe6;
-  padding: 12px 16px;
-  margin: 12px 0;
+  padding: 0 1rem;
+  margin: 1rem 0;
   color: #8c6d1f;
-  font-style: italic;
+  /*font-style: italic;*/
+  display: flow-root;/*阻止外边距合并*/
 }
 
-.markdown :deep(:not(blockquote) > p) {
+/*.markdown :deep(:not(blockquote) > p) {
   margin-bottom: 10px;
-}
+}*/
 
 .markdown :deep(h1),
 .markdown :deep(h2),
@@ -272,8 +276,11 @@ const markdownHtml = function() {
 .markdown :deep(h4),
 .markdown :deep(h5),
 .markdown :deep(h6) {
-  margin-top: 10px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1rem;
   font-weight: bold;
+  min-height: 1rem; /*没有内容时仍保持高度*/
 }
 
 .markdown :deep(.markdown-table-wrapper) {
@@ -286,8 +293,15 @@ const markdownHtml = function() {
 
 .markdown :deep(table th), .markdown :deep(table td) {
   border: 1px solid #8c8c8c;
-  padding: 4px;
+  /*padding: 0.25rem;*/
+  padding: 0.5rem;
   white-space: nowrap;
+}
+
+.markdown :deep(p) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.2rem;
 }
 
 </style>
