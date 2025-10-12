@@ -1,4 +1,4 @@
-### Webhook remind dingtalk
+### Webhook remind
 < {%
     client.global.clearAll();
     client.global.set('message', new Date().toISOString());

@@ -1,7 +1,12 @@
-### Webhook record clip
+### Webhook record
 < {%
     client.global.clearAll();
     client.global.set('content', new Date().toISOString());
 %}
 GET http://{{host}}/webhook/record/clip?content={{content}}
 
+### Webhook record mode=insert
+< {%
+    client.global.set('content', new Date().toISOString());
+%}
+GET http://{{host}}/webhook/record/clip?mode=insert&content=INSERT%20{{content}}
