@@ -160,7 +160,7 @@ const markdownHtml = function() {
           :to="{ path: '/explore', query: { path: notePath.split('\\').slice(0, index + 2).join('\\') + '\\' } }">
           {{ segment }}
         </RouterLink>\</template>
-      <template v-if="index === notePath.split('\\').length - 2">{{ segment }}</template>
+      <template v-if="index === notePath.split('\\').length - 2"><span>{{ segment }}</span></template>
     </template>
     <span v-if="lastSaveTime" style="font-size: 12px; margin-left: 20px;">最后保存于 {{ showDateTime(lastSaveTime) }}</span>
   </div>
@@ -250,10 +250,13 @@ const markdownHtml = function() {
   left: 0;
   right: 0;
   z-index: 1000;
+  display: flex;
+  overflow: hidden;
 }
 
 .fixed-title * {
   /*font-weight: bold;*/
+  white-space: nowrap;
 }
 
 .markdown :deep(blockquote) {
