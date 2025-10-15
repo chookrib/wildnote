@@ -251,7 +251,12 @@ const markdownHtml = function() {
   right: 0;
   z-index: 1000;
   display: flex;
-  overflow: hidden;
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox 隐藏滚动条 */
+  -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
+}
+.fixed-title::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Webkit 隐藏滚动条 */
 }
 
 .fixed-title * {
