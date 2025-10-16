@@ -1,3 +1,10 @@
+server:
+  port: 8080
+
+logging:
+  file:
+    name: log\log.log
+
 spring:
   application:
     name: wildnote
@@ -5,13 +12,6 @@ spring:
     resources:
       # 指定前端静态资源路径，相对于wildnote-server目录的路径
       static-locations: file:..\wildnote-web\dist
-
-server:
-  port: 8080
-
-logging:
-  file:
-    name: log\log.log
 
 wildnote:
   username: admin
