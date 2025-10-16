@@ -17,7 +17,7 @@ wildnote:
   username: admin
   password: admin
   # 笔记根路径，支持绝对路径和相对路径
-  # note-root-path: C:\note
+  #note-root-path: C:\note
   note-root-path: .\src
   note-extensions: .md,.txt
   log-root-path: log\
