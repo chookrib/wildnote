@@ -264,6 +264,10 @@ const markdownHtml = function() {
   white-space: nowrap;
 }
 
+.markdown {
+  line-height: 1.3rem;
+}
+
 .markdown :deep(blockquote) {
   border-left: 0.25rem solid #ffe58f;
   background: #fffbe6;
@@ -277,6 +281,11 @@ const markdownHtml = function() {
 /*.markdown :deep(:not(blockquote) > p) {
   margin-bottom: 10px;
 }*/
+
+.markdown :deep(code:not([class])) {
+  background-color: #f3f3f3;
+}
+
 
 .markdown :deep(h1),
 .markdown :deep(h2),
@@ -301,8 +310,8 @@ const markdownHtml = function() {
 
 .markdown :deep(table th), .markdown :deep(table td) {
   border: 1px solid #8c8c8c;
-  /*padding: 0.25rem;*/
-  padding: 0.5rem;
+  padding: 0.2rem;
+  /*padding: 0.5rem;*/
   white-space: nowrap;
 }
 
