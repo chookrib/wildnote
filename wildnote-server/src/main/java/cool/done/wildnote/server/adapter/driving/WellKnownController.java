@@ -2,6 +2,7 @@ package cool.done.wildnote.server.adapter.driving;
 
 import cool.done.wildnote.server.Application;
 
+import cool.done.wildnote.server.utility.CryptoUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,15 @@ public class WellKnownController {
     @ResponseBody
     public Result testException() {
         throw new RuntimeException("测试异常");
+    }
+
+    /**
+     * Md5
+     */
+    @RequestMapping(value = "/.well-known/test/md5", method = RequestMethod.GET)
+    @ResponseBody
+    public Result testMd5(@RequestParam String text) {
+        return Result.okData(CryptoUtility.encodeMd5(text));
     }
 }
 

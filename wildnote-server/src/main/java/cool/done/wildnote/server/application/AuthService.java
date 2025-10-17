@@ -52,11 +52,11 @@ public class AuthService {
         if(!authSuccess) {
             // 再从笔记配置文件中获取认证信息
             try {
-                String encryptedPassword = noteSettingService.getAuthEncryptedPassword(username);
+                String settingPassword = noteSettingService.getAuthPassword(username);
                 if (
-                        !ValueUtility.isBlank(encryptedPassword) &&
-                        //encryptedPassword.equals(CryptoUtility.encodeMd5(password))
-                        encryptedPassword.equals(password)
+                        !ValueUtility.isBlank(settingPassword) &&
+                        settingPassword.equals(CryptoUtility.encodeMd5(password))
+                        //settingPassword.equals(password)
                 ) {
                     authSuccess = true;
                 }

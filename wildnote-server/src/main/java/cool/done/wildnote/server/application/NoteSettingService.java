@@ -63,9 +63,9 @@ public class NoteSettingService {
     }
 
     /**
-     * 取认证加密密码
+     * 取认证密码
      */
-    public String getAuthEncryptedPassword(String username) {
+    public String getAuthPassword(String username) {
         return this.settingContentJson.path("auth").path(username).asText();
     }
 
