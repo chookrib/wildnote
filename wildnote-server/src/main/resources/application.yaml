@@ -14,14 +14,16 @@ logging:
     name: log\log.log
 
 wildnote:
-  username: admin
-  password: admin
+  auth-username: admin
+  auth-password: admin
+  auth-jwt-secret: secret
   # 笔记根路径，支持绝对路径和相对路径
   # note-root-path: C:\note
   note-root-path: .\src
   note-extensions: .md,.txt
-  log-root-path: log\
-  setting-path: wildnote.json
+  # 笔记配置文件路径，在笔记根路径下的相对路径
+  note-setting-file-path: wildnote.json
+  extra-log-root-path: log\
 
   # 使用钉钉发送提醒消息
   remind-dingtalk-key:

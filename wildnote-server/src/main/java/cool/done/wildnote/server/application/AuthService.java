@@ -3,6 +3,8 @@ package cool.done.wildnote.server.application;
 import com.auth0.jwt.interfaces.Claim;
 import cool.done.wildnote.server.utility.CryptoUtility;
 import cool.done.wildnote.server.utility.ValueUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,20 +17,22 @@ import java.util.Map;
 @Component
 public class AuthService {
 
-    //private final SettingService settingService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    @Value("${wildnote.username:}")
-    private String noteUsername;
+    @Value("${wildnote.auth-username:}")
+    private String authUsername;
 
-    @Value("${wildnote.password:}")
-    private String notePassword;
+    @Value("${wildnote.auth-password:}")
+    private String authPassword;
 
-    //访问令牌
-    //private String accessToken;
+    @Value("${wildnote.auth-jwt-secret:}")
+    private String authJwtSecret;
 
-    //public AuthService(SettingService settingService) {
-    //    this.settingService = settingService;
-    //}
+    private final NoteSettingService noteSettingService;
+
+    public AuthService(NoteSettingService noteSettingService) {
+        this.noteSettingService = noteSettingService;
+    }
 
     /**
      * 登录
@@ -38,24 +42,37 @@ public class AuthService {
             throw new ApplicationException("用户名或密码不能为空");
         }
 
-        if (!noteUsername.equals(username) || !notePassword.equals(password)) {
+        boolean authSuccess = false;
+
+        // 先从环境配置文件中获取认证信息
+        if (this.authUsername.equals(username) && this.authPassword.equals(password)) {
+            authSuccess = true;
+        }
+
+        if(!authSuccess) {
+            // 再从笔记配置文件中获取认证信息
+            try {
+                String encryptedPassword = noteSettingService.getAuthEncryptedPassword(username);
+                if (
+                        !ValueUtility.isBlank(encryptedPassword) &&
+                        //encryptedPassword.equals(CryptoUtility.encodeMd5(password))
+                        encryptedPassword.equals(password)
+                ) {
+                    authSuccess = true;
+                }
+            } catch (Exception e) {
+                logger.info("从配置文件中获取认证信息异常: {}", e.getMessage());
+            }
+        }
+
+        if (!authSuccess) {
             throw new ApplicationException("用户名或密码错误");
         }
 
-        //if (!settingService.auth(username, password)) {
-        //    throw new ApplicationException("用户名或密码错误");
-        //}
-
-        //令牌不存在时创建令牌
-        //if (StringUtils.isEmpty(accessToken)) {
-        //    accessToken = UUID.randomUUID().toString();
-        //}
-        //return accessToken;
-
         return CryptoUtility.encodeJwt(
-                Map.of("username", noteUsername),
+                Map.of("username", username),
                 new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L),   // 30天过期
-                notePassword
+                this.authJwtSecret
         );
     }
 
@@ -64,15 +81,15 @@ public class AuthService {
      * 验证 AccessToken
      */
     public boolean verifyAccessToken(String accessToken) {
-        if(ValueUtility.isBlank(accessToken)) {
+        if (ValueUtility.isBlank(accessToken)) {
             return false;
         }
 
         try {
-            Map<String, Claim> payload = CryptoUtility.decodeJwt(accessToken, notePassword);
-            return payload.get("username").asString().equals(noteUsername);
-        }
-        catch (Exception e) {
+            Map<String, Claim> payload = CryptoUtility.decodeJwt(accessToken, this.authJwtSecret);
+            // return payload.get("username").asString().equals(this.authUsername);
+            return true;
+        } catch (Exception e) {
             return false;
         }
     }

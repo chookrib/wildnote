@@ -12,9 +12,9 @@ public class JsonUtility {
     /**
      * 读取JsonNode
      */
-    public static JsonNode readTree(String json) {
+    public static JsonNode readTree(String str) {
         try {
-            return new ObjectMapper().readTree(json);
+            return new ObjectMapper().readTree(str);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("解析JSON字符串异常", e);
         }

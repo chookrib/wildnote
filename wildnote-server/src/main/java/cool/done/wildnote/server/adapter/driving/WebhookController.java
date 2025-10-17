@@ -1,7 +1,7 @@
 package cool.done.wildnote.server.adapter.driving;
 
 import cool.done.wildnote.server.application.NoteExploreService;
-import cool.done.wildnote.server.application.SettingService;
+import cool.done.wildnote.server.application.NoteSettingService;
 import cool.done.wildnote.server.domain.RemindGateway;
 import cool.done.wildnote.server.utility.ValueUtility;
 import org.slf4j.Logger;
@@ -26,14 +26,14 @@ public class WebhookController {
 
     private final ApplicationContext applicationContext;
     private final NoteExploreService noteExploreService;
-    private final SettingService settingService;
+    private final NoteSettingService noteSettingService;
 
     public WebhookController(
             ApplicationContext applicationContext,
-            SettingService settingService,
+            NoteSettingService noteSettingService,
             NoteExploreService noteExploreService) {
         this.applicationContext = applicationContext;
-        this.settingService = settingService;
+        this.noteSettingService = noteSettingService;
         this.noteExploreService = noteExploreService;
     }
 
@@ -45,7 +45,7 @@ public class WebhookController {
         if (ValueUtility.isBlank(name) || ValueUtility.isBlank(message))
             throw new ControllerException("Webhook remind 参数错误");
 
-        String value = settingService.getRemindWebhook(name);
+        String value = noteSettingService.getRemindWebhook(name);
         if (ValueUtility.isBlank(value))
             throw new ControllerException(String.format("Webhook remind 未配置"));
 
@@ -57,7 +57,7 @@ public class WebhookController {
     }
 
     /**
-     * 记录 Webhook
+     * 记录 Webhook，未指定 mode 默认为 append
      */
     @RequestMapping(value = "/webhook/record/{name}", method = RequestMethod.GET)
     public Result record(@PathVariable String name,
@@ -66,45 +66,19 @@ public class WebhookController {
         if (ValueUtility.isBlank(name) || ValueUtility.isBlank(content))
             throw new ControllerException("Webhook record 参数错误");
 
-        String value = settingService.getRecordWebhook(name);
+        String value = noteSettingService.getRecordWebhook(name);
         if (ValueUtility.isBlank(value))
             throw new ControllerException("Webhook record 未配置");
 
-        Path notePath = noteExploreService.combineAbsPath(value);
-
-        //File noteFile = new File(notePath);
-        //if (!noteFile.exists())
-        //    throw new ControllerException("配置的记录路径不存在");
+        String newContent = String.format(
+                "\n\n%s %s",
+                new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
+                content);
 
         if ("append".equalsIgnoreCase(mode)) {
-            // 追加到文件末尾
-            try (FileWriter writer = new FileWriter(notePath.toFile(), StandardCharsets.UTF_8, true)) {
-                writer.write(String.format(
-                        "\n\n%s %s",
-                        new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
-                        content)
-                );
-            } catch (IOException e) {
-                throw new ControllerException(String.format("Webhook record 异常: %s", e.getMessage()));
-            }
+            noteExploreService.appendFileContent(value, newContent);
         } else if ("insert".equalsIgnoreCase(mode)) {
-            // 插入到文件开头
-            try {
-                String oldContent = "";
-                if (notePath.toFile().exists()) {
-                    oldContent = java.nio.file.Files.readString(notePath, StandardCharsets.UTF_8);
-                }
-                try (FileWriter writer = new FileWriter(notePath.toFile(), StandardCharsets.UTF_8, false)) {
-                    writer.write(String.format(
-                            "%s %s\n\n%s",
-                            new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
-                            content,
-                            oldContent.trim())
-                    );
-                }
-            } catch (IOException e) {
-                throw new ControllerException(String.format("Webhook record 异常: %s", e.getMessage()));
-            }
+            noteExploreService.insertFileContent(value, newContent);
         } else {
             throw new ControllerException("Webhook record mode 非法");
         }

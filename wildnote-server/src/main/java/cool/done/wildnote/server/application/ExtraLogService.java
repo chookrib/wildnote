@@ -25,7 +25,7 @@ public class ExtraLogService {
 
     private String logRootAbsPath;
 
-    public ExtraLogService(@Value("${wildnote.log-root-path:}") String logRootPath) {
+    public ExtraLogService(@Value("${wildnote.extra-log-root-path:}") String logRootPath) {
         if (ValueUtility.isBlank(logRootPath)) {
             throw new ApplicationException("未配置日志根路径");
         }
