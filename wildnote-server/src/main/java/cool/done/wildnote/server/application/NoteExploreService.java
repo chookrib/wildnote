@@ -193,7 +193,8 @@ public class NoteExploreService {
 
         // 跳过不符合扩展名的文件，仅跳过文件，文件夹仍然需要添加
         if (file.isFile()) {
-            String ext = file.getName().contains(".") ? file.getName().substring(file.getName().lastIndexOf('.') + 1) : "";
+            String ext = file.getName().contains(".") ?
+                    "." + file.getName().substring(file.getName().lastIndexOf('.') + 1) : "";
             if (!this.noteExtensions.contains(ext)) {
                 return;
             }
