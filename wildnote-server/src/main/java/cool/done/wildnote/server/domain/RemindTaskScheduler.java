@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * 使用 Spring TaskScheduler 实现
  */
 @Component
-public class RemindSchedulerSpringImpl implements RemindScheduler {
+public class RemindTaskScheduler implements RemindScheduler {
 
     private final RemindGateway remindGateway;
     private final TaskScheduler taskScheduler;
@@ -24,7 +24,7 @@ public class RemindSchedulerSpringImpl implements RemindScheduler {
     // TaskScheduler 不支持获取作业，使用 Map 保存作业
     private Map<String, ScheduledFuture<?>> jobMap = new ConcurrentHashMap<>();
 
-    public RemindSchedulerSpringImpl(RemindGateway remindGateway, TaskScheduler taskScheduler) {
+    public RemindTaskScheduler(RemindGateway remindGateway, TaskScheduler taskScheduler) {
         this.remindGateway = remindGateway;
         this.taskScheduler = taskScheduler;
     }

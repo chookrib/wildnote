@@ -15,7 +15,7 @@ import java.util.*;
  * 使用 Quartz 实现
  */
 @Component
-public class RemindSchedulerQuartzImpl implements RemindScheduler {
+public class RemindQuartzScheduler implements RemindScheduler {
 
     private static final Logger logger = LoggerFactory.getLogger(NoteRemindService.class);
 
@@ -23,7 +23,7 @@ public class RemindSchedulerQuartzImpl implements RemindScheduler {
     private final Scheduler scheduler;
     private final String schedulerJobGroupName = "REMIND";
 
-    public RemindSchedulerQuartzImpl(RemindGateway remindGateway) {
+    public RemindQuartzScheduler(RemindGateway remindGateway) {
         this.remindGateway = remindGateway;
         try {
             this.scheduler = StdSchedulerFactory.getDefaultScheduler();

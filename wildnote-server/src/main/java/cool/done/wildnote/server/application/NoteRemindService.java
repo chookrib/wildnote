@@ -26,8 +26,8 @@ public class NoteRemindService {
     private final ExtraLogService extraLogService;
 
     public NoteRemindService(
-            //@Qualifier("RemindSchedulerSpringImpl") NoteRemindScheduler remindScheduler,
-            @Qualifier("remindSchedulerQuartzImpl") RemindScheduler remindScheduler,
+            //@Qualifier("remindTaskScheduler") RemindScheduler remindScheduler,
+            @Qualifier("remindQuartzScheduler") RemindScheduler remindScheduler,
             ExtraLogService extraLogService
     ) {
         this.remindScheduler = remindScheduler;
