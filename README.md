@@ -2,7 +2,7 @@
 
 ## 项目说明
 
-`wildnote\wildnote-server`为后端项目，使用 Java 开发
+`wildnote\wildnote-server`为后端项目，使用 Java 开发  
 `wildnote\wildnote-web`为前端项目，使用 Vue3 开发  
 
 ## 使用说明
