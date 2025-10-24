@@ -40,8 +40,9 @@ public class NoteTreeNode {
     /**
      * 创建
      */
-    public static NoteTreeNode create(String relPath, String absPath, String name, boolean directory,
-                                      Long creationTime, long lastModifiedTime, int level) {
+    public static NoteTreeNode create(
+            String relPath, String absPath, String name, boolean directory, Long creationTime, long lastModifiedTime,
+            int level) {
         NoteTreeNode note = new NoteTreeNode();
         note.relPath = relPath;
         note.absPath = absPath;

@@ -1,8 +1,8 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import cool.done.wildnote.server.application.NoteSettingService;
-import cool.done.wildnote.server.domain.*;
+import cool.done.wildnote.server.domain.RemindGateway;
+import cool.done.wildnote.server.domain.SmsGateway;
 import cool.done.wildnote.server.utility.ValueUtility;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,8 +21,11 @@ public class SystemController {
     private final SmsGateway smsGateway;
     private final NoteSettingService noteSettingService;
 
-    public SystemController(RemindGateway remindGateway, SmsGateway smsGateway,
-                            NoteSettingService noteSettingService) {
+    public SystemController(
+            RemindGateway remindGateway,
+            SmsGateway smsGateway,
+            NoteSettingService noteSettingService
+    ) {
         this.remindGateway = remindGateway;
         this.smsGateway = smsGateway;
         this.noteSettingService = noteSettingService;

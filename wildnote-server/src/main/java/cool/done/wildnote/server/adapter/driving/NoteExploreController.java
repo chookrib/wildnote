@@ -5,6 +5,7 @@ import cool.done.wildnote.server.application.NoteExploreService;
 import cool.done.wildnote.server.application.NoteTreeNodeDto;
 import cool.done.wildnote.server.application.NoteSettingService;
 import cool.done.wildnote.server.utility.JsonUtility;
+import okhttp3.Request;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,7 +21,10 @@ public class NoteExploreController {
     private final NoteExploreService noteExploreService;
     private final NoteSettingService noteSettingService;
 
-    public NoteExploreController(NoteExploreService noteExploreService, NoteSettingService noteSettingService) {
+    public NoteExploreController(
+            NoteExploreService noteExploreService,
+            NoteSettingService noteSettingService
+    ) {
         this.noteExploreService = noteExploreService;
         this.noteSettingService = noteSettingService;
     }
@@ -55,8 +59,8 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/get", method = RequestMethod.POST)
     public Result noteGetViaPost(@RequestBody String requestBody) {
-        JsonNode json = JsonUtility.readTree(requestBody);
-        String path = json.path("path").asText();
+        JsonNode requestJson = RequestHelper.toJson(requestBody);
+        String path = requestJson.path("path").asText();
         String content = noteExploreService.getFileContent(path);
         return Result.okData(Map.of("content", content));
     }
@@ -75,9 +79,9 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/save", method = RequestMethod.POST)
     public Result noteSave(@RequestBody String requestBody) {
-        JsonNode json = JsonUtility.readTree(requestBody);
-        String path = json.path("path").asText();
-        String content = json.path("content").asText();
+        JsonNode requestJson = RequestHelper.toJson(requestBody);
+        String path = requestJson.path("path").asText();
+        String content = requestJson.path("content").asText();
         noteExploreService.saveFileContent(path, content);
         return Result.ok();
     }
@@ -87,8 +91,8 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/create", method = RequestMethod.POST)
     public Result noteCreate(@RequestBody String requestBody) {
-        JsonNode json = JsonUtility.readTree(requestBody);
-        String path = json.path("path").asText();
+        JsonNode requestJson = RequestHelper.toJson(requestBody);
+        String path = requestJson.path("path").asText();
         noteExploreService.createFile(path);
         return Result.ok();
     }
@@ -98,8 +102,8 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/delete", method = RequestMethod.POST)
     public Result noteDelete(@RequestBody String requestBody) {
-        JsonNode json = JsonUtility.readTree(requestBody);
-        String path = json.path("path").asText();
+        JsonNode requestJson = RequestHelper.toJson(requestBody);
+        String path = requestJson.path("path").asText();
         noteExploreService.deleteFile(path);
         return Result.ok();
     }
@@ -119,8 +123,8 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/favorite/set", method = RequestMethod.POST)
     public Result noteFavorite(@RequestBody String requestBody) {
-        JsonNode json = JsonUtility.readTree(requestBody);
-        JsonNode pathsNode = json.path("paths");
+        JsonNode requestJson = RequestHelper.toJson(requestBody);
+        JsonNode pathsNode = requestJson.path("paths");
         List<String> paths = new ArrayList<>();
         if (pathsNode.isArray()) {
             for (JsonNode node : pathsNode) {

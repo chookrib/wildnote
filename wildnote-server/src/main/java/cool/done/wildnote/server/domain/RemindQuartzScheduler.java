@@ -17,7 +17,7 @@ import java.util.*;
 @Component
 public class RemindQuartzScheduler implements RemindScheduler {
 
-    private static final Logger logger = LoggerFactory.getLogger(NoteRemindService.class);
+    private static final Logger logger = LoggerFactory.getLogger(RemindQuartzScheduler.class);
 
     private final RemindGateway remindGateway;
     private final Scheduler scheduler;

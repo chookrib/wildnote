@@ -41,12 +41,13 @@ public class NoteExploreService {
     private final ExtraLogService extraLogService;
     private final NoteSettingService noteSettingService;
 
-    public NoteExploreService(@Value("${wildnote.note-root-path}") String noteRootPath,
-                              @Value("${wildnote.note-extensions}") String noteExtensions,
-                              @Value("${wildnote.note-setting-file-path:}") String noteSettingFilePath,
-                              NoteRemindService noteRemindService,
-                              ExtraLogService extraLogService,
-                              NoteSettingService noteSettingService
+    public NoteExploreService(
+            @Value("${wildnote.note-root-path}") String noteRootPath,
+            @Value("${wildnote.note-extensions}") String noteExtensions,
+            @Value("${wildnote.note-setting-file-path:}") String noteSettingFilePath,
+            NoteRemindService noteRemindService,
+            ExtraLogService extraLogService,
+            NoteSettingService noteSettingService
     ) {
         if (ValueUtility.isBlank(noteRootPath)) {
             throw new ApplicationException("未配置笔记根路径");

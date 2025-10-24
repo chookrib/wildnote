@@ -61,7 +61,7 @@ public class DingTalkRemindGatewayAdapter implements RemindGateway {
                 requestBody, String.class
         );
         //logger.info(responseBody);
-        JsonNode responseJson = JsonUtility.readTree(responseBody);
+        JsonNode responseJson = JsonUtility.deserialize(responseBody);
         String accessToken = responseJson.path("accessToken").asText();
         int expireIn = responseJson.path("expiresIn").asInt();
         DINGTALK_ACCESS_TOKEN = accessToken;

@@ -69,12 +69,12 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
         private AuthService authService;
 
         @Override
-        public boolean preHandle(HttpServletRequest request, @NonNull HttpServletResponse response,
-                                 @NonNull Object handler) throws NotLoginException {
-
+        public boolean preHandle(
+                HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler)
+                throws NotLoginException {
             String accessToken = request.getHeader("Access-Token");
 
-            if(!authService.verifyAccessToken(accessToken)) {
+            if (!authService.verifyAccessToken(accessToken)) {
                 throw new NotLoginException();
             }
 

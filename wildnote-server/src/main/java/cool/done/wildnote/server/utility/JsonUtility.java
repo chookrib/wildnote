@@ -5,29 +5,29 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Jackson Utility
+ * Json Utility
  */
 public class JsonUtility {
 
     /**
-     * 读取JsonNode
+     * 反序列化 JSON 字符串为 JsonNode
      */
-    public static JsonNode readTree(String str) {
+    public static JsonNode deserialize(String data) {
         try {
-            return new ObjectMapper().readTree(str);
+            return new ObjectMapper().readTree(data);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("解析JSON字符串异常", e);
+            throw new RuntimeException("反序列化JSON异常", e);
         }
     }
 
     /**
-     * 将对象转换为Json字符串
+     * 序列化对象为 JSON 字符串
      */
-    public static String writeValueAsString(Object object) {
+    public static String serialize(Object data) {
         try {
-            return new ObjectMapper().writeValueAsString(object);
+            return new ObjectMapper().writeValueAsString(data);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("生成JSON字符串异常", e);
+            throw new RuntimeException("序列化JSON异常", e);
         }
     }
 }

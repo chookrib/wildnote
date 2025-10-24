@@ -31,7 +31,8 @@ public class WebhookController {
     public WebhookController(
             ApplicationContext applicationContext,
             NoteSettingService noteSettingService,
-            NoteExploreService noteExploreService) {
+            NoteExploreService noteExploreService
+    ) {
         this.applicationContext = applicationContext;
         this.noteSettingService = noteSettingService;
         this.noteExploreService = noteExploreService;

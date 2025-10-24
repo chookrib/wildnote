@@ -44,7 +44,7 @@ public class NoteSettingService {
         this.settingFileAbsPath = settingFileAbsPath;
         try {
             this.settingContent = Files.readString(Path.of(this.settingFileAbsPath), StandardCharsets.UTF_8);
-            this.settingContentJson = JsonUtility.readTree(this.settingContent);
+            this.settingContentJson = JsonUtility.deserialize(this.settingContent);
             extraLogService.logNoteInfo(
                     String.format("读取笔记配置文件 %s 成功", settingFileAbsPath), logger
             );

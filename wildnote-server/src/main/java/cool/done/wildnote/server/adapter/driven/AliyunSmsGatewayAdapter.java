@@ -63,7 +63,7 @@ public class AliyunSmsGatewayAdapter implements SmsGateway {
                             "阿里云短信验证码发送结果: %s %s %s",
                             mobile,
                             code,
-                            JsonUtility.writeValueAsString(response.body)
+                            JsonUtility.serialize(response.body)
                     ), logger);
         } catch (Exception e) {
             extraLogService.logSmsError(String.format("阿里云短信验异常: %s %s %s", mobile, code, e.getMessage()), logger);
