@@ -9,12 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Webhook Controller
@@ -71,19 +68,19 @@ public class WebhookController {
         if (ValueUtility.isBlank(value))
             throw new ControllerException("Webhook record 未配置");
 
-        String newContent = String.format(
-                "\n\n%s %s",
-                new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()),
-                content);
+        String contentWithTime = new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()) + " " + content;
 
         if ("append".equalsIgnoreCase(mode)) {
-            noteExploreService.appendFileContent(value, newContent);
+            noteExploreService.appendFileContent(value, "\n\n" + contentWithTime);
         } else if ("insert".equalsIgnoreCase(mode)) {
-            noteExploreService.insertFileContent(value, newContent);
+            noteExploreService.insertFileContent(value, "\n\n" + contentWithTime);
         } else {
             throw new ControllerException("Webhook record mode 非法");
         }
 
-        return Result.ok();
+        return Result.okData(Map.of(
+                "content", contentWithTime,
+                "mode", mode
+        ));
     }
 }
