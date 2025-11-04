@@ -1,6 +1,5 @@
 package cool.done.wildnote.server.application;
 
-import cool.done.wildnote.server.adapter.driving.ControllerException;
 import cool.done.wildnote.server.domain.NoteTreeNode;
 import cool.done.wildnote.server.utility.ValueUtility;
 import io.methvin.watcher.DirectoryWatcher;
@@ -56,8 +55,8 @@ public class NoteExploreService {
         try {
             // toRealPath 会解析符号链接，并返回规范化后的绝对路径，同时会检查路径是否真实存在。如果路径不存在或无权限，会抛出异常
             path = Path.of(noteRootPath).toRealPath();
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("笔记根路径非法 %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("笔记根路径非法 %s", ex.getMessage()), ex);
         }
         //if (!Files.exists(path)) {
         //    throw new ApplicationException("笔记根路径不存在");
@@ -73,9 +72,9 @@ public class NoteExploreService {
         if (!ValueUtility.isBlank(noteSettingFilePath)) {
             try {
                 settingPath = combineAbsPath(noteSettingFilePath).toString();
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 extraLogService.logNoteError(
-                        String.format("笔记配置文件路径 %s 异常: %s", noteSettingFilePath, e.getMessage()), logger
+                        String.format("笔记配置文件路径 %s 异常: %s", noteSettingFilePath, ex.getMessage()), logger
                 );
             }
         }
@@ -159,9 +158,9 @@ public class NoteExploreService {
                 }
             });
             extraLogService.logNoteInfo(String.format("加载笔记文件夹成功: %s", noteRootAbsPath), logger);
-        } catch (IOException e) {
+        } catch (IOException ex) {
             extraLogService.logNoteError(
-                    String.format("加载笔记文件夹异常: %s %s", noteRootAbsPath, e.getMessage()), logger
+                    String.format("加载笔记文件夹异常: %s %s", noteRootAbsPath, ex.getMessage()), logger
             );
         }
 
@@ -212,7 +211,7 @@ public class NoteExploreService {
         try {
             BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
             creationTime = attrs.creationTime().toMillis();
-        } catch (IOException e) {
+        } catch (IOException ex) {
             extraLogService.logNoteError(String.format("获取文件系统创建时间属性异常: %s", absPath), logger);
         }
 
@@ -253,8 +252,8 @@ public class NoteExploreService {
                 String description = parts.length >= 2 ? parts[2].trim() : "";
                 noteRemindService.addCron(path, lineNumber, cronExpression, description);
             }
-        } catch (IOException e) {
-            extraLogService.logNoteError(String.format("解析笔记文件cron失败: %s %s", path, e.getMessage()), logger);
+        } catch (IOException ex) {
+            extraLogService.logNoteError(String.format("解析笔记文件cron失败: %s %s", path, ex.getMessage()), logger);
         }
     }
 
@@ -288,8 +287,8 @@ public class NoteExploreService {
     public String getFileContent(String relPath) {
         try {
             return Files.readString(combineAbsPath(relPath));
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("读取笔记内容异常: %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("读取笔记内容异常: %s", ex.getMessage()), ex);
         }
     }
 
@@ -300,8 +299,8 @@ public class NoteExploreService {
         try {
             Files.writeString(combineAbsPath(relPath), content);
             // 后续由 watcher 监控并处理
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("保存笔记内容异常: %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("保存笔记内容异常: %s", ex.getMessage()), ex);
         }
     }
 
@@ -313,8 +312,8 @@ public class NoteExploreService {
                 combineAbsPath(relPath).toFile(), StandardCharsets.UTF_8, true)
         ) {
             writer.write(content);
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("追加笔记内容异常: %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("追加笔记内容异常: %s", ex.getMessage()), ex);
         }
     }
 
@@ -332,8 +331,8 @@ public class NoteExploreService {
         //    System.arraycopy(originalBytes, 0, newBytes, 0, (int) originalBytes.length);
         //    System.arraycopy(contentBytes, 0, newBytes, originalBytes.length, contentBytes.length);
         //    Files.write(path, newBytes);
-        //} catch (IOException e) {
-        //    throw new ApplicationException(String.format("插入笔记内容异常: %s", e.getMessage()));
+        //} catch (IOException ex) {
+        //    throw new ApplicationException(String.format("插入笔记内容异常: %s", ex.getMessage()), ex);
         //}
 
         // 写法二
@@ -346,8 +345,8 @@ public class NoteExploreService {
             try (FileWriter writer = new FileWriter(path.toFile(), StandardCharsets.UTF_8, false)) {
                 writer.write(content + oldContent);
             }
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("插入笔记内容异常: %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("插入笔记内容异常: %s", ex.getMessage()), ex);
         }
 
         // 写法三
@@ -371,8 +370,8 @@ public class NoteExploreService {
         //    }
         //    // 替换原文件
         //    Files.move(tempPath, path, StandardCopyOption.REPLACE_EXISTING);
-        //} catch (IOException e) {
-        //    throw new ApplicationException(String.format("插入笔记内容异常: %s", e.getMessage()));
+        //} catch (IOException ex) {
+        //    throw new ApplicationException(String.format("插入笔记内容异常: %s", ex.getMessage()), ex);
         //}
     }
 
@@ -387,8 +386,8 @@ public class NoteExploreService {
         try {
             Files.writeString(path, "");
             // 后续由 watcher 监控并处理
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("创建笔记异常: %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("创建笔记异常: %s", ex.getMessage()), ex);
         }
     }
 
@@ -399,8 +398,8 @@ public class NoteExploreService {
         try {
             Files.delete(combineAbsPath(relPath));
             // 后续由 watcher 监控并处理
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("删除笔记异常: %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("删除笔记异常: %s", ex.getMessage()), ex);
         }
     }
 
@@ -442,9 +441,9 @@ public class NoteExploreService {
                     .build();
             watcher.watchAsync();
             extraLogService.logNoteInfo(String.format("启动笔记文件夹监控成功: %s", noteRootAbsPath), logger);
-        } catch (IOException e) {
+        } catch (IOException ex) {
             extraLogService.logNoteError(
-                    String.format("启动笔记文件夹监控异常: %s %s", noteRootAbsPath, e.getMessage()), logger
+                    String.format("启动笔记文件夹监控异常: %s %s", noteRootAbsPath, ex.getMessage()), logger
             );
         }
     }
@@ -457,8 +456,8 @@ public class NoteExploreService {
             try {
                 watcher.close();
                 extraLogService.logNoteInfo(String.format("停止笔记文件夹监控成功"), logger);
-            } catch (IOException e) {
-                extraLogService.logNoteError(String.format("停止笔记文件夹监控异常: %s", e.getMessage()), logger);
+            } catch (IOException ex) {
+                extraLogService.logNoteError(String.format("停止笔记文件夹监控异常: %s", ex.getMessage()), logger);
             }
         }
     }

@@ -33,15 +33,15 @@ public class ExtraLogService {
         try {
             // toAbsolutePath 会返回该路径的绝对路径（不解析符号链接，也不检查路径是否存在），只将相对路径转换为绝对路径
             path = Path.of(logRootPath).toAbsolutePath();
-        } catch (Exception e) {
-            throw new ApplicationException(String.format("日志根路径非法 %s", e.getMessage()));
+        } catch (Exception ex) {
+            throw new ApplicationException(String.format("日志根路径非法 %s", ex.getMessage()), ex);
         }
 
         if (!Files.exists(path)) {
             try {
                 Files.createDirectories(path);
-            } catch (IOException e) {
-                throw new ApplicationException(String.format("创建日志根路径文件夹异常: %s", e.getMessage()));
+            } catch (IOException ex) {
+                throw new ApplicationException(String.format("创建日志根路径文件夹异常: %s", ex.getMessage()), ex);
             }
         } else {
             if (!Files.isDirectory(path)) {
@@ -118,8 +118,8 @@ public class ExtraLogService {
                     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
                             " " + message + "\n");
             fileWriter.close();
-        } catch (Exception e) {
-            logger.error("写入日志失败: {} {}", message, e.getMessage());
+        } catch (Exception ex) {
+            logger.error("写入日志失败: {} {}", message, ex.getMessage());
         }
     }
 
@@ -172,8 +172,8 @@ public class ExtraLogService {
             long nextNegativeOffset = fileLength - (start + (size - resultLength));
             // System.out.println(" fileLength: " + fileLength + " nextNegativeOffset: " + nextNegativeOffset);
             return new ExtraLogResult(result, start > 0, nextNegativeOffset);
-        } catch (Exception e) {
-            throw new ApplicationException(String.format("读取日志失败: %s %s", logType.getFilename(), e.getMessage()));
+        } catch (Exception ex) {
+            throw new ApplicationException(String.format("读取日志失败: %s %s", logType.getFilename(), ex.getMessage()), ex);
         }
     }
 }

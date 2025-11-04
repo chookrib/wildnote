@@ -21,7 +21,11 @@ public class Application {
 
     public static void main(String[] args) {
         applicationContext = SpringApplication.run(Application.class, args);
-        logger.info("Started File-Name: {} Build-Time: {}", getFileName(), getBuildTime());
+        Properties props = getManifestProperties();
+        logger.info("File-Name: {} Build-Time: {} Git-Commit-Id-Abbrev: {}",
+                getFileName(),
+                props.getProperty("Build-Time", ""),
+                props.getProperty("Git-Commit-Id-Abbrev", ""));
     }
 
     /**
@@ -32,32 +36,31 @@ public class Application {
     }
 
     /**
-     * 从MANIFEST.MF取应用打包时间
+     * 从MANIFEST.MF取信息
      */
-    public static String getBuildTime() {
+    public static Properties getManifestProperties() {
+        Properties props = new Properties();
         try {
             InputStream inputStream = applicationContext.getClass().getClassLoader()
                     .getResourceAsStream("META-INF/MANIFEST.MF");
 
             if (inputStream == null) {
-                logger.warn("获取 Build-Time 失败: META-INF/MANIFEST.MF 文件不存在");
-                return "";
+                logger.warn("读取 META-INF/MANIFEST.MF 失败: 文件不存在");
+                return props;
             }
 
-            Properties props = new Properties();
             props.load(inputStream);
+            return props;
 
-            for (String key : props.stringPropertyNames()) {
-                if (key.equals("Build-Time")) {
-                    return props.getProperty(key);
-                }
-            }
-
-            logger.warn("获取 Build-Time 失败: META-INF/MANIFEST.MF 文件未包含 Build-Time");
-            return "";
-        } catch (Exception e) {
-            logger.warn("获取 Build-Time 失败: {}", e.getMessage());
-            return "";
+            //for (String key : props.stringPropertyNames()) {
+            //    if (key.equals("Build-Time")) {
+            //        return props.getProperty(key);
+            //    }
+            //}
+        } catch (Exception ex) {
+            logger.warn("读取 META-INF/MANIFEST.MF 失败: {}", ex.getMessage());
         }
+
+        return props;
     }
 }

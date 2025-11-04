@@ -26,7 +26,7 @@ public class NoteRemindController {
      * 取所有笔记提醒计划任务
      */
     @RequestMapping(value = "/api/remind/all", method = RequestMethod.GET)
-    public Result remindCron() {
+    public Result remindAll() {
         List<NoteCron> cronList = noteRemindService.getCronList();
         Map<String, Long> jobMap = noteRemindService.getCronJobMap();
         List<Map<String, Object>> scheduledCronList = cronList.stream()

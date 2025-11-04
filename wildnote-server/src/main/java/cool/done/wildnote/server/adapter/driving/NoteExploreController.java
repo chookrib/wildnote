@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import cool.done.wildnote.server.application.NoteExploreService;
 import cool.done.wildnote.server.application.NoteTreeNodeDto;
 import cool.done.wildnote.server.application.NoteSettingService;
-import cool.done.wildnote.server.utility.JsonUtility;
-import okhttp3.Request;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -59,8 +58,9 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/get", method = RequestMethod.POST)
     public Result noteGetViaPost(@RequestBody String requestBody) {
-        JsonNode requestJson = RequestHelper.toJson(requestBody);
-        String path = requestJson.path("path").asText();
+        var requestJson = RequestValueHelper.getRequestJson(requestBody);
+        //String path = requestJson.path("path").asText();
+        String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         String content = noteExploreService.getFileContent(path);
         return Result.okData(Map.of("content", content));
     }
@@ -69,7 +69,11 @@ public class NoteExploreController {
      * 读取笔记，根据QueryString参数
      */
     @RequestMapping(value = "/api/note/get", method = RequestMethod.GET)
-    public Result noteGetViaGet(@RequestParam String path) {
+    public Result noteGetViaGet(
+            HttpServletRequest request
+            //@RequestParam String path
+    ) {
+        String path = RequestValueHelper.getRequestParamStringTrimReq(request, "path");
         String content = noteExploreService.getFileContent(path);
         return Result.okData(Map.of("content", content));
     }
@@ -79,9 +83,11 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/save", method = RequestMethod.POST)
     public Result noteSave(@RequestBody String requestBody) {
-        JsonNode requestJson = RequestHelper.toJson(requestBody);
-        String path = requestJson.path("path").asText();
-        String content = requestJson.path("content").asText();
+        var requestJson = RequestValueHelper.getRequestJson(requestBody);
+        //String path = requestJson.path("path").asText();
+        //String content = requestJson.path("content").asText();
+        String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
+        String content = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "content");
         noteExploreService.saveFileContent(path, content);
         return Result.ok();
     }
@@ -91,8 +97,9 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/create", method = RequestMethod.POST)
     public Result noteCreate(@RequestBody String requestBody) {
-        JsonNode requestJson = RequestHelper.toJson(requestBody);
-        String path = requestJson.path("path").asText();
+        var requestJson = RequestValueHelper.getRequestJson(requestBody);
+        //String path = requestJson.path("path").asText();
+        String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         noteExploreService.createFile(path);
         return Result.ok();
     }
@@ -102,8 +109,9 @@ public class NoteExploreController {
      */
     @RequestMapping(value = "/api/note/delete", method = RequestMethod.POST)
     public Result noteDelete(@RequestBody String requestBody) {
-        JsonNode requestJson = RequestHelper.toJson(requestBody);
-        String path = requestJson.path("path").asText();
+        var requestJson = RequestValueHelper.getRequestJson(requestBody);
+        //String path = requestJson.path("path").asText();
+        String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         noteExploreService.deleteFile(path);
         return Result.ok();
     }
@@ -122,15 +130,9 @@ public class NoteExploreController {
      * 存收藏路径
      */
     @RequestMapping(value = "/api/note/favorite/set", method = RequestMethod.POST)
-    public Result noteFavorite(@RequestBody String requestBody) {
-        JsonNode requestJson = RequestHelper.toJson(requestBody);
-        JsonNode pathsNode = requestJson.path("paths");
-        List<String> paths = new ArrayList<>();
-        if (pathsNode.isArray()) {
-            for (JsonNode node : pathsNode) {
-                paths.add(node.asText());
-            }
-        }
+    public Result noteFavoriteSet(@RequestBody String requestBody) {
+        var requestJson = RequestValueHelper.getRequestJson(requestBody);
+        List<String> paths = RequestValueHelper.getRequestJsonStringTrimList(requestJson, "paths");
         // System.out.println("paths=" + paths);
         noteSettingService.setFavorite(paths);
         return Result.ok();

@@ -14,9 +14,11 @@ import java.util.Map;
 public class CryptoUtility {
 
     /**
-     * JWT编码
+     * JWT 编码
      */
-    public static String encodeJwt(Map<String, ?> payload, Date expiresAt, String secret) {
+    public static String encodeJwt(
+            //Map<String, ?> payload,
+            Map<String, String> payload, Date expiresAt, String secret) {
         return JWT.create()
                 .withPayload(payload)
                 .withExpiresAt(expiresAt)
@@ -24,7 +26,7 @@ public class CryptoUtility {
     }
 
     /**
-     * JWT解码
+     * JWT 解码
      */
     public static Map<String, Claim> decodeJwt(String jwt, String secret) {
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC256(secret))
@@ -45,8 +47,8 @@ public class CryptoUtility {
                 sb.append(String.format("%02x", b));
             }
             return sb.toString();
-        } catch (java.security.NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        } catch (java.security.NoSuchAlgorithmException ex) {
+            throw new RuntimeException(ex);
         }
     }
 }

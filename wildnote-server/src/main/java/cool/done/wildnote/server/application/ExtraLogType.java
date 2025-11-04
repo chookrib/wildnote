@@ -30,6 +30,6 @@ public enum ExtraLogType {
             }
         }
         //throw new IllegalArgumentException("未知的日志类型: " + name);
-        throw new ApplicationException("未知的日志类型: " + name);
+        throw new ApplicationException(String.format("未知的日志类型: %s", name));
     }
 }

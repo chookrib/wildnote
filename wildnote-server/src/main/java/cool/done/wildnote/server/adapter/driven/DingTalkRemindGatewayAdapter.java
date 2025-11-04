@@ -42,8 +42,8 @@ public class DingTalkRemindGatewayAdapter implements RemindGateway {
         try {
             String response = dingTalkChatSend(message);
             extraLogService.logRemindInfo(String.format("钉钉提醒结果: %s %s", message, response), logger);
-        } catch (Exception e) {
-            extraLogService.logRemindError(String.format("钉钉提醒异常: %s", e.getMessage()), logger);
+        } catch (Exception ex) {
+            extraLogService.logRemindError(String.format("钉钉提醒异常: %s", ex.getMessage()), logger);
         }
     }
 

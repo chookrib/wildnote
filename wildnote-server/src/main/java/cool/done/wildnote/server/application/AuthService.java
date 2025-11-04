@@ -60,8 +60,8 @@ public class AuthService {
                 ) {
                     authSuccess = true;
                 }
-            } catch (Exception e) {
-                logger.info("从配置文件中获取认证信息异常: {}", e.getMessage());
+            } catch (Exception ex) {
+                logger.info("从配置文件中获取认证信息异常: {}", ex.getMessage());
             }
         }
 
@@ -89,7 +89,7 @@ public class AuthService {
             Map<String, Claim> payload = CryptoUtility.decodeJwt(accessToken, this.authJwtSecret);
             // return payload.get("username").asString().equals(this.authUsername);
             return true;
-        } catch (Exception e) {
+        } catch (Exception ex) {
             return false;
         }
     }

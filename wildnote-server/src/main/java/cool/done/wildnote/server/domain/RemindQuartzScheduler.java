@@ -34,8 +34,8 @@ public class RemindQuartzScheduler implements RemindScheduler {
                         this.remindGateway.remind(message);
                     });
             this.scheduler.start();
-        } catch (SchedulerException e) {
-            throw new DomainException(String.format("RemindSchedulerQuartzImpl初始化异常: %s", e.getMessage()));
+        } catch (SchedulerException ex) {
+            throw new DomainException(String.format("RemindSchedulerQuartzImpl初始化异常: %s", ex.getMessage()), ex);
         }
     }
 
@@ -53,8 +53,8 @@ public class RemindQuartzScheduler implements RemindScheduler {
                 .build();
         try {
             scheduler.scheduleJob(jobDetail, trigger);
-        } catch (SchedulerException e) {
-            throw new DomainException(e.getMessage());
+        } catch (SchedulerException ex) {
+            throw new DomainException(ex.getMessage(), ex);
         }
         return jobId;
     }
@@ -64,8 +64,8 @@ public class RemindQuartzScheduler implements RemindScheduler {
         JobKey jobKey = new JobKey(jobId, schedulerJobGroupName);
         try {
             scheduler.deleteJob(jobKey);
-        } catch (SchedulerException e) {
-            throw new DomainException(e.getMessage());
+        } catch (SchedulerException ex) {
+            throw new DomainException(ex.getMessage(), ex);
         }
     }
 
@@ -96,8 +96,8 @@ public class RemindQuartzScheduler implements RemindScheduler {
                 else
                     result.put(jobKey.getName(), null);
             }
-        } catch (SchedulerException e) {
-            throw new DomainException(e.getMessage());
+        } catch (SchedulerException ex) {
+            throw new DomainException(ex.getMessage(), ex);
         }
         return result;
     }
@@ -111,8 +111,8 @@ public class RemindQuartzScheduler implements RemindScheduler {
             Set<JobKey> jobKeySet = scheduler.getJobKeys(matcher);
             List<JobKey> jobKeyList = new ArrayList<>(jobKeySet);
             scheduler.deleteJobs(jobKeyList);
-        } catch (SchedulerException e) {
-            throw new DomainException(e.getMessage());
+        } catch (SchedulerException ex) {
+            throw new DomainException(ex.getMessage(), ex);
         }
     }
 }

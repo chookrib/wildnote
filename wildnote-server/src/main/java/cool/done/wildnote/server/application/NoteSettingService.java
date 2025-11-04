@@ -48,9 +48,9 @@ public class NoteSettingService {
             extraLogService.logNoteInfo(
                     String.format("读取笔记配置文件 %s 成功", settingFileAbsPath), logger
             );
-        } catch (IOException e) {
+        } catch (IOException ex) {
             extraLogService.logNoteError(
-                    String.format("读取笔记配置文件 %s 异常，未更新配置: %s", settingFileAbsPath, e.getMessage()), logger
+                    String.format("读取笔记配置文件 %s 异常，未更新配置: %s", settingFileAbsPath, ex.getMessage()), logger
             );
         }
     }
@@ -114,8 +114,8 @@ public class NoteSettingService {
             mapper.writer(prettyPrinter).writeValue(
                     new File(this.settingFileAbsPath), objectNode
             );
-        } catch (IOException e) {
-            throw new ApplicationException(String.format("保存配置文件异常: %s", e.getMessage()));
+        } catch (IOException ex) {
+            throw new ApplicationException(String.format("保存配置文件异常: %s", ex.getMessage()), ex);
         }
     }
 }

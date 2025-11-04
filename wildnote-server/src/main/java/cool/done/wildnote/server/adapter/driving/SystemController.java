@@ -4,6 +4,7 @@ import cool.done.wildnote.server.application.NoteSettingService;
 import cool.done.wildnote.server.domain.RemindGateway;
 import cool.done.wildnote.server.domain.SmsGateway;
 import cool.done.wildnote.server.utility.ValueUtility;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,7 @@ public class SystemController {
      * 取配置
      */
     @RequestMapping(value = "/api/system/setting", method = RequestMethod.GET)
-    public Result setting() {
+    public Result systemSetting() {
         return Result.okData(Map.of("content", noteSettingService.getSettingContent()));
     }
 
@@ -43,10 +44,14 @@ public class SystemController {
      * 测试提醒功能
      */
     @RequestMapping(value = "/api/system/test/remind", method = RequestMethod.GET)
-    public Result testRemind(@RequestParam String message) {
-        if (ValueUtility.isBlank(message)) {
-            throw new ControllerException("参数 message 不能为空");
-        }
+    public Result sysetmTestRemind(
+            HttpServletRequest request
+            //, @RequestParam String message
+    ) {
+        //if (ValueUtility.isBlank(message)) {
+        //    throw new ControllerException("参数 message 不能为空");
+        //}
+        String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
         this.remindGateway.remind(message);
         return Result.ok();
     }
@@ -55,13 +60,18 @@ public class SystemController {
      * 测试短信功能
      */
     @RequestMapping(value = "/api/system/test/sms", method = RequestMethod.GET)
-    public Result testSms(@RequestParam String mobile, @RequestParam String code) {
-        if (ValueUtility.isBlank(mobile)) {
-            throw new ControllerException("参数 mobile 不能为空");
-        }
-        if (ValueUtility.isBlank(code)) {
-            throw new ControllerException("参数 code 不能为空");
-        }
+    public Result systemTestSms(
+            HttpServletRequest request
+            //, @RequestParam String mobile, @RequestParam String code
+    ) {
+        //if (ValueUtility.isBlank(mobile)) {
+        //    throw new ControllerException("参数 mobile 不能为空");
+        //}
+        //if (ValueUtility.isBlank(code)) {
+        //    throw new ControllerException("参数 code 不能为空");
+        //}
+        String mobile = RequestValueHelper.getRequestParamStringTrimReq(request, "mobile");
+        String code = RequestValueHelper.getRequestParamStringTrimReq(request, "code");
         this.smsGateway.sendCode(mobile, code);
         return Result.ok();
     }

@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Properties;
+
 /**
  * Well Known Controller
  */
@@ -22,9 +24,12 @@ public class WellKnownController {
     @RequestMapping(value = "/.well-known/info", method = RequestMethod.GET, produces = "text/plain")
     @ResponseBody
     public String info() {
+        Properties props = Application.getManifestProperties();
         return "File-Name: " + Application.getFileName() +
                System.lineSeparator() +
-               "Build-Time: " + Application.getBuildTime() +
+               "Build-Time: " + props.getProperty("Build-Time", "") +
+               System.lineSeparator() +
+               "Git-Commit-Id-Abbrev: " + props.getProperty("Git-Commit-Id-Abbrev", "") +
                System.lineSeparator();
     }
 

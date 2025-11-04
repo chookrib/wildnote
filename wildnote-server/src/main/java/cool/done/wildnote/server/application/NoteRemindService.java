@@ -61,10 +61,10 @@ public class NoteRemindService {
                 extraLogService.logRemindInfo(String.format("添加笔记提醒计划任务调度作业成功: %s %s %s %s %s",
                         path, lineNumber, cronExpression, description, jobId
                 ), logger);
-            } catch (Exception e) {
+            } catch (Exception ex) {
                 extraLogService.logRemindError(
                         String.format("添加笔记提醒计划任务调度作业异常: %s %s %s %s %s",
-                                path, lineNumber, cronExpression, description, e.getMessage()
+                                path, lineNumber, cronExpression, description, ex.getMessage()
                         ), logger);
             }
         } else {
@@ -98,14 +98,14 @@ public class NoteRemindService {
                             cron.getCronExpression(),
                             cron.getDescription()
                     ), logger);
-                } catch (Exception e) {
+                } catch (Exception ex) {
                     extraLogService.logRemindError(
                             String.format("删除笔记提醒计划任务已调度作业异常: %s %s %s %s %s",
                                     cron.getPath(),
                                     cron.getLineNumber(),
                                     cron.getCronExpression(),
                                     cron.getDescription(),
-                                    e.getMessage()
+                                    ex.getMessage()
                             ), logger);
                 }
             }
@@ -122,8 +122,8 @@ public class NoteRemindService {
         try {
             remindScheduler.clearJob();
             extraLogService.logRemindInfo(String.format("清除所有笔记提醒计划任务已调度作业成功"), logger);
-        } catch (Exception e) {
-            extraLogService.logRemindError(String.format("清除所有笔记提醒计划任务已调度作业异常: %s", e.getMessage()), logger);
+        } catch (Exception ex) {
+            extraLogService.logRemindError(String.format("清除所有笔记提醒计划任务已调度作业异常: %s", ex.getMessage()), logger);
         }
     }
 }

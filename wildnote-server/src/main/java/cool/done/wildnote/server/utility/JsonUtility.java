@@ -15,8 +15,8 @@ public class JsonUtility {
     public static JsonNode deserialize(String data) {
         try {
             return new ObjectMapper().readTree(data);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("反序列化JSON异常", e);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException("反序列化JSON异常", ex);
         }
     }
 
@@ -26,8 +26,8 @@ public class JsonUtility {
     public static String serialize(Object data) {
         try {
             return new ObjectMapper().writeValueAsString(data);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("序列化JSON异常", e);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException("序列化JSON异常", ex);
         }
     }
 }
