@@ -59,7 +59,6 @@ public class NoteExploreController {
     @RequestMapping(value = "/api/note/get", method = RequestMethod.POST)
     public Result noteGetViaPost(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
-        //String path = requestJson.path("path").asText();
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         String content = noteExploreService.getFileContent(path);
         return Result.okData(Map.of("content", content));
@@ -69,10 +68,7 @@ public class NoteExploreController {
      * 读取笔记，根据QueryString参数
      */
     @RequestMapping(value = "/api/note/get", method = RequestMethod.GET)
-    public Result noteGetViaGet(
-            HttpServletRequest request
-            //@RequestParam String path
-    ) {
+    public Result noteGetViaGet(HttpServletRequest request) {
         String path = RequestValueHelper.getRequestParamStringTrimReq(request, "path");
         String content = noteExploreService.getFileContent(path);
         return Result.okData(Map.of("content", content));
@@ -84,8 +80,6 @@ public class NoteExploreController {
     @RequestMapping(value = "/api/note/save", method = RequestMethod.POST)
     public Result noteSave(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
-        //String path = requestJson.path("path").asText();
-        //String content = requestJson.path("content").asText();
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         String content = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "content");
         noteExploreService.saveFileContent(path, content);
@@ -98,7 +92,6 @@ public class NoteExploreController {
     @RequestMapping(value = "/api/note/create", method = RequestMethod.POST)
     public Result noteCreate(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
-        //String path = requestJson.path("path").asText();
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         noteExploreService.createFile(path);
         return Result.ok();
@@ -110,7 +103,6 @@ public class NoteExploreController {
     @RequestMapping(value = "/api/note/delete", method = RequestMethod.POST)
     public Result noteDelete(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
-        //String path = requestJson.path("path").asText();
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         noteExploreService.deleteFile(path);
         return Result.ok();

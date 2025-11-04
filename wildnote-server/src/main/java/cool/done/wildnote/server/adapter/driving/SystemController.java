@@ -44,13 +44,7 @@ public class SystemController {
      * 测试提醒功能
      */
     @RequestMapping(value = "/api/system/test/remind", method = RequestMethod.GET)
-    public Result sysetmTestRemind(
-            HttpServletRequest request
-            //, @RequestParam String message
-    ) {
-        //if (ValueUtility.isBlank(message)) {
-        //    throw new ControllerException("参数 message 不能为空");
-        //}
+    public Result sysetmTestRemind(HttpServletRequest request) {
         String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
         this.remindGateway.remind(message);
         return Result.ok();
@@ -60,16 +54,7 @@ public class SystemController {
      * 测试短信功能
      */
     @RequestMapping(value = "/api/system/test/sms", method = RequestMethod.GET)
-    public Result systemTestSms(
-            HttpServletRequest request
-            //, @RequestParam String mobile, @RequestParam String code
-    ) {
-        //if (ValueUtility.isBlank(mobile)) {
-        //    throw new ControllerException("参数 mobile 不能为空");
-        //}
-        //if (ValueUtility.isBlank(code)) {
-        //    throw new ControllerException("参数 code 不能为空");
-        //}
+    public Result systemTestSms(HttpServletRequest request) {
         String mobile = RequestValueHelper.getRequestParamStringTrimReq(request, "mobile");
         String code = RequestValueHelper.getRequestParamStringTrimReq(request, "code");
         this.smsGateway.sendCode(mobile, code);

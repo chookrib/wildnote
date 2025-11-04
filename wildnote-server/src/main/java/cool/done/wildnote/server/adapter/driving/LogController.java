@@ -6,7 +6,6 @@ import cool.done.wildnote.server.application.ExtraLogType;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -37,12 +36,9 @@ public class LogController {
      * 取日志
      */
     @RequestMapping(value = "/api/log/get", method = RequestMethod.GET)
-    public Result logGet(HttpServletRequest request
-            //, @RequestParam String type,
-            //, @RequestParam(defaultValue = "0") long offset
-    ) {
+    public Result logGet(HttpServletRequest request) {
         String type = RequestValueHelper.getRequestParamStringTrimReq(request,"type");
-        long offset = RequestValueHelper.getRequestParamLong(request, 0, "offset");
+        long offset = RequestValueHelper.getRequestParamLongOrDefault(request, 0, "offset");
 
         ExtraLogResult logResult = extraLogService.readLog(ExtraLogType.getByName(type), offset);
         return Result.okData(Map.of("result", logResult));

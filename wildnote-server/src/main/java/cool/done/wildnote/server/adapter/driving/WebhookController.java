@@ -40,17 +40,12 @@ public class WebhookController {
      * 提醒 Webhook
      */
     @RequestMapping(value = "/webhook/remind/{name}", method = RequestMethod.GET)
-    public Result remind(
-            HttpServletRequest request,
-            @PathVariable String name
-            //, @RequestParam String message
-    ) {
-        //if (ValueUtility.isBlank(name) || ValueUtility.isBlank(message))
-        //    throw new ControllerException("Webhook remind 参数错误");
-        String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
-
+    public Result remind(HttpServletRequest request, @PathVariable String name) {
         if (ValueUtility.isBlank(name))
             throw new ControllerException("Webhook remind name 参数错误");
+
+        name = name.trim();
+        String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
 
         String value = noteSettingService.getRemindWebhook(name);
         if (ValueUtility.isBlank(value))
@@ -67,17 +62,13 @@ public class WebhookController {
      * 记录 Webhook，未指定 mode 默认为 append
      */
     @RequestMapping(value = "/webhook/record/{name}", method = RequestMethod.GET)
-    public Result record(
-            HttpServletRequest request,
-            @PathVariable String name
-            //, @RequestParam(value = "mode", defaultValue = "append") String mode
-            //, @RequestParam String content
-    ) {
-        String mode = RequestValueHelper.getRequestParamStringTrim(request, "append", "mode");
-        String content = RequestValueHelper.getRequestParamStringTrimReq(request, "content");
-
+    public Result record(HttpServletRequest request, @PathVariable String name) {
         if (ValueUtility.isBlank(name))
             throw new ControllerException("Webhook record name 参数错误");
+
+        name = name.trim();
+        String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "append", "mode");
+        String content = RequestValueHelper.getRequestParamStringTrimReq(request, "content");
 
         String value = noteSettingService.getRecordWebhook(name);
         if (ValueUtility.isBlank(value))
