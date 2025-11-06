@@ -3,6 +3,7 @@ package cool.done.wildnote.server.adapter.driving;
 import cool.done.wildnote.server.Application;
 
 import cool.done.wildnote.server.utility.CryptoUtility;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -43,12 +44,13 @@ public class WellKnownController {
     }
 
     /**
-     * Md5
+     * MD5 编码
      */
-    @RequestMapping(value = "/.well-known/test/md5", method = RequestMethod.GET)
+    @RequestMapping(value = "/.well-known/test/crypto/md5-encode", method = RequestMethod.GET)
     @ResponseBody
-    public Result testMd5(@RequestParam String text) {
-        return Result.okData(CryptoUtility.encodeMd5(text));
+    public Result testMd5(HttpServletRequest request) {
+        String text = RequestValueHelper.getRequestParamStringTrimReq(request,"text");
+        return Result.okData(CryptoUtility.md5Encode(text));
     }
 }
 

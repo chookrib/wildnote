@@ -1,6 +1,5 @@
 package cool.done.wildnote.server.application;
 
-import com.auth0.jwt.interfaces.Claim;
 import cool.done.wildnote.server.utility.CryptoUtility;
 import cool.done.wildnote.server.utility.ValueUtility;
 import org.slf4j.Logger;
@@ -8,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -25,12 +24,25 @@ public class AuthService {
     @Value("${wildnote.auth-password:}")
     private String authPassword;
 
-    @Value("${wildnote.auth-jwt-secret:}")
     private String authJwtSecret;
+    private int authJwtExpiresMinute;
 
     private final NoteSettingService noteSettingService;
 
-    public AuthService(NoteSettingService noteSettingService) {
+    public AuthService(
+            @Value("${wildnote.auth-jwt-secret:}") String jwtSecret,
+            @Value("${wildnote.auth-jwt-expires:}") String jwtExpires,
+            NoteSettingService noteSettingService) {
+        if (!ValueUtility.isBlank(jwtSecret)) {
+            this.authJwtSecret = jwtSecret;
+        } else {
+            throw new ApplicationException("wildnote.auth-jwt-secret 配置错误");
+        }
+        try {
+            this.authJwtExpiresMinute = CryptoUtility.jwtExpiresMinute(jwtExpires);
+        } catch (Exception ex) {
+            throw new ApplicationException("wildnote.auth-jwt-expires 配置错误");
+        }
         this.noteSettingService = noteSettingService;
     }
 
@@ -49,14 +61,14 @@ public class AuthService {
             authSuccess = true;
         }
 
-        if(!authSuccess) {
+        if (!authSuccess) {
             // 再从笔记配置文件中获取认证信息
             try {
                 String settingPassword = noteSettingService.getAuthPassword(username);
                 if (
                         !ValueUtility.isBlank(settingPassword) &&
-                        settingPassword.equals(CryptoUtility.encodeMd5(password))
-                        //settingPassword.equals(password)
+                                settingPassword.equals(CryptoUtility.md5Encode(password))
+                    //settingPassword.equals(password)
                 ) {
                     authSuccess = true;
                 }
@@ -69,10 +81,10 @@ public class AuthService {
             throw new ApplicationException("用户名或密码错误");
         }
 
-        return CryptoUtility.encodeJwt(
+        return CryptoUtility.jwtEncode(
                 Map.of("username", username),
-                new Date(System.currentTimeMillis() + 30 * 24 * 60 * 60 * 1000L),   // 30天过期
-                this.authJwtSecret
+                this.authJwtSecret,
+                LocalDateTime.now().plusMinutes(this.authJwtExpiresMinute)
         );
     }
 
@@ -86,8 +98,8 @@ public class AuthService {
         }
 
         try {
-            Map<String, Claim> payload = CryptoUtility.decodeJwt(accessToken, this.authJwtSecret);
-            // return payload.get("username").asString().equals(this.authUsername);
+            Map<String, ?> payload = CryptoUtility.jwtDecode(accessToken, this.authJwtSecret);
+            //return Objects.toString(payload.get("username"), "").equals(this.authUsername);
             return true;
         } catch (Exception ex) {
             return false;
