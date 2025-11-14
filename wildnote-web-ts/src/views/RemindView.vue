@@ -1,8 +1,8 @@
 <script setup>
 import { computed, onMounted, ref, useCssModule } from 'vue'
 import { RouterLink } from 'vue-router'
-import axios from '@/utility/axios-utility.js'
-import { showDateTime, showTime } from '@/utility/datetime-utility.js'
+import axios from '@/utility/axios-utility'
+import { showDateTime, showTime } from '@/utility/datetime-utility'
 
 const scheduledCrons = ref([])
 const unscheduledCrons = ref([])

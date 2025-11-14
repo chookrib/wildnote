@@ -2,8 +2,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue'
-import axios from '@/utility/axios-utility.js'
-import { showDateTime } from '@/utility/datetime-utility.js'
+import axios from '@/utility/axios-utility'
+import { showDateTime } from '@/utility/datetime-utility'
 
 const dataSource = ref([])
 const searchKey = ref('')

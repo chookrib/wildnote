@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { message } from 'ant-design-vue'
-import * as localStorageUtility from '@/utility/local-storage-utility.js'
+import * as localStorageUtility from '@/utility/local-storage-utility'
 
 const instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL

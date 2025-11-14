@@ -1,8 +1,8 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
-import * as localStorageUtility from '@/utility/local-storage-utility.js'
-import { showConfirm } from '@/utility/confirm-utility.js'
+import * as localStorageUtility from '@/utility/local-storage-utility'
+import { showConfirm } from '@/utility/confirm-utility'
 
 console.log(import.meta.env)
 

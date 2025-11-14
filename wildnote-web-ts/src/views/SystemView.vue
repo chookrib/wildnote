@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { message } from 'ant-design-vue'
-import axios from '@/utility/axios-utility.js'
+import axios from '@/utility/axios-utility'
 
 const remindMessage = ref('')
 const smsMobile = ref('')
