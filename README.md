@@ -3,8 +3,8 @@
 ## 项目说明
 
 `wildnote\wildnote-server`为后端项目，使用 Java 开发  
-`wildnote\wildnote-web-js`为前端项目，使用 Vite + Vue 3 + Javascript 开发  
-`wildnote\wildnote-web-ts`为前端项目，使用 Vite + Vue 3 + TypeScript 开发  
+`wildnote\wildnote-web`为前端项目，使用 Vite + Vue 3 + Javascript 开发  
+`wildnote\wildnote-web-ts`为前端项目升级 ts 版本，使用 Vite + Vue 3 + TypeScript 开发  
 
 ## 使用说明
 
