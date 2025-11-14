@@ -37,7 +37,7 @@ git checkout main
 git pull
 rem git pull > git_output.txt 2>&1
 
-cd wildnote-web
+cd wildnote-web-ts
 call npm install
 call npm run build
 cd ..
@@ -62,9 +62,9 @@ goto :EOF
 
 :runjar
 rem set run_wildnote_cmd=java -jar ".\target\%1" --spring.config.location="%cd%\..\wildnote.properties"
-rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web\dist %~2 %~3 %~4 %~5
-rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web\dist %*
-set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web\dist %2 %3 %4 %5 %6 %7 %8 %9
+rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web-ts\dist %~2 %~3 %~4 %~5
+rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web-ts\dist %*
+set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web-ts\dist %2 %3 %4 %5 %6 %7 %8 %9
 echo %run_wildnote_cmd%
 %run_wildnote_cmd%
 goto :EOF
