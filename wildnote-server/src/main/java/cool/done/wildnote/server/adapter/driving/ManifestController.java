@@ -25,17 +25,17 @@ public class ManifestController {
                   "name": "",
                   "icons": [
                     {
-                      "src": "img/logo192c.png",
+                      "src": "/img/logo192c.png",
                       "type": "image/png",
                       "sizes": "192x192"
                     },
                     {
-                      "src": "img/logo512c.png",
+                      "src": "/img/logo512c.png",
                       "type": "image/png",
                       "sizes": "512x512"
                     }
                   ],
-                  "start_url": ".",
+                  "start_url": "/",
                   "background_color": "#ffffff",
                   "display": "standalone",
                   "theme_color": "#001529"
