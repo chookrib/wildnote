@@ -250,10 +250,7 @@ public class ValueUtility {
         if (millisTimestamp == null) {
             return null;
         }
-        long delayTime = millisTimestamp - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
-        //if(delayTime < 0) {
-        //    return null;
-        //}
-        return delayTime;
+        //return millisTimestamp - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
+        return millisTimestamp - LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)) * 1000;
     }
 }
