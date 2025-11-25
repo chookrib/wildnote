@@ -1,63 +1,59 @@
 <script setup>
-import { onMounted, ref } from 'vue'
-import { message } from 'ant-design-vue'
-import axios from '@/utility/axios-utility'
+import { onMounted, ref } from 'vue';
+import { message } from 'ant-design-vue';
+import axios from '@/utility/axios-utility';
 
-const remindMessage = ref('')
-const smsMobile = ref('')
-const smsCode = ref('')
+const remindMessage = ref('');
+const smsMobile = ref('');
+const smsCode = ref('');
 
-const settingContent = ref('')
+const settingContent = ref('');
 
 onMounted(() => {
-  loadSetting()
-})
+  loadSetting();
+});
 
 const loadSetting = () => {
-  axios.get('/api/system/setting').then(response => {
-    settingContent.value = response.data.data.content
-  })
-}
+  axios.get('/api/system/setting').then((response) => {
+    settingContent.value = response.data.data.content;
+  });
+};
 
-const remindPanelVisible = ref(false)
+const remindPanelVisible = ref(false);
 const openRemindPanel = () => {
-  remindPanelVisible.value = true
-}
+  remindPanelVisible.value = true;
+};
 
 const testRemind = () => {
-  axios.get('/api/system/remind/test?message=' + remindMessage.value)
-    .then(response => {
-      remindPanelVisible.value = false
-      message.success('测试提醒消息发送成功')
-    })
-}
+  axios.get('/api/system/remind/test?message=' + remindMessage.value).then((response) => {
+    remindPanelVisible.value = false;
+    message.success('测试提醒消息发送成功');
+  });
+};
 
-const smsPanelVisible = ref(false)
+const smsPanelVisible = ref(false);
 const openSmsPanel = () => {
-  smsPanelVisible.value = true
-}
+  smsPanelVisible.value = true;
+};
 
 const testSms = () => {
-  axios.get(
-    '/api/system/sms/test?mobile=' + smsMobile.value + '&code=' + smsCode.value
-  ).then(response => {
-    smsPanelVisible.value = false
-    message.success('测试短信验证码发送成功')
-  })
-}
+  axios.get('/api/system/sms/test?mobile=' + smsMobile.value + '&code=' + smsCode.value).then((response) => {
+    smsPanelVisible.value = false;
+    message.success('测试短信验证码发送成功');
+  });
+};
 
 const reloadNote = () => {
-  axios.get('/api/note/reload').then(response => {
-    message.success('重新加载所有笔记成功')
-  })
-}
+  axios.get('/api/note/reload').then((response) => {
+    message.success('重新加载所有笔记成功');
+  });
+};
 </script>
 
 <template>
   <a-card>
     <template #title>系统配置</template>
-    <template #extra>
-    </template>
+    <template #extra> </template>
     <div class="json">{{ settingContent }}</div>
   </a-card>
 

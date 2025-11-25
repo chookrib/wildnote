@@ -1,31 +1,27 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import zhCN from 'ant-design-vue/es/locale/zh_CN'
-import * as localStorageUtility from '@/utility/local-storage-utility'
-import { showConfirm } from '@/utility/confirm-utility'
+import { RouterLink, RouterView } from 'vue-router';
+import zhCN from 'ant-design-vue/es/locale/zh_CN';
+import * as localStorageUtility from '@/utility/local-storage-utility';
+import { showConfirm } from '@/utility/confirm-utility';
+import router from '@/router';
 
-console.log(import.meta.env)
+const title = window.location.hostname;
 
-const title = window.location.hostname
-
-const logout = function() {
-  showConfirm('确定要注销吗？', function() {
-    localStorageUtility.dropAccessToken()
-    window.location.href = '/login.html'
-  })
-}
+const logout = function () {
+  showConfirm('确定要注销吗？', () => {
+    localStorageUtility.delAccessToken();
+    // window.location.href = '/login.html';
+    router.push({ path: '/login', query: { nlr: 'true' } });
+  });
+};
 </script>
 
 <template>
   <a-config-provider :locale="zhCN">
-    <a-layout style="height: 100vh;">
+    <a-layout style="height: 100vh">
       <a-layout-header>
-        <img
-            src="/img/logo192.png"
-            alt=""
-            style="height: 20px; filter: brightness(0) invert(1);"
-        />
-        <div style="flex-grow: 1">{{title}}</div>
+        <img src="/img/logo192.png" alt="" style="height: 20px; filter: brightness(0) invert(1)" />
+        <div style="flex-grow: 1">{{ title }}</div>
         <RouterLink to="/">首页</RouterLink>
         <RouterLink to="/explore">浏览</RouterLink>
         <RouterLink to="/search">搜索</RouterLink>
@@ -34,7 +30,7 @@ const logout = function() {
         <RouterLink to="/log">日志</RouterLink>
         <a href="javascript:void(0)" @click="logout">注销</a>
       </a-layout-header>
-      <a-layout-content style="margin-top: 40px; height: 100%;">
+      <a-layout-content style="margin-top: 40px; height: 100%">
         <RouterView :key="$route.fullPath" />
       </a-layout-content>
     </a-layout>

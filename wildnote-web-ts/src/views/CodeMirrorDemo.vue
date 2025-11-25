@@ -1,14 +1,21 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
-import { EditorState } from '@codemirror/state'
-import { EditorView, keymap, lineNumbers, highlightWhitespace, highlightActiveLine, drawSelection } from '@codemirror/view'
-import { syntaxHighlighting, defaultHighlightStyle, foldGutter } from '@codemirror/language'
-import { defaultKeymap, history, undo, redo } from '@codemirror/commands'
-import { highlightSelectionMatches } from '@codemirror/search'
-import { markdown } from '@codemirror/lang-markdown'
+import { onMounted, onUnmounted, ref } from 'vue';
+import { EditorState } from '@codemirror/state';
+import {
+  EditorView,
+  keymap,
+  lineNumbers,
+  highlightWhitespace,
+  highlightActiveLine,
+  drawSelection,
+} from '@codemirror/view';
+import { syntaxHighlighting, defaultHighlightStyle, foldGutter } from '@codemirror/language';
+import { defaultKeymap, history, undo, redo } from '@codemirror/commands';
+import { highlightSelectionMatches } from '@codemirror/search';
+import { markdown } from '@codemirror/lang-markdown';
 
-const editorRef = ref(null)
-let view
+const editorRef = ref(null);
+let view = null;
 onMounted(() => {
   view = new EditorView({
     state: EditorState.create({
@@ -33,26 +40,25 @@ onMounted(() => {
         //keymap.of(defaultKeymap),
         keymap.of([
           ...defaultKeymap,
-          { key: "Mod-z", run: undo },
-          { key: "Mod-y", run: redo },
-          { key: "Shift-Mod-z", run: redo }
+          { key: 'Mod-z', run: undo },
+          { key: 'Mod-y', run: redo },
+          { key: 'Shift-Mod-z', run: redo },
         ]),
         highlightWhitespace(),
         markdown(),
-      ]
+      ],
     }),
-    parent: editorRef.value
-  })
-})
+    parent: editorRef.value,
+  });
+});
 
 onUnmounted(() => {
-  view.destroy()
-})
-
+  view.destroy();
+});
 </script>
 
 <template>
-<div ref="editorRef" style="height: 100%; background-color: #fff;"></div>
+  <div ref="editorRef" style="height: 100%; background-color: #fff"></div>
 </template>
 
 <style scoped>
@@ -75,6 +81,4 @@ onUnmounted(() => {
   overflow: auto;
   height: 100%;
 }
-
-
 </style>

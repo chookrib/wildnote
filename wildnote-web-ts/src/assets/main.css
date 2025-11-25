@@ -23,7 +23,7 @@ body {
 
 /*antd 表格 header 样式*/
 .ant-table-thead > tr > th {
-  font-weight: normal!important;
+  font-weight: normal !important;
   white-space: nowrap;
   /*text-align: center;*/
 }

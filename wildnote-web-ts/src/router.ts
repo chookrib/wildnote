@@ -1,56 +1,54 @@
 // import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router';
 // import IndexView from '@/views/IndexView.vue'
 
 const router = createRouter({
-    //history: createWebHistory(import.meta.env.BASE_URL),
-    history: createWebHashHistory(),
-    routes: [
+  //history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
+  routes: [
+    {
+      path: '/login',
+      component: () => import('@/views/Login.vue'),
+    },
+    {
+      path: '/code-mirror-demo',
+      component: () => import('@/views/CodeMirrorDemo.vue'),
+    },
+    {
+      path: '/',
+      component: () => import('@/views/home/Layout.vue'),
+      children: [
         {
-            path: '/',
-            name: 'index',
-            // component: IndexView
-            // route level code-splitting
-            // this generates a separate chunk (About.[hash].js) for this route
-            // which is lazy-loaded when the route is visited.
-            component: () => import('@/views/IndexView.vue')
+          path: '',
+          component: () => import('@/views/home/Index.vue'),
         },
         {
-            path: '/explore',
-            name: 'explore',
-            component: () => import('@/views/ExploreView.vue')
+          path: '/explore',
+          component: () => import('@/views/home/Explore.vue'),
         },
         {
-            path: '/search',
-            name: 'search',
-            component: () => import('@/views/SearchView.vue')
+          path: '/search',
+          component: () => import('@/views/home/Search.vue'),
         },
         {
-            path: '/remind',
-            name: 'remind',
-            component: () => import('@/views/RemindView.vue')
+          path: '/remind',
+          component: () => import('@/views/home/Remind.vue'),
         },
         {
-            path: '/note',
-            name: 'note',
-            component: () => import('@/views/NoteView.vue')
+          path: '/note',
+          component: () => import('@/views/home/Note.vue'),
         },
         {
-            path: '/system',
-            name: 'system',
-            component: () => import('@/views/SystemView.vue')
+          path: '/system',
+          component: () => import('@/views/home/System.vue'),
         },
         {
-            path: '/log',
-            name: 'log',
-            component: () => import('@/views/LogView.vue')
+          path: '/log',
+          component: () => import('@/views/home/Log.vue'),
         },
-        {
-            path: '/code-mirror-demo',
-            name: 'code-mirror-demo',
-            component: () => import('@/views/CodeMirrorDemoView.vue')
-        }
-    ]
-})
+      ],
+    },
+  ],
+});
 
-export default router
+export default router;

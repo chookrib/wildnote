@@ -1,29 +1,35 @@
 <script setup>
+import { reactive } from 'vue';
+import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
+import axios from '@/utility/axios-utility';
+import * as localStorageUtility from '@/utility/local-storage-utility';
+import { useRoute } from 'vue-router';
+import router from '@/router';
 
-import { reactive } from 'vue'
-import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
-import axios from '@/utility/axios-utility'
-import * as localStorageUtility from '@/utility/local-storage-utility'
+const route = useRoute();
+if (route.query.nlr !== 'true') router.push({ path: '/' });
 
-const loginForm = reactive({ username: '', password: '' })
+const loginForm = reactive({ username: '', password: '' });
 
-const login = function() {
-  axios.post('/api/login', {
-    username: loginForm.username,
-    password: loginForm.password
-  }).then(response => {
-    localStorageUtility.setAccessToken(response.data.data.accessToken)
-    //router.push('/')
-    window.location.href = '/'
-  })
-}
+const login = () => {
+  axios
+    .post('/api/login', {
+      username: loginForm.username,
+      password: loginForm.password,
+    })
+    .then((response) => {
+      localStorageUtility.setAccessToken(response.data.data.accessToken);
+      // window.location.href = '/';
+      router.push({ path: '/' });
+    });
+};
 </script>
 
 <template>
-  <a-card :hoverable="true" style="width: 300px; padding-top: 50px;">
+  <a-card :hoverable="true" style="width: 300px; padding-top: 50px">
     <div class="logo-box-outside">
       <div class="logo-box-inside">
-        <img src="/img/logo192.png" alt="">
+        <img src="/img/logo192.png" alt="" />
       </div>
     </div>
     <a-form autocomplete="off">
