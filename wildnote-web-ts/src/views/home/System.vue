@@ -3,6 +3,8 @@ import { onMounted, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import axios from '@/utility/axios-utility';
 
+const windowLocationOrigin = window.location.origin;
+
 const remindMessage = ref('');
 const smsMobile = ref('');
 const smsCode = ref('');
@@ -51,6 +53,12 @@ const reloadNote = () => {
 </script>
 
 <template>
+  <a-card>
+    <template #title>当前网址</template>
+    <template #extra> </template>
+    {{ windowLocationOrigin }}
+  </a-card>
+
   <a-card>
     <template #title>系统配置</template>
     <template #extra> </template>
