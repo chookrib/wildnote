@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
 import * as localStorageUtility from '@/utility/local-storage-utility';

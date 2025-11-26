@@ -1,12 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, useCssModule } from 'vue';
 import { RouterLink } from 'vue-router';
 import axios from '@/utility/axios-utility';
 import { showDateTime, showTime } from '@/utility/datetime-utility';
+import type { ColumnsType } from 'ant-design-vue/es/table';
+import type { TablePaginationConfig } from 'ant-design-vue/lib';
+import type { FilterValue, SorterResult } from 'ant-design-vue/es/table/interface';
 
-const scheduledCrons = ref([]);
-const unscheduledCrons = ref([]);
-const remainJobs = ref([]);
+// const scheduledCrons = ref([]);
+// const unscheduledCrons = ref([]);
+// const remainJobs = ref([]);
+const scheduledCrons = ref<Array<{ path: string; delayTime?: number; cronDetail?: string; [key: string]: any }>>([]);
+const unscheduledCrons = ref<Array<{ path: string; [key: string]: any }>>([]);
+const remainJobs = ref<Array<{ jobId: string; nextTime?: string; [key: string]: any }>>([]);
 
 onMounted(() => {
   axios.get('/api/remind/all').then((response) => {
@@ -16,7 +22,8 @@ onMounted(() => {
   });
 });
 
-const sorterParam = ref({});
+// const sorterParam = ref({});
+const sorterParam = ref<SorterResult<any>>();
 
 const scheduledCronsComputed = computed(() => {
   const sorter = sorterParam.value;
@@ -42,14 +49,22 @@ const scheduledCronsComputed = computed(() => {
   return [...scheduledCrons.value];
 });
 
-const handleTableChange = (pagination, filters, sorter) => {
+const handleTableChange = (
+  pagination: TablePaginationConfig,
+  filters: Record<string, FilterValue>,
+  sorter: SorterResult<any> | SorterResult<any>[],
+) => {
   // console.log('Table changed:', pagination, filters, sorter);
-  sorterParam.value = sorter;
+  if (Array.isArray(sorter)) {
+    sorterParam.value = sorter[0];
+  } else {
+    sorterParam.value = sorter;
+  }
 };
 
 const styles = useCssModule();
 // console.log(styles);
-const scheduledCronColumns = [
+const scheduledCronColumns: ColumnsType<any> = [
   {
     title: '笔记文件路径',
     dataIndex: 'path',
@@ -104,7 +119,7 @@ const scheduledCronColumns = [
     //ellipsis: true,
   },
 ];
-const unscheduledCronColumns = [
+const unscheduledCronColumns: ColumnsType<any> = [
   {
     title: '笔记文件路径',
     dataIndex: 'path',
@@ -125,7 +140,7 @@ const unscheduledCronColumns = [
     //ellipsis: true
   },
 ];
-const remainJobColumns = [
+const remainJobColumns: ColumnsType<any> = [
   {
     title: '作业Id',
     dataIndex: 'jobId',

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import axios from '@/utility/axios-utility';
 import { message } from 'ant-design-vue';
@@ -27,9 +27,9 @@ const loadLogContent = () => {
     //   (match, p1) =>
     //     `<a href="#/note?path=${encodeURIComponent(p1.trim())}">${p1}</a>`,
     // );
-    let content = response.data.data.result.log
+    const content = response.data.data.result.log
       .split('\n')
-      .map((line) => (/(失败|异常)/.test(line) ? `<span style="color: red;">${line}</span>` : line))
+      .map((line: string) => (/(失败|异常)/.test(line) ? `<span style="color: red;">${line}</span>` : line))
       .join('<br>');
     logContent.value = logContent.value + content + '<hr style="margin: 10px 0;">';
     logHasMore.value = response.data.data.result.hasMore;
@@ -37,7 +37,7 @@ const loadLogContent = () => {
   });
 };
 
-const handleTabChange = (e) => {
+const handleTabChange = (e: any) => {
   // console.log(e);
   logType.value = e;
   logContent.value = '';

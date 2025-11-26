@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite --mode dev",
     "build": "vue-tsc -b && vite build --mode prod",
+    "build-run": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
+    "build-only": "vite build --mode prod",
+    "type-check": "vue-tsc --build",
+    "lint": "eslint . --fix --cache",
     "format": "prettier --write src/"
   },
   "dependencies": {
@@ -21,9 +25,15 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
+    "@tsconfig/node22": "^22.0.5",
     "@types/node": "^24.10.0",
     "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/tsconfig": "^0.8.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-vue": "^10.6.1",
+    "jiti": "^2.6.1",
     "prettier": "^3.6.2",
     "typescript": "~5.9.3",
     "unplugin-vue-components": "^30.0.0",

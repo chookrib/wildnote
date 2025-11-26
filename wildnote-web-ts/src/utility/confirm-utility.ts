@@ -2,7 +2,7 @@ import { createVNode } from 'vue';
 import { Modal } from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
-const showConfirm = (content: string, onOk: Function, onCancel: Function) => {
+const showConfirm = (content: string, onOk?: () => void, onCancel?: () => void) => {
   Modal.confirm({
     title: '操作确认',
     icon: createVNode(ExclamationCircleOutlined),

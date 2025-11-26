@@ -1,10 +1,10 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { message } from 'ant-design-vue';
 import { EditFilled, RollbackOutlined, SaveFilled, StarFilled, StarOutlined } from '@ant-design/icons-vue';
 
-import { Marked } from 'marked';
+import { Marked, type RendererObject } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/default.min.css';
@@ -28,15 +28,15 @@ import * as localStorageUtility from '@/utility/local-storage-utility';
 import { showDateTime } from '@/utility/datetime-utility';
 
 const route = useRoute();
-const notePath = route.query.path;
+const notePath: string = (route.query.path as string) || '';
 const noteContent = ref('');
 const noteContentEdit = ref('');
 const editMode = ref(false);
 const isFavorite = ref(false);
-const lastSaveTime = ref(null);
+const lastSaveTime = ref<number | null>(null);
 
-const editorRef = ref(null);
-let view;
+const editorRef = ref();
+let view: EditorView;
 onMounted(() => {
   loadNote();
 
@@ -123,8 +123,9 @@ const delFavorite = () => {
   isFavorite.value = false;
 };
 
-const renderer = {
-  link(href, title, text) {
+const renderer: RendererObject<string, any> = {
+  link(this: any, ...args: any[]) {
+    const [href, title, text] = args;
     const link = marked.Renderer.prototype.link.call(this, href, title, text);
     return link.replace('<a', "<a target='_blank' rel='noreferrer' ");
   },
@@ -140,7 +141,7 @@ const renderer = {
   },
 };
 
-const marked = new Marked(
+const marked: Marked = new Marked(
   {
     breaks: true,
     renderer: renderer,

@@ -1,11 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import { showDateTime } from '@/utility/datetime-utility';
+import type { ColumnsType } from 'ant-design-vue/es/table';
 
-const dataSource = ref([]);
+// const dataSource = ref([]);
+const dataSource = ref<Array<{ relPath: string; lastModifiedTime: string; directory: boolean }>>([]);
 const searchKey = ref('');
 
 onMounted(() => {
@@ -18,13 +20,13 @@ const dataSourceComputed = computed(() => {
   if (searchKey.value.length === 0) {
     return [];
   }
-  let ds = dataSource.value.filter((node) => node.relPath.toLowerCase().includes(searchKey.value.toLowerCase()));
+  const ds = dataSource.value.filter((node) => node.relPath.toLowerCase().includes(searchKey.value.toLowerCase()));
   return ds.sort((a, b) => {
     return a.relPath.localeCompare(b.relPath);
   });
 });
 
-const columns = [
+const columns: ColumnsType<any> = [
   {
     title: '路径',
     dataIndex: 'relPath',

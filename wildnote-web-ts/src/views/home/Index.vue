@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { message } from 'ant-design-vue';
@@ -7,10 +7,12 @@ import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
 import { showConfirm } from '@/utility/confirm-utility';
 
-const favoriteNotePathsRemote = ref([]);
-const favoriteNotePaths = ref([]);
+// const favoriteNotePathsRemote = ref([]);
+// const favoriteNotePaths = ref([]);
+const favoriteNotePathsRemote = ref<string[]>([]);
+const favoriteNotePaths = ref<string[]>([]);
 // let remindLog = ref('');
-let dragIndex = null;
+let dragIndex: number | null = null;
 
 onMounted(() => {
   favoriteNotePaths.value = localStorageUtility.getFavoriteNotePaths();
@@ -29,17 +31,19 @@ const loadFavoriteNotePathRemote = () => {
   });
 };
 
-const onDragStart = (index) => {
+const onDragStart = (index: number) => {
   dragIndex = index;
 };
 
-const onDrop = (dropIndex) => {
-  localStorageUtility.moveFavoritePath(dragIndex, dropIndex);
-  dragIndex = null;
+const onDrop = (dropIndex: number) => {
+  if (dragIndex) {
+    localStorageUtility.moveFavoritePath(dragIndex, dropIndex);
+    dragIndex = null;
+  }
   favoriteNotePaths.value = localStorageUtility.getFavoriteNotePaths();
 };
 
-const delFavorite = (path) => {
+const delFavorite = (path: string) => {
   showConfirm(`确定删除本地收藏的笔记路径 ${path} 吗？`, () => {
     localStorageUtility.delFavoriteNotePath(path);
     favoriteNotePaths.value = localStorageUtility.getFavoriteNotePaths();

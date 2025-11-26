@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import axios from '@/utility/axios-utility';

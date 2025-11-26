@@ -1,14 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 import { FolderFilled, FileTextOutlined, StarFilled, StarOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
+import type { FilterValue, SorterResult } from 'ant-design-vue/es/table/interface';
+import type { TablePaginationConfig } from 'ant-design-vue/lib';
+import type { ColumnsType } from 'ant-design-vue/es/table';
 
 const route = useRoute();
-const path = route.query.path || '\\';
+const path = (route.query.path as string) || '\\';
 const isFavorite = ref(false);
-const dataSource = ref([]);
+// const dataSource = ref([]);
+const dataSource = ref<Array<{ relPath: string; lastModifiedTime: string; level: number; directory: boolean }>>([]);
 
 onMounted(() => {
   axios.get('/api/note/all').then((response) => {
@@ -17,7 +21,8 @@ onMounted(() => {
   isFavorite.value = localStorageUtility.isFavoriteNotePath(path);
 });
 
-const sorterParam = ref({});
+// const sorterParam = ref({});
+const sorterParam = ref<SorterResult<any>>();
 
 const dataSourceComputed = computed(() => {
   let ds = [];
@@ -28,14 +33,12 @@ const dataSourceComputed = computed(() => {
     ds = dataSource.value.filter((node) => node.level === 0);
   }
   const sorter = sorterParam.value;
-  if (sorter && sorter.field && sorter.order) {
+  if (sorter && sorter.field && sorter.order && sorter.order === 'descend') {
     return ds.sort((a, b) => {
-      if (sorter.order === 'descend') {
-        if (a.directory === b.directory) {
-          return b.relPath.localeCompare(a.relPath, 'en');
-        }
-        return a.directory - b.directory;
+      if (a.directory === b.directory) {
+        return b.relPath.localeCompare(a.relPath, 'en');
       }
+      return Number(a.directory) - Number(b.directory);
     });
   }
   return ds.sort((a, b) => {
@@ -43,15 +46,23 @@ const dataSourceComputed = computed(() => {
     if (a.directory === b.directory) {
       return a.relPath.localeCompare(b.relPath, 'en');
     }
-    return b.directory - a.directory;
+    return Number(b.directory) - Number(a.directory);
   });
 });
 
-const handleTableChange = (pagination, filters, sorter) => {
-  sorterParam.value = sorter;
+const handleTableChange = (
+  pagination: TablePaginationConfig,
+  filters: Record<string, FilterValue>,
+  sorter: SorterResult<any> | SorterResult<any>[],
+) => {
+  if (Array.isArray(sorter)) {
+    sorterParam.value = sorter[0];
+  } else {
+    sorterParam.value = sorter;
+  }
 };
 
-const columns = [
+const columns: ColumnsType<any> = [
   {
     title: '路径',
     dataIndex: 'relPath',

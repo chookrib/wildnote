@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
 import { EditorState } from '@codemirror/state';
 import {
@@ -15,7 +15,7 @@ import { highlightSelectionMatches } from '@codemirror/search';
 import { markdown } from '@codemirror/lang-markdown';
 
 const editorRef = ref(null);
-let view = null;
+let view: EditorView;
 onMounted(() => {
   view = new EditorView({
     state: EditorState.create({
@@ -48,7 +48,7 @@ onMounted(() => {
         markdown(),
       ],
     }),
-    parent: editorRef.value,
+    parent: editorRef.value!,
   });
 });
 

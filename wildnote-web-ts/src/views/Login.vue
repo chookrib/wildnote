@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { reactive } from 'vue';
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
