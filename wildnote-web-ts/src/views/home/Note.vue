@@ -63,6 +63,9 @@ onMounted(() => {
     }),
     parent: editorRef.value,
   });
+
+  if(route.query.edit === 'true')
+    editNote();
 });
 
 const loadNote = () => {

@@ -2,10 +2,11 @@
 import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { message } from 'ant-design-vue';
-import { FolderFilled, FileTextOutlined, DownloadOutlined, UploadOutlined } from '@ant-design/icons-vue';
+import { FolderFilled, FileTextOutlined, DownloadOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
 import { showConfirm } from '@/utility/confirm-utility';
+import router from '@/router';
 
 // const favoriteNotePathsRemote = ref([]);
 // const favoriteNotePaths = ref([]);

@@ -7,7 +7,7 @@ import { showDateTime } from '@/utility/datetime-utility';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 
 // const dataSource = ref([]);
-const dataSource = ref<Array<{ relPath: string; lastModifiedTime: string; directory: boolean }>>([]);
+const dataSource = ref<Array<{ path: string; lastModifiedTime: string; directory: boolean }>>([]);
 const searchKey = ref('');
 
 onMounted(() => {
@@ -20,16 +20,16 @@ const dataSourceComputed = computed(() => {
   if (searchKey.value.length === 0) {
     return [];
   }
-  const ds = dataSource.value.filter((node) => node.relPath.toLowerCase().includes(searchKey.value.toLowerCase()));
+  const ds = dataSource.value.filter((node) => node.path.toLowerCase().includes(searchKey.value.toLowerCase()));
   return ds.sort((a, b) => {
-    return a.relPath.localeCompare(b.relPath);
+    return a.path.localeCompare(b.path);
   });
 });
 
 const columns: ColumnsType<any> = [
   {
     title: '路径',
-    dataIndex: 'relPath',
+    dataIndex: 'path',
   },
   {
     title: '修改时间',
@@ -52,7 +52,7 @@ const columns: ColumnsType<any> = [
   <a-card style="margin-top: 40px">
     <a-table
       :columns="columns"
-      :row-key="(record) => record.relPath"
+      :row-key="(record) => record.path"
       :data-source="dataSourceComputed"
       :pagination="false"
       size="small"
@@ -61,14 +61,14 @@ const columns: ColumnsType<any> = [
         <a-empty description="没有搜索结果" />
       </template>
       <template #bodyCell="{ column, record }">
-        <template v-if="column.dataIndex === 'relPath'">
-          <RouterLink v-if="record.directory" :to="{ path: '/explore', query: { path: record.relPath + '\\' } }">
+        <template v-if="column.dataIndex === 'path'">
+          <RouterLink v-if="record.directory" :to="{ path: '/explore', query: { path: record.path + '\\' } }">
             <FolderFilled :style="{ color: '#f7c427' }" />
-            {{ record.relPath }}
+            {{ record.path }}
           </RouterLink>
-          <RouterLink v-if="!record.directory" :to="{ path: '/note', query: { path: record.relPath } }">
+          <RouterLink v-if="!record.directory" :to="{ path: '/note', query: { path: record.path } }">
             <FileTextOutlined :style="{ color: '#000000' }" />
-            {{ record.relPath }}
+            {{ record.path }}
           </RouterLink>
         </template>
         <template v-if="column.dataIndex === 'lastModifiedTime'">
