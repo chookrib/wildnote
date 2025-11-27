@@ -10,21 +10,20 @@ import java.time.LocalDateTime;
  */
 public class NoteTreeNodeDto {
 
-    private String relPath;
-    //private String absPath;
+    // private String relPath;
+    // private String absPath;
+    private String path;
     private String name;
     private boolean directory;
     private LocalDateTime creationTime;
     private LocalDateTime lastModifiedTime;
     private int level;
 
-    public String getRelPath() {
-        return relPath;
-    }
+    // public String getRelPath() { return relPath; }
 
-    //public String getAbsPath() {
-    //    return absPath;
-    //}
+    // public String getAbsPath() { return absPath; }
+
+    public String getPath() { return path; }
 
     public String getName() {
         return name;
@@ -47,8 +46,9 @@ public class NoteTreeNodeDto {
      */
     public static NoteTreeNodeDto fromEntity(NoteTreeNode entity) {
         NoteTreeNodeDto dto = new NoteTreeNodeDto();
-        dto.relPath = entity.getRelPath();
+        //dto.relPath = entity.getRelPath();
         //dto.absPath = entity.getAbsPath();
+        dto.path = entity.getRelPath();
         dto.name = entity.getName();
         dto.directory = entity.isDirectory();
         dto.creationTime = ValueUtility.toLocalDateTime(entity.getCreationTime());

@@ -1,13 +1,14 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import cool.done.wildnote.server.application.NoteExploreService;
-import cool.done.wildnote.server.application.NoteTreeNodeDto;
 import cool.done.wildnote.server.application.NoteSettingService;
+import cool.done.wildnote.server.application.NoteTreeNodeDto;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -93,8 +94,8 @@ public class NoteExploreController {
     public Result noteCreate(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
-        noteExploreService.createFile(path);
-        return Result.ok();
+        String notePath = noteExploreService.createFile(path);
+        return Result.okData(Map.of("path", notePath));
     }
 
     /**
@@ -105,6 +106,28 @@ public class NoteExploreController {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         noteExploreService.deleteFile(path);
+        return Result.ok();
+    }
+
+    /**
+     * 创建笔记文件夹
+     */
+    @RequestMapping(value = "/api/note/create-folder", method = RequestMethod.POST)
+    public Result noteCreateFolder(@RequestBody String requestBody) {
+        var requestJson = RequestValueHelper.getRequestJson(requestBody);
+        String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
+        String notePath = noteExploreService.createDirectory(path);
+        return Result.okData(Map.of("path", notePath));
+    }
+
+    /**
+     * 删除笔记
+     */
+    @RequestMapping(value = "/api/note/delete-folder", method = RequestMethod.POST)
+    public Result noteDeleteFolder(@RequestBody String requestBody) {
+        var requestJson = RequestValueHelper.getRequestJson(requestBody);
+        String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
+        noteExploreService.deleteDirectory(path);
         return Result.ok();
     }
 

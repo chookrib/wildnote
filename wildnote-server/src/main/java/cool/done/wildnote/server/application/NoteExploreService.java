@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -151,7 +153,7 @@ public class NoteExploreService {
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    if (!dir.equals(Path.of(noteRootAbsPath))) {    // 排队根路径
+                    if (!dir.equals(Path.of(noteRootAbsPath))) {    // 排除根路径
                         files.add(dir.toFile());
                     }
                     return FileVisitResult.CONTINUE;
@@ -375,19 +377,51 @@ public class NoteExploreService {
         //}
     }
 
+    ///**
+    // * 在笔记文件夹中创建文件
+    // */
+    //public void createFile(String relPath) {
+    //    Path path = combineAbsPath(relPath);
+    //    if (Files.exists(path)) {
+    //        throw new ApplicationException("创建笔记异常: 笔记文件已存在");
+    //    }
+    //    try {
+    //        Files.writeString(path, "");
+    //        // 后续由 watcher 监控并处理
+    //    } catch (IOException ex) {
+    //        throw new ApplicationException(String.format("创建笔记异常: %s", ex.getMessage()), ex);
+    //    }
+    //}
+
     /**
      * 在笔记文件夹中创建文件
      */
-    public void createFile(String relPath) {
-        Path path = combineAbsPath(relPath);
-        if (Files.exists(path)) {
-            throw new ApplicationException("创建笔记异常: 笔记文件已存在");
+    public String createFile(String path) {
+        String relPath = path + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".md";
+        Path absPath = combineAbsPath(relPath);
+        if (!Files.exists(absPath)) {
+            try {
+                Files.writeString(absPath, "");    // 创建文件
+                // 后续由 watcher 监控并处理
+            } catch (IOException ex) {
+                throw new ApplicationException(String.format("创建笔记异常: %s", ex.getMessage()), ex);
+            }
         }
+        return relPath;
+    }
+
+    /**
+     * 在笔记文件夹中移动文件
+     */
+    public void moveFile(String relPath, String newRelPath) {
         try {
-            Files.writeString(path, "");
+            Path source = combineAbsPath(relPath);
+            Path target = combineAbsPath(newRelPath);
+            // Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(source, target);
             // 后续由 watcher 监控并处理
         } catch (IOException ex) {
-            throw new ApplicationException(String.format("创建笔记异常: %s", ex.getMessage()), ex);
+            throw new ApplicationException(String.format("移动笔记异常: %s", ex.getMessage()), ex);
         }
     }
 
@@ -395,11 +429,42 @@ public class NoteExploreService {
      * 在笔记文件夹中删除文件
      */
     public void deleteFile(String relPath) {
+        Path path = combineAbsPath(relPath);
         try {
-            Files.delete(combineAbsPath(relPath));
+            Files.delete(path);  // 不会进回收站
             // 后续由 watcher 监控并处理
         } catch (IOException ex) {
             throw new ApplicationException(String.format("删除笔记异常: %s", ex.getMessage()), ex);
+        }
+    }
+
+    /**
+     * 在笔记文件夹中创建文件夹
+     */
+    public String createDirectory(String path) {
+        String relPath = path + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+        Path absPath = combineAbsPath(relPath);
+        if (!Files.exists(absPath)) {
+            try {
+                Files.createDirectories(absPath);
+            } catch (IOException ex) {
+                throw new ApplicationException(String.format("创建笔记文件夹异常: %s", ex.getMessage()), ex);
+            }
+        }
+        return relPath;
+    }
+
+    /**
+     * 在笔记文件夹中删除文件夹
+     */
+    public void deleteDirectory(String relPath) {
+        Path path = combineAbsPath(relPath);
+        try {
+            Files.delete(path);  // 不会进回收站
+            // 后续由 watcher 监控并处理
+        } catch (IOException ex) {
+            //throw new ApplicationException(String.format("删除笔记文件夹异常: %s", ex.getMessage()), ex);
+            throw new ApplicationException(String.format("删除笔记文件夹异常: 不能删除非空的笔记文件夹"), ex);
         }
     }
 
