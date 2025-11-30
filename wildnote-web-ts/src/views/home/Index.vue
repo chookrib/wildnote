@@ -8,27 +8,27 @@ import * as localStorageUtility from '@/utility/local-storage-utility';
 import { showConfirm } from '@/utility/confirm-utility';
 import router from '@/router';
 
-// const favoriteNotePathsRemote = ref([]);
-// const favoriteNotePaths = ref([]);
-const favoriteNotePathsRemote = ref<string[]>([]);
-const favoriteNotePaths = ref<string[]>([]);
+// const favoritePathsRemote = ref([]);
+// const favoritePaths = ref([]);
+const favoritePathsRemote = ref<string[]>([]);
+const favoritePaths = ref<string[]>([]);
 // let remindLog = ref('');
 let dragIndex: number | null = null;
 
 onMounted(() => {
-  favoriteNotePaths.value = localStorageUtility.getFavoriteNotePaths();
+  favoritePaths.value = localStorageUtility.getFavoritePaths();
   // axios.get('/api/log/get?type=remind').then(response => {
   //   //remindLog.value = response.data.data.result.log;
   //   //remindLog.value = response.data.data.replace(/(\\[^|]+)/g, '<a href="#/note?path=$1">$1</a>');
   //   remindLog.value = response.data.data.replace(/(\s\\[^|]+)/g,
   //     (match, p1) => `<a href="#/note?path=${encodeURIComponent(p1.trim())}">${p1}</a>`);
   // });
-  loadFavoriteNotePathRemote();
+  loadFavoriteRemote();
 });
 
-const loadFavoriteNotePathRemote = () => {
-  axios.get('/api/note/favorite/get').then((response) => {
-    favoriteNotePathsRemote.value = response.data.data.paths;
+const loadFavoriteRemote = () => {
+  axios.get('/api/favorite/get').then((response) => {
+    favoritePathsRemote.value = response.data.data.paths;
   });
 };
 
@@ -41,21 +41,21 @@ const onDrop = (dropIndex: number) => {
     localStorageUtility.moveFavoritePath(dragIndex, dropIndex);
     dragIndex = null;
   }
-  favoriteNotePaths.value = localStorageUtility.getFavoriteNotePaths();
+  favoritePaths.value = localStorageUtility.getFavoritePaths();
 };
 
 const delFavorite = (path: string) => {
   showConfirm(`确定删除本地收藏的笔记路径 ${path} 吗？`, () => {
-    localStorageUtility.delFavoriteNotePath(path);
-    favoriteNotePaths.value = localStorageUtility.getFavoriteNotePaths();
+    localStorageUtility.delFavoritePath(path);
+    favoritePaths.value = localStorageUtility.getFavoritePaths();
   });
 };
 
 const downloadFavorite = () => {
   showConfirm(`确定下载服务端收藏的笔记路径到本地吗？（将覆盖本地收藏的笔记路径）`, () => {
-    axios.get('/api/note/favorite/get').then((response) => {
-      favoriteNotePaths.value = response.data.data.paths;
-      localStorageUtility.setFavoriteNotePaths(favoriteNotePaths.value);
+    axios.get('/api/favorite/get').then((response) => {
+      favoritePaths.value = response.data.data.paths;
+      localStorageUtility.setFavoritePaths(favoritePaths.value);
       message.success('下载笔记路径成功');
     });
   });
@@ -64,12 +64,12 @@ const downloadFavorite = () => {
 const uploadFavorite = () => {
   showConfirm(`确定上传本地收藏的笔记路径到服务端吗？（将覆盖服务端收藏的笔记路径）`, () => {
     axios
-      .post('/api/note/favorite/set', {
-        paths: favoriteNotePaths.value,
+      .post('/api/favorite/set', {
+        paths: favoritePaths.value,
       })
       .then((response) => {
         message.success('上传笔记路径成功');
-        loadFavoriteNotePathRemote();
+        loadFavoriteRemote();
       });
   });
 };
@@ -78,10 +78,10 @@ const uploadFavorite = () => {
 <template>
   <a-card>
     <template #title>本地收藏笔记路径</template>
-    <a-empty description="没有收藏笔记路径" v-if="favoriteNotePaths.length === 0" />
-    <a-flex wrap="wrap" gap="small" v-if="favoriteNotePaths.length > 0">
+    <a-empty description="没有收藏笔记路径" v-if="favoritePaths.length === 0" />
+    <a-flex wrap="wrap" gap="small" v-if="favoritePaths.length > 0">
       <a-tag
-        v-for="(path, index) in favoriteNotePaths"
+        v-for="(path, index) in favoritePaths"
         :key="index"
         draggable="true"
         @dragstart="onDragStart(index)"
@@ -109,9 +109,9 @@ const uploadFavorite = () => {
   </a-card>
   <a-card>
     <template #title>服务端收藏笔记路径</template>
-    <a-empty description="没有收藏笔记路径" v-if="favoriteNotePathsRemote.length === 0" />
-    <a-flex wrap="wrap" gap="small" v-if="favoriteNotePathsRemote.length > 0">
-      <a-tag v-for="(path, index) in favoriteNotePathsRemote" :key="index">
+    <a-empty description="没有收藏笔记路径" v-if="favoritePathsRemote.length === 0" />
+    <a-flex wrap="wrap" gap="small" v-if="favoritePathsRemote.length > 0">
+      <a-tag v-for="(path, index) in favoritePathsRemote" :key="index">
         <template #icon>
           <template v-if="path.endsWith('\\')">
             <FolderFilled :style="{ color: '#f7c427' }" />

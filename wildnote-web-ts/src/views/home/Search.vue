@@ -11,7 +11,7 @@ const dataSource = ref<Array<{ path: string; lastModifiedTime: string; directory
 const searchKey = ref('');
 
 onMounted(() => {
-  axios.get('/api/note/all').then((response) => {
+  axios.get('/api/explore/all-note').then((response) => {
     dataSource.value = response.data.data.list;
   });
 });

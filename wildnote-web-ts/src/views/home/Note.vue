@@ -64,13 +64,12 @@ onMounted(() => {
     parent: editorRef.value,
   });
 
-  if(route.query.edit === 'true')
-    editNote();
+  if (route.query.edit === 'true') editNote();
 });
 
 const loadNote = () => {
   axios
-    .post('/api/note/get', {
+    .post('/api/explore/get-note-file', {
       path: notePath,
     })
     .then((response) => {
@@ -78,7 +77,7 @@ const loadNote = () => {
       //isFavorite.value = localStorageUtility.isFavoriteNotePath(notePath);
     });
   // 当笔记不存在时可以取消收藏
-  isFavorite.value = localStorageUtility.isFavoriteNotePath(notePath);
+  isFavorite.value = localStorageUtility.isFavoritePath(notePath);
 };
 
 const editNote = () => {
@@ -99,7 +98,7 @@ onUnmounted(() => {
 
 const saveNote = () => {
   axios
-    .post('/api/note/save', {
+    .post('/api/explore/save-note-file', {
       path: notePath,
       //content: noteContentEdit.value
       content: view.state.doc.toString(),
@@ -122,7 +121,7 @@ const addFavorite = () => {
 };
 
 const delFavorite = () => {
-  localStorageUtility.delFavoriteNotePath(notePath);
+  localStorageUtility.delFavoritePath(notePath);
   isFavorite.value = false;
 };
 

@@ -1,14 +1,21 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue';
-import {RouterLink, useRoute} from 'vue-router';
-import {FileTextOutlined, FolderFilled, PlusOutlined, StarFilled, StarOutlined, PlusSquareOutlined} from '@ant-design/icons-vue';
+import { computed, onMounted, ref } from 'vue';
+import { RouterLink, useRoute } from 'vue-router';
+import {
+  FileTextOutlined,
+  FolderFilled,
+  PlusOutlined,
+  StarFilled,
+  StarOutlined,
+  PlusSquareOutlined,
+} from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
-import type {FilterValue, SorterResult} from 'ant-design-vue/es/table/interface';
-import type {TablePaginationConfig} from 'ant-design-vue/lib';
-import type {ColumnsType} from 'ant-design-vue/es/table';
-import router from "@/router.ts";
-import {showConfirm} from "@/utility/confirm-utility.ts";
+import type { FilterValue, SorterResult } from 'ant-design-vue/es/table/interface';
+import type { TablePaginationConfig } from 'ant-design-vue/lib';
+import type { ColumnsType } from 'ant-design-vue/es/table';
+import router from '@/router.ts';
+import { showConfirm } from '@/utility/confirm-utility.ts';
 
 const route = useRoute();
 const path = (route.query.path as string) || '\\';
@@ -17,15 +24,15 @@ const isFavorite = ref(false);
 const dataSource = ref<Array<{ path: string; lastModifiedTime: string; level: number; directory: boolean }>>([]);
 
 onMounted(() => {
-  loadNotes();
-  isFavorite.value = localStorageUtility.isFavoriteNotePath(path);
+  loadAllNote();
+  isFavorite.value = localStorageUtility.isFavoritePath(path);
 });
 
-const loadNotes = () => {
-  axios.get('/api/note/all').then((response) => {
+const loadAllNote = () => {
+  axios.get('/api/explore/all-note').then((response) => {
     dataSource.value = response.data.data.list;
   });
-}
+};
 
 // const sorterParam = ref({});
 const sorterParam = ref<SorterResult<any>>();
@@ -85,9 +92,9 @@ const columns: ColumnsType<any> = [
   {
     title: '操作',
     key: 'action',
-    width: '100px',
+    width: '140px',
     align: 'center',
-  }
+  },
 ];
 
 const addFavorite = () => {
@@ -96,45 +103,76 @@ const addFavorite = () => {
 };
 
 const delFavorite = () => {
-  localStorageUtility.delFavoriteNotePath(path);
+  localStorageUtility.delFavoritePath(path);
   isFavorite.value = false;
 };
 
-const createNote = () => {
-  axios
-    .post('/api/note/create', {path: path})
-    .then((response) => {
-      router.push({path: '/note', query: {path: response.data.data.path, edit: 'true'}});
-    });
+const createNoteFile = () => {
+  axios.post('/api/explore/create-note-file', { path: path }).then((response) => {
+    router.push({ path: '/note', query: { path: response.data.data.path, edit: 'true' } });
+  });
 };
 
-const deleteNote = (path: string) => {
+const deleteNoteFile = (path: string) => {
   showConfirm(`确定要删除笔记 ${path} 吗？`, () => {
-    axios
-      .post('/api/note/delete', {path: path})
-      .then((response) => {
-        loadNotes();
-      });
+    axios.post('/api/explore/delete-note-file', { path: path }).then((response) => {
+      loadAllNote();
+    });
   });
-}
+};
 
 const createNoteFolder = () => {
-  axios
-    .post('/api/note/create-folder', {path: path})
-    .then((response) => {
-      loadNotes();
-    });
+  axios.post('/api/explore/create-note-folder', { path: path }).then((response) => {
+    loadAllNote();
+  });
 };
 
 const deleteNoteFolder = (path: string) => {
   showConfirm(`确定要删除笔记文件夹 ${path} 吗？`, () => {
-    axios
-      .post('/api/note/delete-folder', {path: path})
-      .then((response) => {
-        loadNotes();
-      });
+    axios.post('/api/explore/delete-note-folder', { path: path }).then((response) => {
+      loadAllNote();
+    });
   });
-}
+};
+
+const moveNoteFolderPanelVisible = ref(false);
+const moveNoteFilePanelVisible = ref(false);
+const moveSourcePath = ref('');
+const moveTargetPath = ref('');
+
+const showMoveNoteFolderPanel = (path: string) => {
+  moveNoteFolderPanelVisible.value = true;
+  moveSourcePath.value = path;
+  moveTargetPath.value = path;
+};
+
+const moveNoteFolder = () => {
+  axios
+    .post('/api/explore/move-note-folder', { sourcePath: moveSourcePath.value, targetPath: moveTargetPath.value })
+    .then((response) => {
+      moveNoteFolderPanelVisible.value = false;
+      moveSourcePath.value = '';
+      moveTargetPath.value = '';
+      loadAllNote();
+    });
+};
+
+const showMoveNoteFilePanel = (path: string) => {
+  moveNoteFilePanelVisible.value = true;
+  moveSourcePath.value = path;
+  moveTargetPath.value = path;
+};
+
+const moveNoteFile = () => {
+  axios
+    .post('/api/explore/move-note-file', { sourcePath: moveSourcePath.value, targetPath: moveTargetPath.value })
+    .then((response) => {
+      moveNoteFilePanelVisible.value = false;
+      moveSourcePath.value = '';
+      moveTargetPath.value = '';
+      loadAllNote();
+    });
+};
 </script>
 
 <template>
@@ -152,8 +190,11 @@ const deleteNoteFolder = (path: string) => {
                   .slice(0, index + 2)
                   .join('\\') + '\\',
             },
-          }">
-          {{ segment }} </RouterLink>\</template>
+          }"
+        >
+          {{ segment }} </RouterLink
+        >\</template
+      >
     </span>
   </div>
   <a-card style="margin-top: 40px">
@@ -168,11 +209,11 @@ const deleteNoteFolder = (path: string) => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'path'">
           <RouterLink v-if="record.directory" :to="{ path: '/explore', query: { path: record.path + '\\' } }">
-            <FolderFilled :style="{ color: '#f7c427' }"/>
+            <FolderFilled :style="{ color: '#f7c427' }" />
             {{ record.name }}
           </RouterLink>
           <RouterLink v-if="!record.directory" :to="{ path: '/note', query: { path: record.path } }">
-            <FileTextOutlined/>
+            <FileTextOutlined />
             {{ record.name }}
           </RouterLink>
         </template>
@@ -180,8 +221,10 @@ const deleteNoteFolder = (path: string) => {
           {{ record.lastModifiedTime }}
         </template>
         <template v-if="column.key === 'action'">
-          <a-button v-if="record.directory === true" type="link" @click="deleteNoteFolder(record.path)">删除</a-button>
-          <a-button v-if="record.directory === false" type="link" @click="deleteNote(record.path)">删除</a-button>
+          <a-button v-if="record.directory" type="link" @click="showMoveNoteFolderPanel(record.path)">移动</a-button>
+          <a-button v-if="record.directory" type="link" @click="deleteNoteFolder(record.path)">删除</a-button>
+          <a-button v-if="!record.directory" type="link" @click="showMoveNoteFilePanel(record.path)">移动</a-button>
+          <a-button v-if="!record.directory" type="link" @click="deleteNoteFile(record.path)">删除</a-button>
         </template>
       </template>
     </a-table>
@@ -191,21 +234,43 @@ const deleteNoteFolder = (path: string) => {
       <PlusSquareOutlined />
     </template>
   </a-float-button>
-  <a-float-button type="primary" @click="createNote" style="right: 80px">
+  <a-float-button type="primary" @click="createNoteFile" style="right: 80px">
     <template #icon>
-      <PlusOutlined/>
+      <PlusOutlined />
     </template>
   </a-float-button>
   <a-float-button type="default" @click="addFavorite" v-if="!isFavorite">
     <template #icon>
-      <StarOutlined/>
+      <StarOutlined />
     </template>
   </a-float-button>
   <a-float-button type="primary" @click="delFavorite" v-if="isFavorite">
     <template #icon>
-      <StarFilled/>
+      <StarFilled />
     </template>
   </a-float-button>
+
+  <a-modal v-model:open="moveNoteFilePanelVisible" title="移动笔记文件" @ok="moveNoteFile">
+    <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+      <a-form-item label="当前路径">
+        {{ moveSourcePath }}
+      </a-form-item>
+      <a-form-item label="移动到">
+        <a-input v-model:value="moveTargetPath"></a-input>
+      </a-form-item>
+    </a-form>
+  </a-modal>
+
+  <a-modal v-model:open="moveNoteFolderPanelVisible" title="移动笔记文件夹" @ok="moveNoteFolder">
+    <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
+      <a-form-item label="当前路径">
+        {{ moveSourcePath }}
+      </a-form-item>
+      <a-form-item label="移动到">
+        <a-input v-model:value="moveTargetPath"></a-input>
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 
 <style scoped>

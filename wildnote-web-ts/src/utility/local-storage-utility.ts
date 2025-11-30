@@ -16,52 +16,52 @@ const delAccessToken = () => {
 
 //======================================================================================================================
 
-const rawFavoriteNotePaths = localStorage.getItem('favorite_note_path');
-let favoriteNotePaths = rawFavoriteNotePaths ? JSON.parse(rawFavoriteNotePaths) : [];
+const favoritePathsStorage = localStorage.getItem('favorite_paths');
+let favoritePaths = favoritePathsStorage ? JSON.parse(favoritePathsStorage) : [];
 
-const getFavoriteNotePaths = () => {
-  return [...favoriteNotePaths];
+const getFavoritePaths = () => {
+  return [...favoritePaths];
 };
 
-const setFavoriteNotePaths = (paths: string[]) => {
-  favoriteNotePaths = [...paths];
-  localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths));
+const setFavoritePaths = (paths: string[]) => {
+  favoritePaths = [...paths];
+  localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
 };
 
-const isFavoriteNotePath = (path: string) => {
-  return favoriteNotePaths.includes(path);
+const isFavoritePath = (path: string) => {
+  return favoritePaths.includes(path);
 };
 
 const addFavoritePath = (path: string) => {
-  if (!favoriteNotePaths.includes(path)) {
-    favoriteNotePaths.push(path);
-    localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths));
+  if (!favoritePaths.includes(path)) {
+    favoritePaths.push(path);
+    localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
   }
 };
 
-const delFavoriteNotePath = (path: string) => {
-  if (favoriteNotePaths.includes(path)) {
-    favoriteNotePaths.splice(favoriteNotePaths.indexOf(path), 1);
-    localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths));
+const delFavoritePath = (path: string) => {
+  if (favoritePaths.includes(path)) {
+    favoritePaths.splice(favoritePaths.indexOf(path), 1);
+    localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
   }
 };
 
 const moveFavoritePath = (dragIndex: number, dropIndex: number) => {
   if (dragIndex === null || dragIndex === dropIndex) return;
-  const moved = favoriteNotePaths.splice(dragIndex, 1)[0];
-  favoriteNotePaths.splice(dropIndex, 0, moved);
-  localStorage.setItem('favorite_note_path', JSON.stringify(favoriteNotePaths));
+  const moved = favoritePaths.splice(dragIndex, 1)[0];
+  favoritePaths.splice(dropIndex, 0, moved);
+  localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
 };
 
 export {
   getAccessToken,
   setAccessToken,
   delAccessToken,
-  getFavoriteNotePaths,
-  setFavoriteNotePaths,
-  isFavoriteNotePath,
+  getFavoritePaths,
+  setFavoritePaths,
+  isFavoritePath,
   addFavoritePath,
-  delFavoriteNotePath,
+  delFavoritePath,
   moveFavoritePath,
   //xxx as xxx
 };

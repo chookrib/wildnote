@@ -46,7 +46,7 @@ const testSms = () => {
 };
 
 const reloadNote = () => {
-  axios.get('/api/note/reload').then((response) => {
+  axios.get('/api/explore/reload').then((response) => {
     message.success('重新加载所有笔记成功');
   });
 };
