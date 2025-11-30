@@ -31,7 +31,7 @@ public class TestController {
      */
     @RequestMapping(value = "/api/test/crypto/md5-encode", method = RequestMethod.GET)
     @ResponseBody
-    public Result testMd5(HttpServletRequest request) {
+    public Result testCryptoMd5Encode(HttpServletRequest request) {
         String text = RequestValueHelper.getRequestParamStringTrimReq(request, "text");
         return Result.okData(CryptoUtility.md5Encode(text));
     }

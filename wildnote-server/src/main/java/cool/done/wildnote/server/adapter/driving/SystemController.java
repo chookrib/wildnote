@@ -44,7 +44,7 @@ public class SystemController {
      * 测试提醒功能
      */
     @RequestMapping(value = "/api/system/test/remind", method = RequestMethod.GET)
-    public Result sysetmTestRemind(HttpServletRequest request) {
+    public Result systemTestRemind(HttpServletRequest request) {
         String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
         this.remindGateway.remind(message);
         return Result.ok();

@@ -79,7 +79,7 @@ public class NoteRemindService {
     /**
      * 删除笔记关联的提醒计划任务及已调度作业
      */
-    public void dropCron(String path) {
+    public void delCron(String path) {
         List<NoteCron> list = cronList.stream()
                 .filter(cron -> cron.getPath().equals(path))
                 .toList();
@@ -91,7 +91,7 @@ public class NoteRemindService {
         for (NoteCron cron : list) {
             if (!ValueUtility.isBlank(cron.getJobId())) {
                 try {
-                    remindScheduler.dropJob(cron.getJobId());
+                    remindScheduler.delJob(cron.getJobId());
                     extraLogService.logRemindInfo(String.format("删除笔记提醒计划任务已调度作业成功: %s %s %s %s",
                             cron.getPath(),
                             cron.getLineNumber(),
