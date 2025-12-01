@@ -7,7 +7,7 @@ import { useRoute } from 'vue-router';
 import router from '@/router';
 
 const route = useRoute();
-if (route.query.nlr !== 'true') router.push({ path: '/' }); // 尝试进入系统
+if (route.query.nlr !== 'true') router.push({ path: '/index' }); // 尝试进入系统
 
 const loginForm = reactive({ username: '', password: '' });
 
@@ -19,8 +19,8 @@ const login = () => {
     })
     .then((response) => {
       localStorageUtility.setAccessToken(response.data.data.accessToken);
-      // window.location.href = '/';
-      router.push({ path: '/' });
+      // window.location.href = '/index';
+      router.push({ path: '/index' });
     });
 };
 </script>
