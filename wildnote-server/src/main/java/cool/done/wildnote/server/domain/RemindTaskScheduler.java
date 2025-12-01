@@ -43,7 +43,7 @@ public class RemindTaskScheduler implements RemindScheduler {
     }
 
     @Override
-    public void delJob(String jobId) {
+    public void deleteJob(String jobId) {
         jobMap.entrySet().removeIf(entry -> {
             if (entry.getKey().equals(jobId)) {
                 entry.getValue().cancel(true);

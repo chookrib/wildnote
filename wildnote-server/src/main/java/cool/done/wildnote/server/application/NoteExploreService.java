@@ -134,12 +134,12 @@ public class NoteExploreService {
     //}
 
     /**
-     * 加载笔记文件夹
+     * 从笔记根路径加载所有笔记
      */
     public void loadRoot() {
         // 清除现有数据和提醒
         noteMap.clear();
-        noteRemindService.clear();
+        noteRemindService.clearCron();
 
         ArrayList<File> files = new ArrayList<>();
         try {
@@ -251,7 +251,7 @@ public class NoteExploreService {
                 String[] parts = line.split("\\|");
                 String cronExpression = parts.length >= 1 ? parts[1].trim() : "";
                 String description = parts.length >= 2 ? parts[2].trim() : "";
-                noteRemindService.addCron(path, lineNumber, cronExpression, description);
+                noteRemindService.scheduleCron(path, lineNumber, cronExpression, description);
             }
         } catch (IOException ex) {
             extraLogService.logNoteError(String.format("解析笔记文件cron失败: %s %s", path, ex.getMessage()), logger);
@@ -263,7 +263,7 @@ public class NoteExploreService {
      */
     private void removeFileAndCron(File file) {
         noteMap.remove(file.getPath());
-        noteRemindService.delCron(
+        noteRemindService.unscheduleCron(
                 file.getPath().substring(noteRootAbsPath.length())  // 路径需要与 addCron 时 path 一致
         );
     }
@@ -395,8 +395,8 @@ public class NoteExploreService {
     /**
      * 在笔记文件夹中创建笔记文件
      */
-    public String createFile(String parentRelPath) {
-        String relPath = parentRelPath + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".md";
+    public void createFile(String relPath) {
+        // String relPath = parentRelPath + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".md";
         Path absPath = combineAbsPath(relPath);
         if (!Files.exists(absPath)) {
             try {
@@ -405,23 +405,6 @@ public class NoteExploreService {
             } catch (IOException ex) {
                 throw new ApplicationException(String.format("创建笔记文件异常: %s", ex.getMessage()), ex);
             }
-        }
-        return relPath;
-    }
-
-    /**
-     * 在笔记文件夹中移动笔记文件
-     */
-    public void moveFile(String sourceRelPath, String targetRelPath) {
-        try {
-            Path source = combineAbsPath(sourceRelPath);
-            Path target = combineAbsPath(targetRelPath);
-            // Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
-            Files.move(source, target);
-            // 后续由 watcher 监控并处理
-        } catch (IOException ex) {
-            // throw new ApplicationException(String.format("移动笔记异常: %s", ex.getMessage()), ex);
-            throw new ApplicationException(String.format("移动笔记文件异常: 新路径中的父文件夹必须存在且不能存在同名文件"), ex);
         }
     }
 
@@ -439,10 +422,26 @@ public class NoteExploreService {
     }
 
     /**
+     * 在笔记文件夹中移动笔记文件
+     */
+    public void moveFile(String sourceRelPath, String targetRelPath) {
+        try {
+            Path source = combineAbsPath(sourceRelPath);
+            Path target = combineAbsPath(targetRelPath);
+            // Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(source, target);
+            // 后续由 watcher 监控并处理
+        } catch (IOException ex) {
+            // throw new ApplicationException(String.format("移动笔记异常: %s", ex.getMessage()), ex);
+            throw new ApplicationException(String.format("移动笔记文件异常: 目的路径中的父文件夹必须存在且不能存在同名文件"), ex);
+        }
+    }
+
+    /**
      * 在笔记文件夹中创建文件夹
      */
-    public String createFolder(String parentRelPath) {
-        String relPath = parentRelPath + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+    public void createDirectory(String relPath) {
+        // String relPath = parentRelPath + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
         Path absPath = combineAbsPath(relPath);
         if (!Files.exists(absPath)) {
             try {
@@ -451,13 +450,12 @@ public class NoteExploreService {
                 throw new ApplicationException(String.format("创建笔记文件夹异常: %s", ex.getMessage()), ex);
             }
         }
-        return relPath;
     }
 
     /**
      * 在笔记文件夹中删除文件夹
      */
-    public void deleteFolder(String relPath) {
+    public void deleteDirectory(String relPath) {
         Path path = combineAbsPath(relPath);
         try {
             Files.delete(path);  // 不会进回收站
@@ -471,7 +469,7 @@ public class NoteExploreService {
     /**
      * 在笔记文件夹中移动文件夹
      */
-    public void moveFolder(String sourceRelPath, String targetRelPath) {
+    public void moveDirectory(String sourceRelPath, String targetRelPath) {
         try {
             Path source = combineAbsPath(sourceRelPath);
             Path target = combineAbsPath(targetRelPath);
@@ -479,7 +477,7 @@ public class NoteExploreService {
             Files.move(source, target);
         } catch (IOException ex) {
             // throw new ApplicationException(String.format("移动笔记文件夹异常: %s", ex.getMessage()), ex);
-            throw new ApplicationException(String.format("移动笔记文件夹异常: 新路径中的父文件夹必须存在且不能存在同名文件夹"), ex);
+            throw new ApplicationException(String.format("移动笔记文件夹异常: 目的路径中的父文件夹必须存在且不能存在同名文件夹"), ex);
         }
     }
 

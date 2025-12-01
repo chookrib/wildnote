@@ -16,7 +16,7 @@ Content-Type: application/json
 %}
 
 ### 保存笔记内容
-POST http://{{host}}/api/note/save
+POST http://{{host}}/api/explore/save-content
 Content-Type: application/json
 Access-Token: {{accessToken}}
 

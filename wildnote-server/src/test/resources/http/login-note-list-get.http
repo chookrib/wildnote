@@ -15,7 +15,7 @@ Content-Type: application/json
 %}
 
 ### 获取笔记列表
-GET http://{{host}}/api/note/all
+GET http://{{host}}/api/explore/all
 Access-Token: {{accessToken}}
 
 > {%
@@ -32,11 +32,11 @@ Access-Token: {{accessToken}}
 %}
 
 ### GET获取笔记内容
-GET http://{{host}}/api/note/get?path={{notePath}}
+GET http://{{host}}/api/explore/get-content?path={{notePath}}
 Access-Token: {{accessToken}}
 
 ### POST获取笔记内容
-POST http://{{host}}/api/note/get
+POST http://{{host}}/api/explore/get-content
 Content-Type: application/json
 Access-Token: {{accessToken}}
 

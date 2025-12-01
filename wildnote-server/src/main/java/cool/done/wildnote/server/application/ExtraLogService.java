@@ -108,7 +108,7 @@ public class ExtraLogService {
     }
 
     /**
-     * 写日志到文件
+     * 写入日志
      */
     private void writeLog(ExtraLogType logType, String message) {
         try {

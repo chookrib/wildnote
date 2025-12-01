@@ -49,26 +49,26 @@ public class NoteRemindService {
     }
 
     /**
-     * 添加笔记提醒计划任务并调度作业
+     * 调度笔记提醒作业
      */
-    public void addCron(String path, int lineNumber, String cronExpression, String description) {
+    public void scheduleCron(String path, int lineNumber, String cronExpression, String description) {
         NoteCron cron = NoteCron.create(path, lineNumber, cronExpression, description);
 
         if (!ValueUtility.isBlank(cronExpression)) {
             try {
                 String jobId = remindScheduler.addJob(cronExpression, description);
                 cron.setJobId(jobId);
-                extraLogService.logRemindInfo(String.format("添加笔记提醒计划任务调度作业成功: %s %s %s %s %s",
+                extraLogService.logRemindInfo(String.format("调度笔记提醒作业成功: %s %s %s %s %s",
                         path, lineNumber, cronExpression, description, jobId
                 ), logger);
             } catch (Exception ex) {
                 extraLogService.logRemindError(
-                        String.format("添加笔记提醒计划任务调度作业异常: %s %s %s %s %s",
+                        String.format("调度笔记提醒作业异常: %s %s %s %s %s",
                                 path, lineNumber, cronExpression, description, ex.getMessage()
                         ), logger);
             }
         } else {
-            extraLogService.logRemindError(String.format("添加笔记提醒计划任务调度作业失败: cron表达式空 %s %s %s",
+            extraLogService.logRemindError(String.format("调度笔记提醒作业失败: cron表达式空 %s %s %s",
                     path, lineNumber, description
             ), logger);
         }
@@ -77,9 +77,9 @@ public class NoteRemindService {
     }
 
     /**
-     * 删除笔记关联的提醒计划任务及已调度作业
+     * 取消调度笔记提醒作业
      */
-    public void delCron(String path) {
+    public void unscheduleCron(String path) {
         List<NoteCron> list = cronList.stream()
                 .filter(cron -> cron.getPath().equals(path))
                 .toList();
@@ -91,8 +91,8 @@ public class NoteRemindService {
         for (NoteCron cron : list) {
             if (!ValueUtility.isBlank(cron.getJobId())) {
                 try {
-                    remindScheduler.delJob(cron.getJobId());
-                    extraLogService.logRemindInfo(String.format("删除笔记提醒计划任务已调度作业成功: %s %s %s %s",
+                    remindScheduler.deleteJob(cron.getJobId());
+                    extraLogService.logRemindInfo(String.format("取消调度笔记提醒作业成功: %s %s %s %s",
                             cron.getPath(),
                             cron.getLineNumber(),
                             cron.getCronExpression(),
@@ -100,7 +100,7 @@ public class NoteRemindService {
                     ), logger);
                 } catch (Exception ex) {
                     extraLogService.logRemindError(
-                            String.format("删除笔记提醒计划任务已调度作业异常: %s %s %s %s %s",
+                            String.format("取消调度笔记提醒作业异常: %s %s %s %s %s",
                                     cron.getPath(),
                                     cron.getLineNumber(),
                                     cron.getCronExpression(),
@@ -115,15 +115,15 @@ public class NoteRemindService {
     }
 
     /**
-     * 清除所有笔记提醒计划任务及已调度作业
+     * 清除所有已调度笔记提醒作业
      */
-    public void clear() {
+    public void clearCron() {
         cronList.clear();
         try {
             remindScheduler.clearJob();
-            extraLogService.logRemindInfo(String.format("清除所有笔记提醒计划任务已调度作业成功"), logger);
+            extraLogService.logRemindInfo(String.format("清除所有已调度笔记提醒作业成功"), logger);
         } catch (Exception ex) {
-            extraLogService.logRemindError(String.format("清除所有笔记提醒计划任务已调度作业异常: %s", ex.getMessage()), logger);
+            extraLogService.logRemindError(String.format("清除所有已调度笔记提醒作业异常: %s", ex.getMessage()), logger);
         }
     }
 }

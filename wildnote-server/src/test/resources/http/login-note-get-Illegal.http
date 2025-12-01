@@ -14,12 +14,12 @@ Content-Type: application/json
     client.global.set('accessToken', response.body.data.accessToken);
 %}
 
-### GET获取笔记内容，非法绝对路径
-GET http://{{host}}/api/note/get?path=C%3A%5Ctest%5Ctest.md
-Access-Token: {{accessToken}}
+#### GET获取笔记内容，非法绝对路径
+#GET http://{{host}}/api/explore/get-content?path=C%3A%5Ctest%5Ctest.md
+#Access-Token: {{accessToken}}
 
 ### POST获取笔记内容，非法绝对路径
-POST http://{{host}}/api/note/get
+POST http://{{host}}/explore/get-content
 Content-Type: application/json
 Access-Token: {{accessToken}}
 
@@ -28,11 +28,11 @@ Access-Token: {{accessToken}}
 }
 
 ### GET获取笔记内容，非法笔记根路径以外路径
-GET http://{{host}}/api/note/get?path=..%5Ctest.md
+GET http://{{host}}/api/explore/get-content?path=..%5Ctest.md
 Access-Token: {{accessToken}}
 
 ### POST获取笔记内容，非法笔记根路径以外路径
-POST http://{{host}}/api/note/get
+POST http://{{host}}/api/explore/get-content
 Content-Type: application/json
 Access-Token: {{accessToken}}
 

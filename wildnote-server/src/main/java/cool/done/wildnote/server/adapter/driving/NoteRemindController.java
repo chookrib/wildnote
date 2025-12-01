@@ -70,10 +70,10 @@ public class NoteRemindController {
                     return map;
                 }).toList();
         return Result.okData(Map.of(
-                "scheduledCrons", scheduledCronList,
-                "unscheduledCrons", unscheduledCronList,
+                "scheduledCronList", scheduledCronList,
+                "unscheduledCronList", unscheduledCronList,
                 //"jobMap", jobMap,
-                "remainJobs", isolatedJobList
+                "isolatedJobList", isolatedJobList
         ));
     }
 }

@@ -60,7 +60,7 @@ public class RemindQuartzScheduler implements RemindScheduler {
     }
 
     @Override
-    public void delJob(String jobId) {
+    public void deleteJob(String jobId) {
         JobKey jobKey = new JobKey(jobId, schedulerJobGroupName);
         try {
             scheduler.deleteJob(jobKey);

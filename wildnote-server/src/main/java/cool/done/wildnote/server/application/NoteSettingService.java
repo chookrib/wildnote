@@ -87,21 +87,21 @@ public class NoteSettingService {
      * 取收藏
      */
     public List<String> getFavorite() {
-        List<String> paths = new ArrayList<>();
-        this.settingContentJson.path("favoriteNotePath").forEach(node -> paths.add(node.asText()));
-        return paths;
+        List<String> list = new ArrayList<>();
+        this.settingContentJson.path("favoriteNotePath").forEach(node -> list.add(node.asText()));
+        return list;
     }
 
     /**
      * 存收藏
      */
-    public void setFavorite(List<String> paths) {
+    public void setFavorite(List<String> list) {
         if (ValueUtility.isBlank(this.settingFileAbsPath))
             throw new ApplicationException("配置文件路径未初始化，无法保存收藏");
 
         ObjectNode objectNode = (ObjectNode) this.settingContentJson;
         objectNode.set("favoriteNotePath", objectNode.arrayNode().addAll(
-                paths.stream().map(objectNode::textNode).collect(java.util.stream.Collectors.toList())
+                list.stream().map(objectNode::textNode).collect(java.util.stream.Collectors.toList())
         ));
         ObjectMapper mapper = new ObjectMapper();
         DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
@@ -115,7 +115,7 @@ public class NoteSettingService {
                     new File(this.settingFileAbsPath), objectNode
             );
         } catch (IOException ex) {
-            throw new ApplicationException(String.format("保存配置文件异常: %s", ex.getMessage()), ex);
+            throw new ApplicationException(String.format("保存收藏到配置文件异常: %s", ex.getMessage()), ex);
         }
     }
 }

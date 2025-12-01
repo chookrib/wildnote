@@ -34,8 +34,8 @@ public class NoteExploreController {
     /**
      * 取所有笔记
      */
-    @RequestMapping(value = "/api/explore/all-note", method = RequestMethod.GET)
-    public Result exploreAllNote() {
+    @RequestMapping(value = "/api/explore/all", method = RequestMethod.GET)
+    public Result exploreAll() {
         //ArrayList<NoteTreeNode> result = new ArrayList<>(
         //        noteExploreService.getNoteMap().values().stream().sorted(
         //                Comparator.comparing(NoteTreeNode::getAbsPath)
@@ -48,31 +48,31 @@ public class NoteExploreController {
     }
 
     /**
-     * 读取笔记文件，根据 POST 参数
+     * 读取笔记文件内容，根据 POST 参数
      */
-    @RequestMapping(value = "/api/explore/get-note-file", method = RequestMethod.POST)
-    public Result exploreGetNoteFileByPost(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/get-content", method = RequestMethod.POST)
+    public Result exploreGetContent(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         String content = noteExploreService.getFileContent(path);
         return Result.okData(Map.of("content", content));
     }
 
-    /**
-     * 读取笔记文件，根据 QueryString 参数
-     */
-    @RequestMapping(value = "/api/explore/get-note-file", method = RequestMethod.GET)
-    public Result exploreGetNoteFileByGet(HttpServletRequest request) {
-        String path = RequestValueHelper.getRequestParamStringTrimReq(request, "path");
-        String content = noteExploreService.getFileContent(path);
-        return Result.okData(Map.of("content", content));
-    }
+    ///**
+    // * 读取笔记文件内容，根据 QueryString 参数
+    // */
+    //@RequestMapping(value = "/api/explore/get-note-content", method = RequestMethod.GET)
+    //public Result exploreGetContentByGet(HttpServletRequest request) {
+    //    String path = RequestValueHelper.getRequestParamStringTrimReq(request, "path");
+    //    String content = noteExploreService.getFileContent(path);
+    //    return Result.okData(Map.of("content", content));
+    //}
 
     /**
-     * 保存笔记文件
+     * 保存笔记文件内容
      */
-    @RequestMapping(value = "/api/explore/save-note-file", method = RequestMethod.POST)
-    public Result exploreSaveNoteFile(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/save-content", method = RequestMethod.POST)
+    public Result exploreSaveContent(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         String content = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "content");
@@ -80,22 +80,24 @@ public class NoteExploreController {
         return Result.ok();
     }
 
+    //==================================================================================================================
+
     /**
      * 创建笔记文件
      */
-    @RequestMapping(value = "/api/explore/create-note-file", method = RequestMethod.POST)
-    public Result exploreCreateNoteFile(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/create-file", method = RequestMethod.POST)
+    public Result exploreCreateFile(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
-        String notePath = noteExploreService.createFile(path);
-        return Result.okData(Map.of("path", notePath));
+        noteExploreService.createFile(path);
+        return Result.ok();
     }
 
     /**
      * 删除笔记文件
      */
-    @RequestMapping(value = "/api/explore/delete-note-file", method = RequestMethod.POST)
-    public Result exploreDeleteNoteFile(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/delete-file", method = RequestMethod.POST)
+    public Result exploreDeleteFile(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
         noteExploreService.deleteFile(path);
@@ -105,46 +107,50 @@ public class NoteExploreController {
     /**
      * 移动笔记文件
      */
-    @RequestMapping(value = "/api/explore/move-note-file", method = RequestMethod.POST)
-    public Result exploreMoveNoteFile(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/move-file", method = RequestMethod.POST)
+    public Result exploreMoveFile(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String sourcePath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "sourcePath");
         String targetPath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "targetPath");
-        noteExploreService.moveFile(sourcePath, targetPath);
+        if(sourcePath == targetPath) {
+            noteExploreService.moveFile(sourcePath, targetPath);
+        }
         return Result.ok();
     }
 
     /**
      * 创建笔记文件夹
      */
-    @RequestMapping(value = "/api/explore/create-note-folder", method = RequestMethod.POST)
-    public Result exploreCreateNoteFolder(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/create-directory", method = RequestMethod.POST)
+    public Result exploreCreateDirectory(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
-        String notePath = noteExploreService.createFolder(path);
-        return Result.okData(Map.of("path", notePath));
+        noteExploreService.createDirectory(path);
+        return Result.ok();
     }
 
     /**
      * 删除笔记文件夹
      */
-    @RequestMapping(value = "/api/explore/delete-note-folder", method = RequestMethod.POST)
-    public Result exploreDeleteNoteFolder(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/delete-directory", method = RequestMethod.POST)
+    public Result exploreDeleteDirectory(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
-        noteExploreService.deleteFolder(path);
+        noteExploreService.deleteDirectory(path);
         return Result.ok();
     }
 
     /**
      * 移动笔记文件夹
      */
-    @RequestMapping(value = "/api/explore/move-note-folder", method = RequestMethod.POST)
-    public Result exploreMoveNoteFolder(@RequestBody String requestBody) {
+    @RequestMapping(value = "/api/explore/move-directory", method = RequestMethod.POST)
+    public Result exploreMoveDirectory(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String sourcePath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "sourcePath");
         String targetPath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "targetPath");
-        noteExploreService.moveFolder(sourcePath, targetPath);
+        if(sourcePath == targetPath) {
+            noteExploreService.moveDirectory(sourcePath, targetPath);
+        }
         return Result.ok();
     }
 }

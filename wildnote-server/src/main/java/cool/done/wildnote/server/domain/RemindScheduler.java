@@ -15,7 +15,7 @@ public interface RemindScheduler {
     /**
      * 根据作业Id删除提醒计划任务调度
      */
-    void delJob(String jobKey);
+    void deleteJob(String jobKey);
 
     /**
      * 取所有已调度的提醒计划任务，返回值 key=计划任务作业Id，value=下次执行的时间戳

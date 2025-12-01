@@ -53,8 +53,8 @@ public class SystemController {
     /**
      * 测试短信功能
      */
-    @RequestMapping(value = "/api/system/test/sms", method = RequestMethod.GET)
-    public Result systemTestSms(HttpServletRequest request) {
+    @RequestMapping(value = "/api/system/test/sms-code", method = RequestMethod.GET)
+    public Result systemTestSmsCode(HttpServletRequest request) {
         String mobile = RequestValueHelper.getRequestParamStringTrimReq(request, "mobile");
         String code = RequestValueHelper.getRequestParamStringTrimReq(request, "code");
         this.smsGateway.sendCode(mobile, code);

@@ -26,7 +26,7 @@ public class NoteFavoriteController {
      */
     @RequestMapping(value = "/api/favorite/get", method = RequestMethod.GET)
     public Result favoriteGet() {
-        return Result.okData(Map.of("paths", noteSettingService.getFavorite()));
+        return Result.okData(Map.of("list", noteSettingService.getFavorite()));
     }
 
     /**
@@ -35,9 +35,9 @@ public class NoteFavoriteController {
     @RequestMapping(value = "/api/favorite/set", method = RequestMethod.POST)
     public Result favoriteSet(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
-        List<String> paths = RequestValueHelper.getRequestJsonStringTrimList(requestJson, "paths");
-        // System.out.println("paths=" + paths);
-        noteSettingService.setFavorite(paths);
+        List<String> list = RequestValueHelper.getRequestJsonStringTrimList(requestJson, "list");
+        // System.out.println("list=" + list);
+        noteSettingService.setFavorite(list);
         return Result.ok();
     }
 }
