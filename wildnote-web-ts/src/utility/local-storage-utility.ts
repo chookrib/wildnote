@@ -9,59 +9,59 @@ const setAccessToken = (newAccessToken: string) => {
   accessToken = newAccessToken;
 };
 
-const delAccessToken = () => {
+const deleteAccessToken = () => {
   localStorage.removeItem('access_token');
   accessToken = '';
 };
 
 //======================================================================================================================
 
-const favoritePathsStorage = localStorage.getItem('favorite_paths');
-let favoritePaths = favoritePathsStorage ? JSON.parse(favoritePathsStorage) : [];
+const favoriteListStored = localStorage.getItem('favorite_list');
+let favoriteList = favoriteListStored ? JSON.parse(favoriteListStored) : [];
 
-const getFavoritePaths = () => {
-  return [...favoritePaths];
+const getFavorite = () => {
+  return [...favoriteList];
 };
 
-const setFavoritePaths = (paths: string[]) => {
-  favoritePaths = [...paths];
-  localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
+const setFavorite = (list: string[]) => {
+  favoriteList = [...list];
+  localStorage.setItem('favorite_list', JSON.stringify(favoriteList));
 };
 
-const isFavoritePath = (path: string) => {
-  return favoritePaths.includes(path);
+const isFavorite = (item: string) => {
+  return favoriteList.includes(item);
 };
 
-const addFavoritePath = (path: string) => {
-  if (!favoritePaths.includes(path)) {
-    favoritePaths.push(path);
-    localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
+const addFavorite = (item: string) => {
+  if (!favoriteList.includes(item)) {
+    favoriteList.push(item);
+    localStorage.setItem('favorite_list', JSON.stringify(favoriteList));
   }
 };
 
-const delFavoritePath = (path: string) => {
-  if (favoritePaths.includes(path)) {
-    favoritePaths.splice(favoritePaths.indexOf(path), 1);
-    localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
+const deleteFavorite = (item: string) => {
+  if (favoriteList.includes(item)) {
+    favoriteList.splice(favoriteList.indexOf(item), 1);
+    localStorage.setItem('favorite_list', JSON.stringify(favoriteList));
   }
 };
 
-const moveFavoritePath = (dragIndex: number, dropIndex: number) => {
+const moveFavorite = (dragIndex: number, dropIndex: number) => {
   if (dragIndex === null || dragIndex === dropIndex) return;
-  const moved = favoritePaths.splice(dragIndex, 1)[0];
-  favoritePaths.splice(dropIndex, 0, moved);
-  localStorage.setItem('favorite_paths', JSON.stringify(favoritePaths));
+  const moved = favoriteList.splice(dragIndex, 1)[0];
+  favoriteList.splice(dropIndex, 0, moved);
+  localStorage.setItem('favorite_list', JSON.stringify(favoriteList));
 };
 
 export {
   getAccessToken,
   setAccessToken,
-  delAccessToken,
-  getFavoritePaths,
-  setFavoritePaths,
-  isFavoritePath,
-  addFavoritePath,
-  delFavoritePath,
-  moveFavoritePath,
+  deleteAccessToken,
+  getFavorite,
+  setFavorite,
+  isFavorite,
+  addFavorite,
+  deleteFavorite,
+  moveFavorite,
   //xxx as xxx
 };

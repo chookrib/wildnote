@@ -27,7 +27,7 @@ const loadLogContent = () => {
     //   (match, p1) =>
     //     `<a href="#/note?path=${encodeURIComponent(p1.trim())}">${p1}</a>`,
     // );
-    const content = response.data.data.result.log
+    const content = response.data.data.result.content
       .split('\n')
       .map((line: string) => (/(失败|异常)/.test(line) ? `<span style="color: red;">${line}</span>` : line))
       .join('<br>');
@@ -37,7 +37,7 @@ const loadLogContent = () => {
   });
 };
 
-const handleTabChange = (e: any) => {
+const handleLogTypeTabChange = (e: any) => {
   // console.log(e);
   logType.value = e;
   logContent.value = '';
@@ -51,10 +51,10 @@ const handleTabChange = (e: any) => {
   <a-card>
     <template #title></template>
     <template #extra></template>
-    <a-tabs v-model:activeKey="logType" @change="handleTabChange">
+    <a-tabs v-model:activeKey="logType" @change="handleLogTypeTabChange">
       <a-tab-pane v-for="item in logTypes" :key="item" :tab="item">
-        <div class="log" v-html="logContent"></div>
-        <div style="text-align: center">
+        <div class="log-content" v-html="logContent"></div>
+        <div class="log-more">
           <a-button type="primary" @click="loadLogContent" :disabled="!logHasMore">加载更多</a-button>
         </div>
       </a-tab-pane>
@@ -63,15 +63,13 @@ const handleTabChange = (e: any) => {
 </template>
 
 <style scoped>
-.log {
+.log-content {
   white-space: pre-wrap;
   word-wrap: anywhere;
   font-size: 12px;
 }
 
-.json {
-  white-space: pre-wrap;
-  word-wrap: anywhere;
-  font-size: 12px;
+.log-more {
+  text-align: center;
 }
 </style>

@@ -8,6 +8,7 @@ import { Marked, type RendererObject } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import hljs from 'highlight.js';
 import 'highlight.js/styles/default.min.css';
+import dayjs from 'dayjs';
 
 import { EditorState } from '@codemirror/state';
 import {
@@ -25,7 +26,6 @@ import { markdown } from '@codemirror/lang-markdown';
 
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
-import { showDateTime } from '@/utility/datetime-utility';
 
 const route = useRoute();
 const notePath: string = (route.query.path as string) || '';
@@ -37,6 +37,7 @@ const lastSaveTime = ref<number | null>(null);
 
 const editorRef = ref();
 let view: EditorView;
+
 onMounted(() => {
   loadNote();
 
@@ -67,9 +68,13 @@ onMounted(() => {
   if (route.query.edit === 'true') editNote();
 });
 
+onUnmounted(() => {
+  if (view) view.destroy();
+});
+
 const loadNote = () => {
   axios
-    .post('/api/explore/get-note-file', {
+    .post('/api/explore/get-content', {
       path: notePath,
     })
     .then((response) => {
@@ -77,7 +82,7 @@ const loadNote = () => {
       //isFavorite.value = localStorageUtility.isFavoriteNotePath(notePath);
     });
   // 当笔记不存在时可以取消收藏
-  isFavorite.value = localStorageUtility.isFavoritePath(notePath);
+  isFavorite.value = localStorageUtility.isFavorite(notePath);
 };
 
 const editNote = () => {
@@ -92,13 +97,9 @@ const editNote = () => {
   });
 };
 
-onUnmounted(() => {
-  if (view) view.destroy();
-});
-
 const saveNote = () => {
   axios
-    .post('/api/explore/save-note-file', {
+    .post('/api/explore/save-content', {
       path: notePath,
       //content: noteContentEdit.value
       content: view.state.doc.toString(),
@@ -115,13 +116,13 @@ const cancelEditNote = () => {
   editMode.value = false;
 };
 
-const addFavorite = () => {
-  localStorageUtility.addFavoritePath(notePath);
+const setFavorite = () => {
+  localStorageUtility.addFavorite(notePath);
   isFavorite.value = true;
 };
 
-const delFavorite = () => {
-  localStorageUtility.delFavoritePath(notePath);
+const unsetFavorite = () => {
+  localStorageUtility.deleteFavorite(notePath);
   isFavorite.value = false;
 };
 
@@ -167,53 +168,40 @@ const markdownHtml = () => {
 </script>
 
 <template>
-  <div class="fixed-title">
+  <div class="note-header">
+    <div class="note-header-title">
     <RouterLink :to="{ path: '/explore' }">根</RouterLink>
-    \<template v-for="(segment, index) in notePath.split('\\').filter((s) => s)" :key="index">
+    <span>\</span>
+    <template v-for="(segment, index) in notePath.split('\\').filter((s) => s)" :key="index">
       <template v-if="index < notePath.split('\\').length - 2">
         <RouterLink
           :to="{
             path: '/explore',
-            query: {
-              path:
-                notePath
-                  .split('\\')
-                  .slice(0, index + 2)
-                  .join('\\') + '\\',
-            },
-          }"
-        >
-          {{ segment }} </RouterLink
-        >\</template
-      >
-      <template v-if="index === notePath.split('\\').length - 2"
-        ><span>{{ segment }}</span></template
-      >
+            query: { path: notePath.split('\\').slice(0, index + 2).join('\\') + '\\' },
+          }">{{ segment }}</RouterLink>\</template>
+      <template v-if="index === notePath.split('\\').length - 2">
+        <span>{{ segment }}</span>
+      </template>
     </template>
-    <span v-if="lastSaveTime" style="font-size: 12px; margin-left: 20px"
-      >最后保存于 {{ showDateTime(lastSaveTime) }}</span
-    >
+    </div>
+    <div v-if="lastSaveTime" class="note-header-time">最后保存于 {{ dayjs(lastSaveTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+    <div>
+      <StarOutlined  @click="setFavorite" v-if="!isFavorite"/>
+      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #FFD700;" />
+    </div>
   </div>
-  <div v-if="!editMode" style="margin-top: 40px; height: calc(100% - 40px); background-color: #fff; overflow: hidden">
+  <div v-if="!editMode" style="background-color: #ffffff; overflow: hidden;">
     <!--<div style="padding: 20px; height: 100%; overflow: scroll; white-space: pre-wrap; word-wrap: anywhere;">-->
     <!--  {{ noteContent }}-->
     <!--</div>-->
     <div class="markdown" style="padding: 20px; height: 100%; overflow: scroll" v-html="markdownHtml()"></div>
   </div>
-  <div v-show="editMode" style="margin-top: 40px; height: calc(100% - 40px); background-color: #fff; overflow: hidden">
+  <div v-show="editMode" style="background-color: #ffffff; overflow: hidden;">
     <!--<a-textarea v-model:value="noteContentEdit" wrap="off" style="height: 100%;"></a-textarea>-->
     <div ref="editorRef" style="height: 100%"></div>
   </div>
-  <a-float-button type="default" @click="addFavorite" v-if="!editMode && !isFavorite" style="right: 80px">
-    <template #icon>
-      <StarOutlined />
-    </template>
-  </a-float-button>
-  <a-float-button type="primary" @click="delFavorite" v-if="!editMode && isFavorite" style="right: 80px">
-    <template #icon>
-      <StarFilled />
-    </template>
-  </a-float-button>
+
+
   <a-float-button type="primary" @click="editNote" v-if="!editMode">
     <template #icon>
       <EditFilled />
@@ -267,33 +255,42 @@ const markdownHtml = () => {
   height: 100%;
 }
 
-.fixed-title {
+.note-header {
   background-color: #fffbe6;
   /*font-weight: bold;*/
   padding-left: 24px;
   padding-right: 24px;
   height: 40px;
   line-height: 40px;
-  position: fixed;
+  position: sticky;
   top: 40px;
   left: 0;
   right: 0;
   z-index: 1000;
-  display: flex;
   overflow-x: auto;
   scrollbar-width: none; /* Firefox 隐藏滚动条 */
   -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.fixed-title::-webkit-scrollbar {
+
+.note-header-time{
+  font-size: 12px;
+  margin-left: 20px;
+}
+
+.note-header::-webkit-scrollbar {
   display: none; /* Chrome/Safari/Webkit 隐藏滚动条 */
 }
 
-.fixed-title * {
+.note-header * {
   /*font-weight: bold;*/
   white-space: nowrap;
 }
 
 .markdown {
+  color: #333333;
   line-height: 1.3rem;
 }
 

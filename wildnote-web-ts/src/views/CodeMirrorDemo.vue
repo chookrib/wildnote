@@ -14,8 +14,9 @@ import { defaultKeymap, history, undo, redo } from '@codemirror/commands';
 import { highlightSelectionMatches } from '@codemirror/search';
 import { markdown } from '@codemirror/lang-markdown';
 
-const editorRef = ref(null);
+const editorRef = ref();
 let view: EditorView;
+
 onMounted(() => {
   view = new EditorView({
     state: EditorState.create({
@@ -48,7 +49,7 @@ onMounted(() => {
         markdown(),
       ],
     }),
-    parent: editorRef.value!,
+    parent: editorRef.value,
   });
 });
 

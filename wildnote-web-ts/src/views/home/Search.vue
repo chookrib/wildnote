@@ -3,7 +3,6 @@ import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
-import { showDateTime } from '@/utility/datetime-utility';
 import type { ColumnsType } from 'ant-design-vue/es/table';
 
 // const dataSource = ref([]);
@@ -11,7 +10,7 @@ const dataSource = ref<Array<{ path: string; lastModifiedTime: string; directory
 const searchKey = ref('');
 
 onMounted(() => {
-  axios.get('/api/explore/all-note').then((response) => {
+  axios.get('/api/explore/all').then((response) => {
     dataSource.value = response.data.data.list;
   });
 });
@@ -42,14 +41,14 @@ const columns: ColumnsType<any> = [
 </script>
 
 <template>
-  <div class="fixed-title">
+  <div class="search-header">
     <a-input v-model:value="searchKey" placeholder="最输入关键字搜索" size="small" :allow-clear="true">
       <template #prefix>
         <SearchOutlined />
       </template>
     </a-input>
   </div>
-  <a-card style="margin-top: 40px">
+  <a-card>
     <a-table
       :columns="columns"
       :row-key="(record) => record.path"
@@ -80,21 +79,21 @@ const columns: ColumnsType<any> = [
 </template>
 
 <style scoped>
-.fixed-title {
+.search-header {
   background-color: #fffbe6;
   /*font-weight: bold;*/
   padding-left: 24px;
   padding-right: 24px;
   height: 40px;
   line-height: 40px;
-  position: fixed;
+  position: sticky;
   top: 40px;
   left: 0;
   right: 0;
   z-index: 1000;
 }
 
-.fixed-title * {
+.search-header * {
   /*font-weight: bold;*/
 }
 </style>

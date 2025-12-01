@@ -4,11 +4,6 @@ import { message } from 'ant-design-vue';
 import axios from '@/utility/axios-utility';
 
 const windowLocationOrigin = window.location.origin;
-
-const remindMessage = ref('');
-const smsMobile = ref('');
-const smsCode = ref('');
-
 const settingContent = ref('');
 
 onMounted(() => {
@@ -21,34 +16,39 @@ const loadSetting = () => {
   });
 };
 
-const remindPanelVisible = ref(false);
-const openRemindPanel = () => {
-  remindPanelVisible.value = true;
+const reloadAllNote = () => {
+  axios.get('/api/explore/reload').then((response) => {
+    message.success('重新加载所有笔记成功');
+  });
+};
+
+const testRemindPanelVisible = ref(false);
+const testRemindMessage = ref('');
+const openTestRemindPanel = () => {
+  testRemindPanelVisible.value = true;
 };
 
 const testRemind = () => {
-  axios.get('/api/system/remind/test?message=' + remindMessage.value).then((response) => {
-    remindPanelVisible.value = false;
+  axios.get('/api/system/test/remind?message=' + testRemindMessage.value).then((response) => {
+    testRemindPanelVisible.value = false;
     message.success('测试提醒消息发送成功');
   });
 };
 
-const smsPanelVisible = ref(false);
-const openSmsPanel = () => {
-  smsPanelVisible.value = true;
+const testSmsCodePanelVisible = ref(false);
+const testSmsCodeMobile = ref('');
+const testSmsCodeValue = ref('');
+const openTestSmsCodePanel = () => {
+  testSmsCodePanelVisible.value = true;
 };
 
-const testSms = () => {
-  axios.get('/api/system/sms/test?mobile=' + smsMobile.value + '&code=' + smsCode.value).then((response) => {
-    smsPanelVisible.value = false;
-    message.success('测试短信验证码发送成功');
-  });
-};
-
-const reloadNote = () => {
-  axios.get('/api/explore/reload').then((response) => {
-    message.success('重新加载所有笔记成功');
-  });
+const testSmsCode = () => {
+  axios
+    .get('/api/system/test/sms-code?mobile=' + testSmsCodeMobile.value + '&code=' + testSmsCodeValue.value)
+    .then((response) => {
+      testSmsCodePanelVisible.value = false;
+      message.success('测试短信验证码发送成功');
+    });
 };
 </script>
 
@@ -75,27 +75,27 @@ const reloadNote = () => {
   <a-card>
     <template #title>测试</template>
     <a-space>
-      <a-button type="primary" @click="reloadNote">重新加载所有笔记</a-button>
-      <a-button type="primary" @click="openRemindPanel">测试发送提醒消息</a-button>
-      <a-button type="primary" @click="openSmsPanel">测试发送短信验证码</a-button>
+      <a-button type="primary" @click="reloadAllNote">重新加载所有笔记</a-button>
+      <a-button type="primary" @click="openTestRemindPanel">测试发送提醒消息</a-button>
+      <a-button type="primary" @click="openTestSmsCodePanel">测试发送短信验证码</a-button>
     </a-space>
   </a-card>
 
-  <a-modal v-model:open="remindPanelVisible" title="测试发送提醒消息" @ok="testRemind">
+  <a-modal v-model:open="testRemindPanelVisible" title="测试发送提醒消息" @ok="testRemind">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item label="提醒内容">
-        <a-input v-model:value="remindMessage"></a-input>
+        <a-input v-model:value="testRemindMessage"></a-input>
       </a-form-item>
     </a-form>
   </a-modal>
 
-  <a-modal v-model:open="smsPanelVisible" title="测试发送短信验证码" @ok="testSms">
+  <a-modal v-model:open="testSmsCodePanelVisible" title="测试发送短信验证码" @ok="testSmsCode">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item label="手机">
-        <a-input v-model:value="smsMobile"></a-input>
+        <a-input v-model:value="testSmsCodeMobile"></a-input>
       </a-form-item>
       <a-form-item label="验证码">
-        <a-input v-model:value="smsCode"></a-input>
+        <a-input v-model:value="testSmsCodeValue"></a-input>
       </a-form-item>
     </a-form>
   </a-modal>

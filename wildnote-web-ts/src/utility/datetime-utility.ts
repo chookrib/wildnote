@@ -1,4 +1,7 @@
-const showDateTime = (dt: number) => {
+/**
+ * 格式化日期时间，格式为: YYYY-MM-DD HH:mm:ss
+ */
+const formatDateTime = (dt: number) => {
   if (!dt) return '';
   const date = new Date();
   date.setTime(dt);
@@ -16,7 +19,10 @@ const showDateTime = (dt: number) => {
   return `${year}-${MM}-${dd} ${HH}:${mm}:${ss}`;
 };
 
-const showTime = (time: string) => {
+/**
+ * 格式化时长，格式为: ?天?小时?分钟?秒
+ */
+const formatDuration = (time: string) => {
   if (!time) return '';
   const t = Number(time);
   const days = Math.floor(t / (24 * 60 * 60 * 1000));
@@ -31,4 +37,4 @@ const showTime = (time: string) => {
   return result;
 };
 
-export { showDateTime, showTime };
+export { formatDateTime, formatDuration };

@@ -1,22 +1,21 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
-import { message } from 'ant-design-vue';
-import { FolderFilled, FileTextOutlined, DownloadOutlined, UploadOutlined, PlusOutlined } from '@ant-design/icons-vue';
+import {onMounted, ref} from 'vue';
+import {RouterLink} from 'vue-router';
+import {message} from 'ant-design-vue';
+import {DownloadOutlined, FileTextOutlined, FolderFilled, UploadOutlined} from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
-import { showConfirm } from '@/utility/confirm-utility';
-import router from '@/router';
+import {showConfirm} from '@/utility/confirm-utility';
 
-// const favoritePathsRemote = ref([]);
-// const favoritePaths = ref([]);
-const favoritePathsRemote = ref<string[]>([]);
-const favoritePaths = ref<string[]>([]);
+// const favoriteListRemote = ref([]);
+// const favoriteList = ref([]);
+const favoriteListRemote = ref<string[]>([]);
+const favoriteList = ref<string[]>([]);
 // let remindLog = ref('');
-let dragIndex: number | null = null;
+let favoriteDragItemIndex: number | null = null;
 
 onMounted(() => {
-  favoritePaths.value = localStorageUtility.getFavoritePaths();
+  favoriteList.value = localStorageUtility.getFavorite();
   // axios.get('/api/log/get?type=remind').then(response => {
   //   //remindLog.value = response.data.data.result.log;
   //   //remindLog.value = response.data.data.replace(/(\\[^|]+)/g, '<a href="#/note?path=$1">$1</a>');
@@ -28,103 +27,117 @@ onMounted(() => {
 
 const loadFavoriteRemote = () => {
   axios.get('/api/favorite/get').then((response) => {
-    favoritePathsRemote.value = response.data.data.paths;
+    favoriteListRemote.value = response.data.data.list;
   });
 };
 
-const onDragStart = (index: number) => {
-  dragIndex = index;
+const onFavoriteItemDragStart = (index: number) => {
+  favoriteDragItemIndex = index;
 };
 
-const onDrop = (dropIndex: number) => {
-  if (dragIndex) {
-    localStorageUtility.moveFavoritePath(dragIndex, dropIndex);
-    dragIndex = null;
+const onFavoriteItemDrop = (dropIndex: number) => {
+  if (favoriteDragItemIndex) {
+    localStorageUtility.moveFavorite(favoriteDragItemIndex, dropIndex);
+    favoriteDragItemIndex = null;
   }
-  favoritePaths.value = localStorageUtility.getFavoritePaths();
+  favoriteList.value = localStorageUtility.getFavorite();
 };
 
-const delFavorite = (path: string) => {
-  showConfirm(`确定删除本地收藏的笔记路径 ${path} 吗？`, () => {
-    localStorageUtility.delFavoritePath(path);
-    favoritePaths.value = localStorageUtility.getFavoritePaths();
-  });
+const deleteFavorite = (path: string) => {
+  showConfirm(
+    {
+      title: '删除本地收藏',
+      content: `确定删除本地收藏的笔记路径 ${path} 吗？`,
+      onOk: () => {
+        localStorageUtility.deleteFavorite(path);
+        favoriteList.value = localStorageUtility.getFavorite();
+      }
+    });
 };
 
 const downloadFavorite = () => {
-  showConfirm(`确定下载服务端收藏的笔记路径到本地吗？（将覆盖本地收藏的笔记路径）`, () => {
-    axios.get('/api/favorite/get').then((response) => {
-      favoritePaths.value = response.data.data.paths;
-      localStorageUtility.setFavoritePaths(favoritePaths.value);
-      message.success('下载笔记路径成功');
+  showConfirm(
+    {
+      title: '下载收藏',
+      content: `确定下载服务端收藏的笔记路径到本地吗？（将覆盖本地收藏的笔记路径）`,
+      onOk: () => {
+        axios.get('/api/favorite/get').then((response) => {
+          favoriteList.value = response.data.data.list;
+          localStorageUtility.setFavorite(favoriteList.value);
+          message.success('下载收藏成功');
+        });
+      }
     });
-  });
 };
 
 const uploadFavorite = () => {
-  showConfirm(`确定上传本地收藏的笔记路径到服务端吗？（将覆盖服务端收藏的笔记路径）`, () => {
-    axios
-      .post('/api/favorite/set', {
-        paths: favoritePaths.value,
-      })
-      .then((response) => {
-        message.success('上传笔记路径成功');
-        loadFavoriteRemote();
-      });
-  });
+  showConfirm(
+    {
+      title: '上传收藏',
+      content: `确定上传本地收藏的笔记路径到服务端吗？（将覆盖服务端收藏的笔记路径）`,
+      onOk: () => {
+        axios.post('/api/favorite/set', {
+          list: favoriteList.value,
+        }).then((response) => {
+          message.success('上传收藏成功');
+          loadFavoriteRemote();
+        });
+      }
+    });
 };
 </script>
 
 <template>
   <a-card>
     <template #title>本地收藏笔记路径</template>
-    <a-empty description="没有收藏笔记路径" v-if="favoritePaths.length === 0" />
-    <a-flex wrap="wrap" gap="small" v-if="favoritePaths.length > 0">
+    <a-empty description="没有收藏笔记路径" v-if="favoriteList.length === 0"/>
+    <a-flex wrap="wrap" gap="small" v-if="favoriteList.length > 0">
       <a-tag
-        v-for="(path, index) in favoritePaths"
+        v-for="(item, index) in favoriteList"
         :key="index"
         draggable="true"
-        @dragstart="onDragStart(index)"
+        @dragstart="onFavoriteItemDragStart(index)"
         @dragover.prevent
-        @drop="onDrop(index)"
+        @drop="onFavoriteItemDrop(index)"
         closable
-        @close.prevent="delFavorite(path)"
+        @close.prevent="deleteFavorite(item)"
       >
         <template #icon>
-          <template v-if="path.endsWith('\\')">
-            <FolderFilled :style="{ color: '#f7c427' }" />
+          <template v-if="item.endsWith('\\')">
+            <FolderFilled :style="{ color: '#f7c427' }"/>
           </template>
-          <template v-if="!path.endsWith('\\')">
-            <FileTextOutlined />
+          <template v-if="!item.endsWith('\\')">
+            <FileTextOutlined/>
           </template>
         </template>
-        <template v-if="path.endsWith('\\')">
-          <RouterLink :to="{ path: '/explore', query: { path: path } }"> {{ path }}&nbsp;&nbsp; </RouterLink>
+        <template v-if="item.endsWith('\\')">
+          <RouterLink :to="{ path: '/explore', query: { path: item } }"> {{ item }}&nbsp;&nbsp;</RouterLink>
         </template>
-        <template v-if="!path.endsWith('\\')">
-          <RouterLink :to="{ path: '/note', query: { path: path } }"> {{ path }}&nbsp;&nbsp; </RouterLink>
+        <template v-if="!item.endsWith('\\')">
+          <RouterLink :to="{ path: '/note', query: { path: item } }"> {{ item }}&nbsp;&nbsp;</RouterLink>
         </template>
       </a-tag>
     </a-flex>
   </a-card>
+
   <a-card>
     <template #title>服务端收藏笔记路径</template>
-    <a-empty description="没有收藏笔记路径" v-if="favoritePathsRemote.length === 0" />
-    <a-flex wrap="wrap" gap="small" v-if="favoritePathsRemote.length > 0">
-      <a-tag v-for="(path, index) in favoritePathsRemote" :key="index">
+    <a-empty description="没有收藏笔记路径" v-if="favoriteListRemote.length === 0"/>
+    <a-flex wrap="wrap" gap="small" v-if="favoriteListRemote.length > 0">
+      <a-tag v-for="(item, index) in favoriteListRemote" :key="index">
         <template #icon>
-          <template v-if="path.endsWith('\\')">
-            <FolderFilled :style="{ color: '#f7c427' }" />
+          <template v-if="item.endsWith('\\')">
+            <FolderFilled :style="{ color: '#f7c427' }"/>
           </template>
-          <template v-if="!path.endsWith('\\')">
-            <FileTextOutlined />
+          <template v-if="!item.endsWith('\\')">
+            <FileTextOutlined/>
           </template>
         </template>
-        <template v-if="path.endsWith('\\')">
-          <RouterLink :to="{ path: '/explore', query: { path: path } }"> {{ path }}&nbsp;&nbsp; </RouterLink>
+        <template v-if="item.endsWith('\\')">
+          <RouterLink :to="{ path: '/explore', query: { path: item } }"> {{ item }}&nbsp;&nbsp;</RouterLink>
         </template>
-        <template v-if="!path.endsWith('\\')">
-          <RouterLink :to="{ path: '/note', query: { path: path } }"> {{ path }}&nbsp;&nbsp; </RouterLink>
+        <template v-if="!item.endsWith('\\')">
+          <RouterLink :to="{ path: '/note', query: { path: item } }"> {{ item }}&nbsp;&nbsp;</RouterLink>
         </template>
       </a-tag>
     </a-flex>
@@ -138,12 +151,12 @@ const uploadFavorite = () => {
   </a-card>-->
   <a-float-button type="primary" @click="downloadFavorite" style="right: 80px">
     <template #icon>
-      <DownloadOutlined />
+      <DownloadOutlined/>
     </template>
   </a-float-button>
   <a-float-button type="primary" @click="uploadFavorite">
     <template #icon>
-      <UploadOutlined />
+      <UploadOutlined/>
     </template>
   </a-float-button>
 </template>

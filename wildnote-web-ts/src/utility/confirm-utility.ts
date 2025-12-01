@@ -1,25 +1,32 @@
-import { createVNode } from 'vue';
-import { Modal } from 'ant-design-vue';
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import {createVNode} from 'vue';
+import {Modal} from 'ant-design-vue';
+import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 
-const showConfirm = (content: string, onOk?: () => void, onCancel?: () => void) => {
+interface ConfirmOption {
+  title?: string;
+  content?: string;
+  onOk?: () => void;
+  onCancel?: () => void;
+}
+
+const showConfirm = (option: ConfirmOption) => {
   Modal.confirm({
-    title: '操作确认',
+    title: option.title ? option.title : '操作确认',
     icon: createVNode(ExclamationCircleOutlined),
-    content: content,
+    content: option.content || '',
     okText: '确认',
     cancelText: '取消',
     onOk: () => {
-      if (onOk) {
-        onOk();
+      if (option.onOk) {
+        option.onOk();
       }
     },
     onCancel: () => {
-      if (onCancel) {
-        onCancel();
+      if (option.onCancel) {
+        option.onCancel();
       }
     },
   });
 };
 
-export { showConfirm };
+export {showConfirm};
