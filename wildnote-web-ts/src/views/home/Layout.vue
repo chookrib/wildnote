@@ -24,8 +24,7 @@ const logout = function () {
   <a-config-provider :locale="zhCN">
     <div class="layout-header">
       <img src="/img/logo192.png" alt="" style="height: 20px; filter: brightness(0) invert(1)"/>
-      <div style="flex-grow: 1">{{ title }}</div>
-      <RouterLink to="/">首页</RouterLink>
+      <div style="flex-grow: 1"><RouterLink to="/">{{ title }}</RouterLink></div>
       <RouterLink to="/explore">浏览</RouterLink>
       <RouterLink to="/search">搜索</RouterLink>
       <RouterLink to="/remind">提醒</RouterLink>
