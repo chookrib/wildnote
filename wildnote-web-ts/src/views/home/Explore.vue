@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue';
-import {RouterLink, useRoute} from 'vue-router';
-import {FileTextOutlined, FolderFilled, StarFilled, StarOutlined,} from '@ant-design/icons-vue';
+import { computed, onMounted, ref } from 'vue';
+import { RouterLink, useRoute } from 'vue-router';
+import { FileTextOutlined, FolderFilled, StarFilled, StarOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
-import type {FilterValue, SorterResult} from 'ant-design-vue/es/table/interface';
-import type {TablePaginationConfig} from 'ant-design-vue/lib';
-import type {ColumnsType} from 'ant-design-vue/es/table';
+import type { FilterValue, SorterResult } from 'ant-design-vue/es/table/interface';
+import type { TablePaginationConfig } from 'ant-design-vue/lib';
+import type { ColumnsType } from 'ant-design-vue/es/table';
 import router from '@/router.ts';
-import {showConfirm} from '@/utility/confirm-utility.ts';
+import { showConfirm } from '@/utility/confirm-utility.ts';
 import dayjs from 'dayjs';
 
 const route = useRoute();
@@ -113,15 +113,15 @@ const openCreatePanel = (directory: boolean) => {
 
 const createNote = () => {
   if (createDirectory.value) {
-    axios.post('/api/explore/create-directory', {path: createPath.value}).then((response) => {
+    axios.post('/api/explore/create-directory', { path: createPath.value }).then((response) => {
       createPanelVisible.value = false;
       loadAllNote();
     });
   } else {
-    axios.post('/api/explore/create-file', {path: createPath.value}).then((response) => {
+    axios.post('/api/explore/create-file', { path: createPath.value }).then((response) => {
       createPanelVisible.value = false;
       // 创建笔记文件后转到笔记文件编辑页面
-      router.push({path: '/note', query: {path: createPath.value, edit: 'true'}});
+      router.push({ path: '/note', query: { path: createPath.value, edit: 'true' } });
     });
   }
 };
@@ -132,11 +132,11 @@ const deleteNote = (path: string, directory: boolean) => {
     content: `确定要删除笔记${directory ? '文件夹' : '文件'} ${path} 吗？`,
     onOk: () => {
       axios
-        .post(directory ? '/api/explore/delete-directory' : '/api/explore/delete-file', {path: path})
+        .post(directory ? '/api/explore/delete-directory' : '/api/explore/delete-file', { path: path })
         .then((response) => {
           loadAllNote();
         });
-    }
+    },
   });
 };
 
@@ -166,24 +166,32 @@ const moveNote = () => {
 </script>
 
 <template>
-
   <div class="explore-header">
     <div>
-      <StarOutlined @click="setFavorite" v-if="!isFavorite"/>
-      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #1677ff;"/>
+      <StarOutlined @click="setFavorite" v-if="!isFavorite" />
+      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #1677ff" />
     </div>
     <div class="explore-header-title">
       <RouterLink :to="{ path: '/explore' }">根</RouterLink>
       <span>\</span>
       <span v-if="explorePath">
-      <template v-for="(segment, index) in explorePath.split('\\').filter((s) => s)" :key="index">
-        <RouterLink
-          :to="{
-            path: '/explore',
-            query: { path: explorePath.split('\\').slice(0, index + 2).join('\\') + '\\' },
-          }">
-          {{ segment }} </RouterLink>\</template>
-    </span>
+        <template v-for="(segment, index) in explorePath.split('\\').filter((s) => s)" :key="index">
+          <RouterLink
+            :to="{
+              path: '/explore',
+              query: {
+                path:
+                  explorePath
+                    .split('\\')
+                    .slice(0, index + 2)
+                    .join('\\') + '\\',
+              },
+            }"
+          >
+            {{ segment }} </RouterLink
+          >\</template
+        >
+      </span>
     </div>
   </div>
 
@@ -199,11 +207,11 @@ const moveNote = () => {
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'path'">
           <RouterLink v-if="record.directory" :to="{ path: '/explore', query: { path: record.path + '\\' } }">
-            <FolderFilled :style="{ color: '#f7c427' }"/>
+            <FolderFilled :style="{ color: '#f7c427' }" />
             {{ record.name }}
           </RouterLink>
           <RouterLink v-if="!record.directory" :to="{ path: '/note', query: { path: record.path } }">
-            <FileTextOutlined/>
+            <FileTextOutlined />
             {{ record.name }}
           </RouterLink>
         </template>
@@ -219,12 +227,8 @@ const moveNote = () => {
   </a-card>
 
   <div class="explore-footer">
-    <a-button type="primary" @click="openCreatePanel(true)">
-      创建笔记文件夹
-    </a-button>
-    <a-button type="primary" @click="openCreatePanel(false)">
-      创建笔记文件
-    </a-button>
+    <a-button type="primary" @click="openCreatePanel(true)"> 创建笔记文件夹 </a-button>
+    <a-button type="primary" @click="openCreatePanel(false)"> 创建笔记文件 </a-button>
   </div>
 
   <a-modal

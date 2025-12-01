@@ -170,37 +170,47 @@ const markdownHtml = () => {
 <template>
   <div class="note-header">
     <div>
-      <StarOutlined  @click="setFavorite" v-if="!isFavorite"/>
-      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #1677ff;" />
+      <StarOutlined @click="setFavorite" v-if="!isFavorite" />
+      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #1677ff" />
     </div>
     <div class="note-header-title">
-    <RouterLink :to="{ path: '/explore' }">根</RouterLink>
-    <span>\</span>
-    <template v-for="(segment, index) in notePath.split('\\').filter((s) => s)" :key="index">
-      <template v-if="index < notePath.split('\\').length - 2">
-        <RouterLink
-          :to="{
-            path: '/explore',
-            query: { path: notePath.split('\\').slice(0, index + 2).join('\\') + '\\' },
-          }">{{ segment }}</RouterLink>\</template>
-      <template v-if="index === notePath.split('\\').length - 2">
-        <span>{{ segment }}</span>
+      <RouterLink :to="{ path: '/explore' }">根</RouterLink>
+      <span>\</span>
+      <template v-for="(segment, index) in notePath.split('\\').filter((s) => s)" :key="index">
+        <template v-if="index < notePath.split('\\').length - 2">
+          <RouterLink
+            :to="{
+              path: '/explore',
+              query: {
+                path:
+                  notePath
+                    .split('\\')
+                    .slice(0, index + 2)
+                    .join('\\') + '\\',
+              },
+            }"
+            >{{ segment }}</RouterLink
+          >\</template
+        >
+        <template v-if="index === notePath.split('\\').length - 2">
+          <span>{{ segment }}</span>
+        </template>
       </template>
-    </template>
     </div>
-    <div v-if="lastSaveTime" class="note-header-time">最后保存于 {{ dayjs(lastSaveTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
+    <div v-if="lastSaveTime" class="note-header-time">
+      最后保存于 {{ dayjs(lastSaveTime).format('YYYY-MM-DD HH:mm:ss') }}
+    </div>
   </div>
-  <div v-if="!editMode" style="background-color: #ffffff; overflow: hidden;">
+  <div v-if="!editMode" style="background-color: #ffffff; overflow: hidden">
     <!--<div style="padding: 20px; height: 100%; overflow: scroll; white-space: pre-wrap; word-wrap: anywhere;">-->
     <!--  {{ noteContent }}-->
     <!--</div>-->
     <div class="markdown" style="padding: 20px; height: 100%; overflow: scroll" v-html="markdownHtml()"></div>
   </div>
-  <div v-show="editMode" style="background-color: #ffffff; overflow: hidden;">
+  <div v-show="editMode" style="background-color: #ffffff; overflow: hidden">
     <!--<a-textarea v-model:value="noteContentEdit" wrap="off" style="height: 100%;"></a-textarea>-->
     <div ref="editorRef" style="height: 100%"></div>
   </div>
-
 
   <a-float-button type="primary" @click="editNote" v-if="!editMode">
     <template #icon>
@@ -275,7 +285,7 @@ const markdownHtml = () => {
   justify-content: left;
 }
 
-.note-header-title{
+.note-header-title {
   white-space: nowrap;
   margin-left: 5px;
 }

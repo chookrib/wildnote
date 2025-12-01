@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
-import {RouterLink} from 'vue-router';
-import {message} from 'ant-design-vue';
-import {DownloadOutlined, FileTextOutlined, FolderFilled, UploadOutlined} from '@ant-design/icons-vue';
+import { onMounted, ref } from 'vue';
+import { RouterLink } from 'vue-router';
+import { message } from 'ant-design-vue';
+import { DownloadOutlined, FileTextOutlined, FolderFilled, UploadOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
-import {showConfirm} from '@/utility/confirm-utility';
+import { showConfirm } from '@/utility/confirm-utility';
 
 // const favoriteListRemote = ref([]);
 // const favoriteList = ref([]);
@@ -44,53 +44,52 @@ const onFavoriteItemDrop = (dropIndex: number) => {
 };
 
 const deleteFavorite = (path: string) => {
-  showConfirm(
-    {
-      title: '删除本地收藏',
-      content: `确定删除本地收藏的笔记路径 ${path} 吗？`,
-      onOk: () => {
-        localStorageUtility.deleteFavorite(path);
-        favoriteList.value = localStorageUtility.getFavorite();
-      }
-    });
+  showConfirm({
+    title: '删除本地收藏',
+    content: `确定删除本地收藏的笔记路径 ${path} 吗？`,
+    onOk: () => {
+      localStorageUtility.deleteFavorite(path);
+      favoriteList.value = localStorageUtility.getFavorite();
+    },
+  });
 };
 
 const downloadFavorite = () => {
-  showConfirm(
-    {
-      title: '下载收藏',
-      content: `确定下载服务端收藏的笔记路径到本地吗？（将覆盖本地收藏的笔记路径）`,
-      onOk: () => {
-        axios.get('/api/favorite/get').then((response) => {
-          favoriteList.value = response.data.data.list;
-          localStorageUtility.setFavorite(favoriteList.value);
-          message.success('下载收藏成功');
-        });
-      }
-    });
+  showConfirm({
+    title: '下载收藏',
+    content: `确定下载服务端收藏的笔记路径到本地吗？（将覆盖本地收藏的笔记路径）`,
+    onOk: () => {
+      axios.get('/api/favorite/get').then((response) => {
+        favoriteList.value = response.data.data.list;
+        localStorageUtility.setFavorite(favoriteList.value);
+        message.success('下载收藏成功');
+      });
+    },
+  });
 };
 
 const uploadFavorite = () => {
-  showConfirm(
-    {
-      title: '上传收藏',
-      content: `确定上传本地收藏的笔记路径到服务端吗？（将覆盖服务端收藏的笔记路径）`,
-      onOk: () => {
-        axios.post('/api/favorite/set', {
+  showConfirm({
+    title: '上传收藏',
+    content: `确定上传本地收藏的笔记路径到服务端吗？（将覆盖服务端收藏的笔记路径）`,
+    onOk: () => {
+      axios
+        .post('/api/favorite/set', {
           list: favoriteList.value,
-        }).then((response) => {
+        })
+        .then((response) => {
           message.success('上传收藏成功');
           loadFavoriteRemote();
         });
-      }
-    });
+    },
+  });
 };
 </script>
 
 <template>
   <a-card>
     <template #title>本地收藏笔记路径</template>
-    <a-empty description="没有收藏笔记路径" v-if="favoriteList.length === 0"/>
+    <a-empty description="没有收藏笔记路径" v-if="favoriteList.length === 0" />
     <a-flex wrap="wrap" gap="small" v-if="favoriteList.length > 0">
       <a-tag
         v-for="(item, index) in favoriteList"
@@ -104,10 +103,10 @@ const uploadFavorite = () => {
       >
         <template #icon>
           <template v-if="item.endsWith('\\')">
-            <FolderFilled :style="{ color: '#f7c427' }"/>
+            <FolderFilled :style="{ color: '#f7c427' }" />
           </template>
           <template v-if="!item.endsWith('\\')">
-            <FileTextOutlined/>
+            <FileTextOutlined />
           </template>
         </template>
         <template v-if="item.endsWith('\\')">
@@ -122,15 +121,15 @@ const uploadFavorite = () => {
 
   <a-card>
     <template #title>服务端收藏笔记路径</template>
-    <a-empty description="没有收藏笔记路径" v-if="favoriteListRemote.length === 0"/>
+    <a-empty description="没有收藏笔记路径" v-if="favoriteListRemote.length === 0" />
     <a-flex wrap="wrap" gap="small" v-if="favoriteListRemote.length > 0">
       <a-tag v-for="(item, index) in favoriteListRemote" :key="index">
         <template #icon>
           <template v-if="item.endsWith('\\')">
-            <FolderFilled :style="{ color: '#f7c427' }"/>
+            <FolderFilled :style="{ color: '#f7c427' }" />
           </template>
           <template v-if="!item.endsWith('\\')">
-            <FileTextOutlined/>
+            <FileTextOutlined />
           </template>
         </template>
         <template v-if="item.endsWith('\\')">
@@ -151,12 +150,12 @@ const uploadFavorite = () => {
   </a-card>-->
   <a-float-button type="primary" @click="downloadFavorite" style="right: 80px">
     <template #icon>
-      <DownloadOutlined/>
+      <DownloadOutlined />
     </template>
   </a-float-button>
   <a-float-button type="primary" @click="uploadFavorite">
     <template #icon>
-      <UploadOutlined/>
+      <UploadOutlined />
     </template>
   </a-float-button>
 </template>

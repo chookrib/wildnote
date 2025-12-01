@@ -1,6 +1,6 @@
-import {createVNode} from 'vue';
-import {Modal} from 'ant-design-vue';
-import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
+import { createVNode } from 'vue';
+import { Modal } from 'ant-design-vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 interface ConfirmOption {
   title?: string;
@@ -29,4 +29,4 @@ const showConfirm = (option: ConfirmOption) => {
   });
 };
 
-export {showConfirm};
+export { showConfirm };
