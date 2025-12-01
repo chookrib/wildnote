@@ -168,6 +168,10 @@ const moveNote = () => {
 <template>
 
   <div class="explore-header">
+    <div>
+      <StarOutlined @click="setFavorite" v-if="!isFavorite"/>
+      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #1677ff;"/>
+    </div>
     <div class="explore-header-title">
       <RouterLink :to="{ path: '/explore' }">根</RouterLink>
       <span>\</span>
@@ -180,10 +184,6 @@ const moveNote = () => {
           }">
           {{ segment }} </RouterLink>\</template>
     </span>
-    </div>
-    <div>
-      <StarOutlined @click="setFavorite" v-if="!isFavorite"/>
-      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #FFD700;" />
     </div>
   </div>
 
@@ -266,11 +266,12 @@ const moveNote = () => {
   z-index: 1000;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: left;
 }
 
-.explore-header-title{
+.explore-header-title {
   white-space: nowrap;
+  margin-left: 5px;
 }
 
 .explore-footer {

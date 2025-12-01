@@ -169,6 +169,10 @@ const markdownHtml = () => {
 
 <template>
   <div class="note-header">
+    <div>
+      <StarOutlined  @click="setFavorite" v-if="!isFavorite"/>
+      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #1677ff;" />
+    </div>
     <div class="note-header-title">
     <RouterLink :to="{ path: '/explore' }">根</RouterLink>
     <span>\</span>
@@ -185,10 +189,6 @@ const markdownHtml = () => {
     </template>
     </div>
     <div v-if="lastSaveTime" class="note-header-time">最后保存于 {{ dayjs(lastSaveTime).format('YYYY-MM-DD HH:mm:ss') }}</div>
-    <div>
-      <StarOutlined  @click="setFavorite" v-if="!isFavorite"/>
-      <StarFilled @click="unsetFavorite" v-if="isFavorite" style="color: #FFD700;" />
-    </div>
   </div>
   <div v-if="!editMode" style="background-color: #ffffff; overflow: hidden;">
     <!--<div style="padding: 20px; height: 100%; overflow: scroll; white-space: pre-wrap; word-wrap: anywhere;">-->
@@ -272,10 +272,15 @@ const markdownHtml = () => {
   -ms-overflow-style: none; /* IE/Edge 隐藏滚动条 */
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: left;
 }
 
-.note-header-time{
+.note-header-title{
+  white-space: nowrap;
+  margin-left: 5px;
+}
+
+.note-header-time {
   font-size: 12px;
   margin-left: 20px;
 }
@@ -286,7 +291,6 @@ const markdownHtml = () => {
 
 .note-header * {
   /*font-weight: bold;*/
-  white-space: nowrap;
 }
 
 .markdown {
