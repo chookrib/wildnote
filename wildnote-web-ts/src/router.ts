@@ -7,10 +7,6 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
-      path: '/',
-      redirect: '/index',
-    },
-    {
       path: '/login',
       component: () => import('@/views/Login.vue'),
     },
@@ -20,34 +16,35 @@ const router = createRouter({
     },
     {
       path: '/',
+      redirect: '/index',
       component: () => import('@/views/home/Layout.vue'),
       children: [
         {
-          path: 'index',
+          path: '/index',
           component: () => import('@/views/home/Index.vue'),
         },
         {
-          path: 'explore',
+          path: '/explore',
           component: () => import('@/views/home/Explore.vue'),
         },
         {
-          path: 'search',
+          path: '/search',
           component: () => import('@/views/home/Search.vue'),
         },
         {
-          path: 'remind',
+          path: '/remind',
           component: () => import('@/views/home/Remind.vue'),
         },
         {
-          path: 'note',
+          path: '/note',
           component: () => import('@/views/home/Note.vue'),
         },
         {
-          path: 'system',
+          path: '/system',
           component: () => import('@/views/home/System.vue'),
         },
         {
-          path: 'log',
+          path: '/log',
           component: () => import('@/views/home/Log.vue'),
         },
       ],
