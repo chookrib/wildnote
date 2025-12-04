@@ -178,10 +178,10 @@ const isolatedJobColumns: ColumnsType<any> = [
           </a-tag>
         </template>
         <template v-if="column.dataIndex === 'nextTime'">
-          {{ record.nextTime }}
+          {{ record.nextTime??'已结束' }}
         </template>
         <template v-if="column.dataIndex === 'delayTime'">
-          {{ formatDuration(record.delayTime) }}
+          {{ formatDuration(record.delayTime)??'已结束' }}
         </template>
         <template v-if="column.dataIndex === 'cronDetail'">
           <a-tag>
