@@ -18,15 +18,17 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RemindTaskScheduler implements RemindScheduler {
 
-    private final RemindGateway remindGateway;
     private final TaskScheduler taskScheduler;
+    private final RemindGateway remindGateway;
 
     // TaskScheduler 不支持获取作业，使用 Map 保存作业
     private Map<String, ScheduledFuture<?>> jobMap = new ConcurrentHashMap<>();
 
-    public RemindTaskScheduler(RemindGateway remindGateway, TaskScheduler taskScheduler) {
-        this.remindGateway = remindGateway;
+    public RemindTaskScheduler(
+            TaskScheduler taskScheduler,
+            RemindGateway remindGateway) {
         this.taskScheduler = taskScheduler;
+        this.remindGateway = remindGateway;
     }
 
     @Override

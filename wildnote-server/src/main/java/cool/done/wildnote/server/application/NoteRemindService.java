@@ -20,7 +20,7 @@ public class NoteRemindService {
     private static final Logger logger = LoggerFactory.getLogger(NoteRemindService.class);
 
     // 存储笔记提醒计划任务的 List
-    private List<NoteCron> cronList = new ArrayList<>();
+    private List<NoteCron> cronList = java.util.Collections.synchronizedList(new ArrayList<>());
 
     private final RemindScheduler remindScheduler;
     private final ExtraLogService extraLogService;

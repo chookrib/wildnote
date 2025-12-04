@@ -1,6 +1,5 @@
 package cool.done.wildnote.server.domain;
 
-import cool.done.wildnote.server.application.NoteRemindService;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
