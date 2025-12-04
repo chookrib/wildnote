@@ -34,6 +34,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
         //globalInterceptor.excludePathPatterns("/**");
 
         //排除地址
+        globalInterceptor.excludePathPatterns("/api/.well-known");
         globalInterceptor.excludePathPatterns("/api/login");
 
         //拦截地址
