@@ -127,11 +127,11 @@ public class AuthController {
         String username = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "username");
         String password = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "password");
 
-        String cachedCaptcha = captchaCache.getIfPresent(fingerprint);
-        if(cachedCaptcha == null) {
+        String code = captchaCache.getIfPresent(fingerprint);
+        if(code == null) {
             throw new ControllerException("验证码已过期");
         }
-        if(!captcha.equalsIgnoreCase(captchaCache.getIfPresent(fingerprint))) {
+        if(!captcha.equalsIgnoreCase(code)) {
             throw new ControllerException("验证码错误");
         }
         String accessToken = authService.login(username, password);
