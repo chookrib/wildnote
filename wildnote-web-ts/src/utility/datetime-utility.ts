@@ -23,7 +23,7 @@ const formatDateTime = (dt: number) => {
  * 格式化时长，格式为: ?天?小时?分钟?秒
  */
 const formatDuration = (time: string) => {
-  if (!time) return null;
+  if (!time) return '';
   const t = Number(time);
   const days = Math.floor(t / (24 * 60 * 60 * 1000));
   const hours = Math.floor((t % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));

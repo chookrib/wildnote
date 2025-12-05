@@ -7,29 +7,29 @@ import type { ColumnsType } from 'ant-design-vue/es/table';
 import type { TablePaginationConfig } from 'ant-design-vue/lib';
 import type { FilterValue, SorterResult } from 'ant-design-vue/es/table/interface';
 
-// const scheduledCrons = ref([]);
-// const unscheduledCrons = ref([]);
-// const isolatedJobs = ref([]);
-const scheduledCronList = ref<Array<{ path: string; delayTime?: number; cronDetail?: string; [key: string]: any }>>([]);
-const unscheduledCronList = ref<Array<{ path: string; [key: string]: any }>>([]);
-const isolatedJobList = ref<Array<{ jobId: string; nextTime?: string; [key: string]: any }>>([]);
+// const activeCronList = ref([]);
+// const inactiveCronList = ref([]);
+// const dirtyJobList = ref([]);
+const activeCronList = ref<Array<{ path: string; delayTime?: number; cronDetail?: string; [key: string]: any }>>([]);
+const inactiveCronList = ref<Array<{ path: string; [key: string]: any }>>([]);
+const dirtyJobList = ref<Array<{ jobId: string; nextTime?: string; [key: string]: any }>>([]);
 
 onMounted(() => {
   axios.get('/api/remind/all').then((response) => {
-    scheduledCronList.value = response.data.data.scheduledCronList;
-    unscheduledCronList.value = response.data.data.unscheduledCronList;
-    isolatedJobList.value = response.data.data.isolatedJobList;
+    activeCronList.value = response.data.data.activeCronList;
+    inactiveCronList.value = response.data.data.inactiveCronList;
+    dirtyJobList.value = response.data.data.dirtyJobList;
   });
 });
 
-// const scheduledCronSorterParam = ref({});
-const scheduledCronSorterParam = ref<SorterResult<any>>();
+// const activeCronSorterParam = ref({});
+const activeCronSorterParam = ref<SorterResult<any>>();
 
-const scheduledCronListComputed = computed(() => {
-  const sorter = scheduledCronSorterParam.value;
+const activeCronListComputed = computed(() => {
+  const sorter = activeCronSorterParam.value;
   if (sorter && sorter.field && sorter.order) {
     if (sorter.field === 'path') {
-      return [...scheduledCronList.value].sort((a, b) => {
+      return [...activeCronList.value].sort((a, b) => {
         if (sorter.order === 'ascend') {
           return a.path.localeCompare(b.path);
         } else {
@@ -37,7 +37,7 @@ const scheduledCronListComputed = computed(() => {
         }
       });
     } else if (sorter.field === 'delayTime' || sorter.field === 'cronDetail') {
-      return [...scheduledCronList.value].sort((a, b) => {
+      return [...activeCronList.value].sort((a, b) => {
         if (sorter.order === 'ascend') {
           return Number(a.delayTime) > Number(b.delayTime) ? 1 : -1;
         } else {
@@ -46,25 +46,25 @@ const scheduledCronListComputed = computed(() => {
       });
     }
   }
-  return [...scheduledCronList.value];
+  return [...activeCronList.value];
 });
 
-const handleScheduledCornTableChange = (
+const handleActiveCornTableChange = (
   pagination: TablePaginationConfig,
   filters: Record<string, FilterValue>,
   sorter: SorterResult<any> | SorterResult<any>[],
 ) => {
   // console.log('Table changed:', pagination, filters, sorter);
   if (Array.isArray(sorter)) {
-    scheduledCronSorterParam.value = sorter[0];
+    activeCronSorterParam.value = sorter[0];
   } else {
-    scheduledCronSorterParam.value = sorter;
+    activeCronSorterParam.value = sorter;
   }
 };
 
 const styles = useCssModule();
 // console.log(styles);
-const scheduledCronColumns: ColumnsType<any> = [
+const activeCronColumns: ColumnsType<any> = [
   {
     title: '笔记文件路径',
     dataIndex: 'path',
@@ -120,7 +120,7 @@ const scheduledCronColumns: ColumnsType<any> = [
   },
 ];
 
-const unscheduledCronColumns: ColumnsType<any> = [
+const inactiveCronColumns: ColumnsType<any> = [
   {
     title: '笔记文件路径',
     dataIndex: 'path',
@@ -136,13 +136,17 @@ const unscheduledCronColumns: ColumnsType<any> = [
     dataIndex: 'cronExpression',
   },
   {
+    title: '状态',
+    dataIndex: 'status',
+  },
+  {
     title: '描述',
     dataIndex: 'description',
     //ellipsis: true
   },
 ];
 
-const isolatedJobColumns: ColumnsType<any> = [
+const dirtyJobColumns: ColumnsType<any> = [
   {
     title: '作业Id',
     dataIndex: 'jobId',
@@ -159,13 +163,13 @@ const isolatedJobColumns: ColumnsType<any> = [
 
 <template>
   <a-card>
-    <template #title>已调度笔记提醒作业</template>
+    <template #title>运行中笔记提醒作业</template>
     <a-table
-      :columns="scheduledCronColumns"
+      :columns="activeCronColumns"
       :row-key="(record) => record.path + record.lineNumber"
-      :data-source="scheduledCronListComputed"
+      :data-source="activeCronListComputed"
       :pagination="false"
-      @change="handleScheduledCornTableChange"
+      @change="handleActiveCornTableChange"
       size="small"
     >
       <template #bodyCell="{ column, record }">
@@ -178,10 +182,10 @@ const isolatedJobColumns: ColumnsType<any> = [
           </a-tag>
         </template>
         <template v-if="column.dataIndex === 'nextTime'">
-          {{ record.nextTime??'已结束' }}
+          {{ record.nextTime }}
         </template>
         <template v-if="column.dataIndex === 'delayTime'">
-          {{ formatDuration(record.delayTime)??'已结束' }}
+          {{ formatDuration(record.delayTime) }}
         </template>
         <template v-if="column.dataIndex === 'cronDetail'">
           <a-tag>
@@ -194,11 +198,11 @@ const isolatedJobColumns: ColumnsType<any> = [
   </a-card>
 
   <a-card>
-    <template #title>未调度笔记提醒作业</template>
+    <template #title>未运行笔记提醒作业</template>
     <a-table
-      :columns="unscheduledCronColumns"
+      :columns="inactiveCronColumns"
       :row-key="(record) => record.path + record.lineNumber"
-      :data-source="unscheduledCronList"
+      :data-source="inactiveCronList"
       :pagination="false"
       size="small"
     >
@@ -215,12 +219,12 @@ const isolatedJobColumns: ColumnsType<any> = [
     </a-table>
   </a-card>
 
-  <a-card v-if="isolatedJobList.length > 0">
-    <template #title>残留笔记提醒作业</template>
+  <a-card v-if="dirtyJobList.length > 0">
+    <template #title>笔记提醒作业脏数据</template>
     <a-table
-      :columns="isolatedJobColumns"
+      :columns="dirtyJobColumns"
       :row-key="(record) => record.jobId"
-      :data-source="isolatedJobList"
+      :data-source="dirtyJobList"
       :pagination="false"
       size="small"
     >
