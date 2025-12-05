@@ -19,7 +19,8 @@ onMounted(() => {
 
 const loadCaptcha = () => {
   // f.value = Math.random().toString(36).substring(2) + Date.now().toString(36);
-  f.value = crypto.randomUUID();
+  // f.value = crypto.randomUUID();
+  f.value = Math.random().toString();
   captchaSrc.value = import.meta.env.VITE_API_URL + 'api/captcha?f=' + f.value;
   console.log(captchaSrc.value);
 };
