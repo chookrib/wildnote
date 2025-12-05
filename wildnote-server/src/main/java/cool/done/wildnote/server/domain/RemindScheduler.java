@@ -8,7 +8,7 @@ import java.util.Map;
 public interface RemindScheduler {
 
     /**
-     * 添加提醒计划任务调度
+     * 添加提醒计划任务调度，返回 jobId
      */
     String addJob(String cronExpression, String message);
 
@@ -18,7 +18,7 @@ public interface RemindScheduler {
     void deleteJob(String jobKey);
 
     /**
-     * 取所有已调度的提醒计划任务，返回值 key=计划任务作业Id，value=下次执行的时间戳
+     * 取所有已调度的提醒计划任务，返回值 key=计划任务作业Id，value=下次执行的时间戳（单位 毫秒）
      */
     Map<String, Long> getAllJob();
 

@@ -232,7 +232,7 @@ public class ValueUtility {
     // =================================================================================================================
 
     /**
-     * Long 转 LocalDateTime
+     * Long 毫秒转 LocalDateTime
      */
     public static LocalDateTime toLocalDateTime(Long millisTimestamp) {
         if (millisTimestamp == null) {
@@ -244,7 +244,7 @@ public class ValueUtility {
     }
 
     /**
-     * 计算等待时间
+     * 计算等待时长，单位毫秒
      */
     public static Long calcDelayTime(Long millisTimestamp) {
         if (millisTimestamp == null) {
