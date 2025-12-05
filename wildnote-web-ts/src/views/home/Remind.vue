@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useCssModule } from 'vue';
-import { RouterLink } from 'vue-router';
+import {computed, onMounted, ref, useCssModule} from 'vue';
+import {RouterLink} from 'vue-router';
 import axios from '@/utility/axios-utility';
-import { formatDuration } from '@/utility/datetime-utility';
-import type { ColumnsType } from 'ant-design-vue/es/table';
-import type { TablePaginationConfig } from 'ant-design-vue/lib';
-import type { FilterValue, SorterResult } from 'ant-design-vue/es/table/interface';
+import {formatDuration} from '@/utility/datetime-utility';
+import type {ColumnsType} from 'ant-design-vue/es/table';
+import type {TablePaginationConfig} from 'ant-design-vue/lib';
+import type {FilterValue, SorterResult} from 'ant-design-vue/es/table/interface';
 
 // const activeCronList = ref([]);
 // const inactiveCronList = ref([]);
@@ -81,10 +81,10 @@ const activeCronColumns: ColumnsType<any> = [
     dataIndex: 'cronDetail',
     sorter: true,
     customCell: (record, rowIndex, column) => {
-      return { class: styles['cell-hide-on-sm-up'] + ' ' + styles['col-cron-detail'] };
+      return {class: styles['cell-hide-on-sm-up'] + ' ' + styles['col-cron-detail']};
     },
     customHeaderCell: (column) => {
-      return { class: styles['cell-hide-on-sm-up'] };
+      return {class: styles['cell-hide-on-sm-up']};
     },
   },
   {
@@ -191,7 +191,7 @@ const dirtyJobColumns: ColumnsType<any> = [
           <a-tag>
             {{ record.cronExpression }}
           </a-tag>
-          <br />{{ record.nextTime }} <br />{{ formatDuration(record.delayTime) }}
+          <br/>{{ record.nextTime }} <br/>{{ formatDuration(record.delayTime) }}
         </template>
       </template>
     </a-table>
@@ -240,11 +240,13 @@ const dirtyJobColumns: ColumnsType<any> = [
     display: none;
   }
 }
+
 .cell-hide-on-sm-up {
   @media (min-width: 576px) {
     display: none;
   }
 }
+
 .col-cron-detail {
   white-space: nowrap;
   overflow: hidden;
