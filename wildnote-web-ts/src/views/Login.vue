@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import {onMounted, reactive, ref} from 'vue';
 import { LockOutlined, UserOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
@@ -9,11 +9,26 @@ import router from '@/router';
 const route = useRoute();
 if (route.query.nlr !== 'true') router.push({ path: '/index' }); // 尝试进入系统
 
-const loginForm = reactive({ username: '', password: '' });
+const f = ref('');
+const captchaSrc = ref('');
+const loginForm = reactive({ username: '', password: '', captcha: '' });
+
+onMounted(() => {
+  loadCaptcha();
+});
+
+const loadCaptcha = () => {
+  // f.value = Math.random().toString(36).substring(2) + Date.now().toString(36);
+  f.value = crypto.randomUUID();
+  captchaSrc.value = import.meta.env.VITE_API_URL + 'api/captcha?f=' + f.value;
+  console.log(captchaSrc.value);
+};
 
 const login = () => {
   axios
     .post('/api/login', {
+      f: f.value,
+      captcha: loginForm.captcha,
       username: loginForm.username,
       password: loginForm.password,
     })
@@ -35,7 +50,7 @@ const login = () => {
       </div>
       <a-form autocomplete="off">
         <a-form-item>
-          <a-input v-model:value="loginForm.username">
+          <a-input v-model:value="loginForm.username" @keyup.enter="login">
             <template #prefix>
               <UserOutlined />
             </template>
@@ -47,6 +62,14 @@ const login = () => {
               <LockOutlined />
             </template>
           </a-input-password>
+        </a-form-item>
+        <a-form-item>
+          <a-input v-model:value="loginForm.captcha" @keyup.enter="login" placeholder="验证码">
+            <template #suffix>
+              <img alt="" :src="captchaSrc" @click="loadCaptcha" />
+            </template>">
+          </a-input>
+
         </a-form-item>
         <div style="text-align: center">
           <a-button type="primary" @click="login">登录</a-button>
