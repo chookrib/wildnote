@@ -25,3 +25,5 @@ dist-ssr
 *.sw?
 
 /.eslintcache
+/src/components.d.ts
+
