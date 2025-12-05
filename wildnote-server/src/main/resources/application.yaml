@@ -14,7 +14,7 @@ spring:
       static-locations: file:..\wildnote-web\dist
 
 wildnote:
-  # 生产环境必须保留 auth-username 和 auth-password 配置以覆盖开发配置
+  # 生产环境必须保留 auth-username 和 auth-password 配置，否则可以使用 admin/admin 登录！！！
   auth-username: admin
   auth-password: admin
   auth-jwt-secret: secret
