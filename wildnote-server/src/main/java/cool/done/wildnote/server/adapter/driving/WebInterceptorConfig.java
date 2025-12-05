@@ -35,6 +35,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
 
         //排除地址
         globalInterceptor.excludePathPatterns("/api/.well-known");
+        globalInterceptor.excludePathPatterns("/api/captcha/**");
         globalInterceptor.excludePathPatterns("/api/login");
 
         //拦截地址
