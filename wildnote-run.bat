@@ -42,7 +42,7 @@ git reset --hard origin/main
 
 cd wildnote-web-ts
 call npm install
-call npm run build
+call npm run build-only
 cd ..
 
 rem set mvn_path=..\wildnote-tools\apache-maven-3.9.9\bin\mvn.cmd
