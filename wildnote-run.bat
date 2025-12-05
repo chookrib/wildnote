@@ -33,9 +33,12 @@ rem echo %PATH%
 rem git --version
 rem echo %cd%
 
-git checkout main
-git pull
+rem git checkout main
+rem git pull
 rem git pull > git_output.txt 2>&1
+
+git fetch origin
+git reset --hard origin/main
 
 cd wildnote-web-ts
 call npm install
