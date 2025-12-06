@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {onMounted, reactive, ref} from 'vue';
-import { LockOutlined, UserOutlined } from '@ant-design/icons-vue';
+import { LockOutlined, UserOutlined, SafetyOutlined } from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
 import { useRoute } from 'vue-router';
@@ -51,21 +51,24 @@ const login = () => {
       </div>
       <a-form autocomplete="off">
         <a-form-item>
-          <a-input v-model:value="loginForm.username" @keyup.enter="login">
+          <a-input v-model:value="loginForm.username" placeholder="账号" @keyup.enter="login">
             <template #prefix>
               <UserOutlined />
             </template>
           </a-input>
         </a-form-item>
         <a-form-item>
-          <a-input-password v-model:value="loginForm.password" @keyup.enter="login">
+          <a-input-password v-model:value="loginForm.password" placeholder="密码" @keyup.enter="login">
             <template #prefix>
               <LockOutlined />
             </template>
           </a-input-password>
         </a-form-item>
         <a-form-item>
-          <a-input v-model:value="loginForm.captcha" @keyup.enter="login" placeholder="验证码">
+          <a-input v-model:value="loginForm.captcha" placeholder="验证码" @keyup.enter="login">
+            <template #prefix>
+              <SafetyOutlined />
+            </template>
             <template #suffix>
               <img alt="" :src="captchaSrc" @click="loadCaptcha" />
             </template>">
