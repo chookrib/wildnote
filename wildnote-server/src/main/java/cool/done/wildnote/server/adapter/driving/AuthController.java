@@ -72,7 +72,13 @@ public class AuthController {
         Graphics2D g = image.createGraphics();
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 100, 24);
-        g.setFont(new Font("Arial", Font.BOLD, 20));
+
+        // g.setFont(new Font("Arial", Font.BOLD, 20));
+        // String preferred = "Arial";
+        // String fontFamily = java.util.Arrays.asList(
+        //        GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()
+        // ).contains(preferred) ? preferred : Font.SANS_SERIF;
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 
         // 添加杂线
         for (int i = 0; i < 5; i++) {
