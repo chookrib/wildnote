@@ -3,13 +3,15 @@ package cool.done.wildnote.server.adapter.driving;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import cool.done.wildnote.server.application.AuthService;
-import cool.done.wildnote.server.utility.ValueUtility;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -54,7 +56,7 @@ public class AuthController {
      */
     @RequestMapping(value = "/api/captcha", method = RequestMethod.GET)
     public ResponseEntity<byte[]> captcha(HttpServletRequest request) throws IOException {
-        String fingerprint = RequestValueHelper.getRequestParamStringTrimReq(request,"f");
+        String fingerprint = RequestValueHelper.getRequestParamStringTrimReq(request, "f");
 
         // String code = String.valueOf((int)((Math.random() * 9 + 1) * 1000));
         // String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -134,10 +136,10 @@ public class AuthController {
         String password = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "password");
 
         String code = captchaCache.getIfPresent(fingerprint);
-        if(code == null) {
+        if (code == null) {
             throw new ControllerException("验证码已过期");
         }
-        if(!captcha.equalsIgnoreCase(code)) {
+        if (!captcha.equalsIgnoreCase(code)) {
             throw new ControllerException("验证码错误");
         }
         String accessToken = authService.login(username, password);
