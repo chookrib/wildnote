@@ -60,7 +60,7 @@ public class AuthController {
 
         // String code = String.valueOf((int)((Math.random() * 9 + 1) * 1000));
         // String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";  //去除易混淆字符Oo0Il1
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";  //去除易混淆字符01IlOo
         StringBuilder codeBuilder = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             int idx = (int) (Math.random() * chars.length());
