@@ -20,16 +20,16 @@ public class AliyunSmsGatewayAdapter implements SmsGateway {
 
     private static final Logger logger = LoggerFactory.getLogger(AliyunSmsGatewayAdapter.class);
 
-    @Value("${wildnote.sms-aliyun-key:}")
+    @Value("${app.sms-aliyun-key:}")
     private String smsAliyunKey;
 
-    @Value("${wildnote.sms-aliyun-secret:}")
+    @Value("${app.sms-aliyun-secret:}")
     private String smsAliyunSecret;
 
-    @Value("${wildnote.sms-aliyun-sign:}")
+    @Value("${app.sms-aliyun-sign:}")
     private String smsAliyunSign;
 
-    @Value("${wildnote.sms-aliyun-template:}")
+    @Value("${app.sms-aliyun-template:}")
     private String smsAliyunTemplate;
 
     private final ExtraLogService extraLogService;

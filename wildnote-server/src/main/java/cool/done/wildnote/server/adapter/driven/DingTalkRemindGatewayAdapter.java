@@ -22,13 +22,13 @@ public class DingTalkRemindGatewayAdapter implements RemindGateway {
 
     private static final Logger logger = LoggerFactory.getLogger(DingTalkRemindGatewayAdapter.class);
 
-    @Value("${wildnote.remind-dingtalk-key:}")
+    @Value("${app.remind-dingtalk-key:}")
     private String remindDingTalkKey;
 
-    @Value("${wildnote.remind-dingtalk-secret:}")
+    @Value("${app.remind-dingtalk-secret:}")
     private String remindDingTalkSecret;
 
-    @Value("${wildnote.remind-dingtalk-chatid:}")
+    @Value("${app.remind-dingtalk-chatid:}")
     private String remindDingTalkChatId;
 
     private final ExtraLogService extraLogService;

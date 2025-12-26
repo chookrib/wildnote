@@ -13,7 +13,10 @@ spring:
       # 指定前端静态资源路径，相对于wildnote-server目录的路径
       static-locations: file:..\wildnote-web\dist
 
-wildnote:
+app:
+  name: wildnote
+  env: dev
+
   # 生产环境必须保留 auth-username 和 auth-password 配置，否则可以使用 admin/admin 登录！！！
   auth-username: admin
   auth-password: admin

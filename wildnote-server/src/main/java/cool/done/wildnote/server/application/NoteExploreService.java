@@ -42,9 +42,9 @@ public class NoteExploreService {
     private final NoteSettingService noteSettingService;
 
     public NoteExploreService(
-            @Value("${wildnote.note-root-path}") String noteRootPath,
-            @Value("${wildnote.note-extensions}") String noteExtensions,
-            @Value("${wildnote.note-setting-file-path:}") String noteSettingFilePath,
+            @Value("${app.note-root-path}") String noteRootPath,
+            @Value("${app.note-extensions}") String noteExtensions,
+            @Value("${app.note-setting-file-path:}") String noteSettingFilePath,
             NoteRemindService noteRemindService,
             ExtraLogService extraLogService,
             NoteSettingService noteSettingService

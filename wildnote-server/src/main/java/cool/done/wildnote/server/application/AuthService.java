@@ -18,10 +18,10 @@ public class AuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
-    @Value("${wildnote.auth-username:}")
+    @Value("${app.auth-username:}")
     private String authUsername;
 
-    @Value("${wildnote.auth-password:}")
+    @Value("${app.auth-password:}")
     private String authPassword;
 
     private String authJwtSecret;
@@ -30,18 +30,18 @@ public class AuthService {
     private final NoteSettingService noteSettingService;
 
     public AuthService(
-            @Value("${wildnote.auth-jwt-secret:}") String jwtSecret,
-            @Value("${wildnote.auth-jwt-expires:}") String jwtExpires,
+            @Value("${app.auth-jwt-secret:}") String jwtSecret,
+            @Value("${app.auth-jwt-expires:}") String jwtExpires,
             NoteSettingService noteSettingService) {
         if (!ValueUtility.isBlank(jwtSecret)) {
             this.authJwtSecret = jwtSecret;
         } else {
-            throw new ApplicationException("wildnote.auth-jwt-secret 配置错误");
+            throw new ApplicationException("app.auth-jwt-secret 配置错误");
         }
         try {
             this.authJwtExpiresMinute = CryptoUtility.jwtExpiresMinute(jwtExpires);
         } catch (Exception ex) {
-            throw new ApplicationException("wildnote.auth-jwt-expires 配置错误");
+            throw new ApplicationException("app.auth-jwt-expires 配置错误");
         }
         this.noteSettingService = noteSettingService;
     }
