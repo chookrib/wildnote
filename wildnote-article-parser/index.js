@@ -1,72 +1,96 @@
+import express from 'express';
+import {extractFromHtml} from '@extractus/article-extractor';
+import {chromium} from 'playwright';
+// import {writeFile, appendFile} from 'node:fs/promises';
 
+const app = express();
 
-const url = 'https://mp.weixin.qq.com/s/6GTGKy_iGmTi5wK60OeSsg';
-// const url = 'https://www.zhihu.com/question/1995213825918641040';
-// const url = 'https://mp.weixin.qq.com/s/K_hmtdkVwSknGjriL6Yo6w'
+app.get('/parse', async (req, res) => {
+    try {
+        const {url} = req.query;
 
-// import Parser from '@postlight/parser';
-// Parser.parse(url).then(result => console.log(result));
-
-
-import { extract, extractFromHtml } from '@extractus/article-extractor';
-// const data = await extract(url)
-// console.log(data)
-
-// const { chromium } = require('playwright');
-import { chromium } from  'playwright';
-
-import { writeFile } from 'node:fs/promises';
-
-// & 'C:\Program Files\Google\Chrome\Application\chrome.exe' --remote-debugging-port=9222 --user-data-dir='C:\temp\pw-profile'
-
-// (async () => {
-//     const browser = await chromium.launch();
-//     const page = await browser.newPage();
-//     await page.goto(url);
-//     console.log(await page.title());
-//     console.log(await page.content());
-//     await browser.close();
-// })();
-
-(async () => {
-
-    const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
-    const context = browser.contexts()[0] || await browser.newContext();
-    const page = context.pages()[0] || await context.newPage();
-
-    // await page.goto(url);
-
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.waitForLoadState('networkidle');
-
-    console.log(await page.title());
-    // console.log(await page.content());
-    let pageContent = await page.content();
-
-    // pageContent = pageContent.replace(/(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/g, "$1-$2-$3");
-    await writeFile('./page-content.html', pageContent, 'utf8');
-
-    // const out = s.replace(
-    //     /(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/g,
-    //     (_, y, m, d) => `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`
-    // );
-
-    const data = await extractFromHtml(pageContent, url);
-    if(!data.published) {
-        if (url.toLowerCase().startsWith('https://mp.weixin.qq.com/')) {
-            const match = pageContent.match(/createTime\s*=\s*['"](\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})['"]/i);
-            if (match?.[1]) {
-                data.published = match[1];
-            }
+        if (!url) {
+            res.status(500).send('缺少 url 参数');
         }
+
+        const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
+
+        // const page = await browser.newPage();
+        // await page.goto(url);
+
+        const context = browser.contexts()[0] || await browser.newContext();
+        const page = context.pages()[0] || await context.newPage();
+
+        // await page.goto(url, {waitUntil: 'domcontentloaded', timeout: 60000});
+        // await page.waitForLoadState('networkidle');
+
+        const response = await page.goto(url, {waitUntil: 'domcontentloaded', timeout: 60000});
+        if (!response) {
+            res.status(500).send('页面未返回响应');
+        }
+
+        if (!response.ok()) {
+            res.status(500).send(`页面打开失败，HTTP 状态码: ${response.status()}`);
+        }
+
+        // await page.waitForLoadState('networkidle', {timeout: 10000}).catch(() => {});
+        // if (page.url() === 'about:blank') {
+        //     res.status(500).send('页面仍是空白页，可能未正确打开');
+        // }
+
+        // console.log(await page.title());
+        // console.log(await page.content());
+
+        let pageContent = await page.content();
+        // await writeFile('./page-content.html', pageContent, 'utf8');
+
+        // pageContent = pageContent.replace(/(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/g, "$1-$2-$3");
+        // pageContent = pageContent.replace(
+        //     /(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/g,
+        //     (_, y, m, d) => `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`
+        // );
+
+        // await page.close();
+        // await browser.close();
+
+        const extractData = await extractFromHtml(pageContent, url);
+
+        if(!extractData) {
+            res.status(500).send('没有解析到内容');
+        }
+
+        // 如果未解析到发布日期
+        if (!extractData.published) {
+            // 手工提取微信公众号文章发布日期
+            // 文章模式（传统图文），提取位置有以下三处
+            // var createTime = '2026-03-13 20:48';
+            // create_time: JsDecode('2026-03-13 20:48'),
+            // <em id="publish_time" className="rich_media_meta rich_media_meta_text">2026年3月13日 20:48</em>
+            // 图片/文字消息（小绿书），提取位置仅有两处，有一处省略年份
+            // create_time: JsDecode('2026-03-13 19:52'),
+            // <span id="publish_time">3月13日 19:52</span>
+            if (url.toLowerCase().startsWith('https://mp.weixin.qq.com/')) {
+                // const match = pageContent.match(/createTime\s*=\s*['"](\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})['"]/i);
+                const match = pageContent.match(/create_time\s*:\s*JsDecode\(['"](\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})['"]\)/i);
+                if (match?.[1]) {
+                    extractData.published = match[1];
+                }
+            }
+
+        }
+
+        console.log(extractData)
+
+        return res.status(200).json(extractData);
+
+    } catch (err) {
+        // console.log(err);
+        res.status(500).send(`发生异常: ${err.message}`);
     }
+});
 
 
-    console.log(data)
-
-    // await page.close();
-
-    await browser.close();
-})();
-
-
+const port = 9223;
+app.listen(port, () => {
+    console.log(`wildnote-article-parser 服务已在端口 ${port} 启动`);
+});
