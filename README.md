@@ -2,22 +2,22 @@
 
 ## 项目说明
 
-`wildnote\wildnote-server`为后端项目，使用 Java 开发  
-`wildnote\wildnote-web`为前端项目，使用 Vite + Vue 3 + Javascript 开发  
-`wildnote\wildnote-web-ts`为前端项目升级 ts 版本，使用 Vite + Vue 3 + TypeScript 开发  
+`wildnote\wildnote-backend`为后端项目，使用 Java 开发  
+`wildnote\wildnote-frontend`为前端项目，使用 Vite + Vue 3 + Javascript 开发同，已废弃  
+`wildnote\wildnote-frontend-ts`为前端项目升级 ts 版本，使用 Vite + Vue 3 + TypeScript 开发  
 
 ## 使用说明
 
 1. 打包（后端项目）
-- 进入`wildnote\wildnote-server`目录
+- 进入`wildnote\wildnote-backend`目录
 - 运行`mvn pakage`打包后端程序
-- 默认生成在`wildnote\wildnote-server\target`目录
+- 默认生成在`wildnote\wildnote-backend\target`目录
 
 2. 打包（前端项目）
-- 进入`wildnote\wildnote-web-ts`目录
+- 进入`wildnote\wildnote-frontend-ts`目录
 - 运行`npm install`安装依赖
 - 运行`npm run build`打包前端程序
-- 默认生成在`wildnote\wildnote-web-ts\dist`目录
+- 默认生成在`wildnote\wildnote-frontend-ts\dist`目录
 
 3. 启动
 - 运行`wildnote\wildnote-run.bat`启动程序
@@ -31,6 +31,6 @@
 - 默认用户名为`admin`，默认密码为`admin`
 
 5. 备份
-- 提供`wildnote\bak-wildnote.bat`备份脚本，可进行笔记目录备份
-  - 运行：`wildnote\bak-wildnote.bat 笔记目录路径 备份目录路径`
+- 提供`wildnote\wildnote-bak.bat`备份脚本，可进行笔记目录备份
+  - 运行：`wildnote\wildnote-bak.bat 笔记目录路径 备份目录路径`
 - 可设定计划任务进行自动备份

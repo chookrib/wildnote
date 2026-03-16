@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cool.done</groupId>
-    <artifactId>wildnote-server</artifactId>
+    <artifactId>wildnote-backend</artifactId>
     <version>RELEASE</version>
-    <name>wildnote-server</name>
+    <name>wildnote-backend</name>
     <description></description>
     <url/>
     <licenses>

@@ -40,15 +40,15 @@ rem git pull > git_output.txt 2>&1
 git fetch origin
 git reset --hard origin/main
 
-cd wildnote-web-ts
+cd wildnote-frontend-ts
 call npm install
 call npm run build-only
 cd ..
 
 rem set mvn_path=..\wildnote-tools\apache-maven-3.9.9\bin\mvn.cmd
-rem call %mvn_path% package -Dmaven.test.skip=true -f .\wildnote-server
+rem call %mvn_path% package -Dmaven.test.skip=true -f .\wildnote-backend
 
-cd wildnote-server
+cd wildnote-backend
 rem call mvnw.cmd package -DskipTests -f .\pom.xml
 call mvnw.cmd package -DskipTests
 
@@ -65,9 +65,9 @@ goto :EOF
 
 :runjar
 rem set run_wildnote_cmd=java -jar ".\target\%1" --spring.config.location="%cd%\..\wildnote.properties"
-rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web-ts\dist %~2 %~3 %~4 %~5
-rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web-ts\dist %*
-set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-web-ts\dist %2 %3 %4 %5 %6 %7 %8 %9
+rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-frontend-ts\dist %~2 %~3 %~4 %~5
+rem set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-frontend-ts\dist %*
+set run_wildnote_cmd=java -jar .\target\%1 --spring.web.resources.static-locations=file:..\wildnote-frontend-ts\dist %2 %3 %4 %5 %6 %7 %8 %9
 echo %run_wildnote_cmd%
 %run_wildnote_cmd%
 goto :EOF
