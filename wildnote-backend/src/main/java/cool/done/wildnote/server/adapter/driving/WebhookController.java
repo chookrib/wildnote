@@ -82,7 +82,7 @@ public class WebhookController {
         if (ValueUtility.isBlank(path))
             throw new ControllerException(String.format("Webhook record 未配置 %s", key));
 
-        content = new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date()) + " " + content;
+        content = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date()) + " " + content;
 
         if ("append".equalsIgnoreCase(mode)) {
             noteExploreService.appendFileContent(path, "\n\n" + content);
