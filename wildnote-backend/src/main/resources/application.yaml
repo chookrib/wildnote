@@ -31,6 +31,9 @@ app:
   note-setting-file-path: wildnote.json
   extra-log-root-path: log\
 
+  # 解析服务地址
+  article-parser-url: http://localhost:9223/parse
+
   # 使用钉钉发送提醒消息
   remind-dingtalk-key:
   remind-dingtalk-secret:

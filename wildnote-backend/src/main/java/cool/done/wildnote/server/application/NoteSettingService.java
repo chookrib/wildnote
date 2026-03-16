@@ -72,22 +72,22 @@ public class NoteSettingService {
     /**
      * 获取 Webhook remind 配置
      */
-    public String getWebhookRemind(String name) {
-        return this.settingContentJson.path("webhook").path("remind").path(name).asText();
+    public String getWebhookRemind(String key) {
+        return this.settingContentJson.path("webhook").path("remind").path(key).asText();
     }
 
     /**
      * 获取 Webhook record 配置
      */
-    public String getWebhookRecord(String name) {
-        return this.settingContentJson.path("webhook").path("record").path(name).asText();
+    public String getWebhookRecord(String key) {
+        return this.settingContentJson.path("webhook").path("record").path(key).asText();
     }
 
     /**
-     * 获取 Webhook url 配置
+     * 获取 Webhook record-url 配置
      */
-    public String getWebhookUrl(String name) {
-        return this.settingContentJson.path("webhook").path("url").path(name).asText();
+    public String getWebhookRecordUrl(String key) {
+        return this.settingContentJson.path("webhook").path("record-url").path(key).asText();
     }
 
     /**
