@@ -1,5 +1,5 @@
 cd /d "%~dp0"
-git pull
+rem git pull
 
 cd wildnote-article-parser
 call npm install
