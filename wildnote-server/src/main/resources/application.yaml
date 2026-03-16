@@ -11,7 +11,7 @@ spring:
   web:
     resources:
       # 指定前端静态资源路径，相对于wildnote-server目录的路径
-      static-locations: file:..\wildnote-web\dist
+      static-locations: file:..\wildnote-web-ts\dist
 
 app:
   name: wildnote
