@@ -104,7 +104,7 @@ public class WebhookController {
     @RequestMapping(value = "/webhook/record-url/{key}", method = RequestMethod.GET)
     public Result url(HttpServletRequest request, @PathVariable String key) {
         if (ValueUtility.isBlank(key))
-            throw new ControllerException("Webhook url 未指定路径参数 name");
+            throw new ControllerException("Webhook record-url 未指定路径参数 name");
 
         key = key.trim();
         String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "append", "mode");
@@ -112,7 +112,7 @@ public class WebhookController {
 
         String path = noteSettingService.getWebhookRecordUrl(key);
         if (ValueUtility.isBlank(path))
-            throw new ControllerException(String.format("Webhook record 未配置 %s", key));
+            throw new ControllerException(String.format("Webhook record-url 未配置 %s", key));
 
         // 是否解析
         String parsedDate = "";
@@ -153,10 +153,10 @@ public class WebhookController {
                     parsedDate = responseJson.get("published").asText();
                     parsedTitle = responseJson.get("title").asText();
                 } else {
-                    parsedMessage = String.format("解析网页失败: %s %s", response.statusCode(), response.body());
+                    parsedMessage = String.format("解析网址失败: %s %s", response.statusCode(), response.body());
                 }
             } catch (Exception e) {
-                parsedMessage = String.format("解析网页异常: %s", e.getMessage());
+                parsedMessage = String.format("解析网址异常: %s", e.getMessage());
             }
 
             // try {

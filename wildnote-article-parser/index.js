@@ -66,7 +66,7 @@ app.get('/parse', async (req, res) => {
             // var createTime = '2026-03-13 20:48';
             // create_time: JsDecode('2026-03-13 20:48'),
             // <em id="publish_time" className="rich_media_meta rich_media_meta_text">2026年3月13日 20:48</em>
-            // 图片/文字消息（小绿书），提取位置仅有两处，有一处省略年份
+            // 图片/文字消息（小绿书），提取位置仅有两处，有一处没有年份
             // create_time: JsDecode('2026-03-13 19:52'),
             // <span id="publish_time">3月13日 19:52</span>
             if (url.toLowerCase().startsWith('https://mp.weixin.qq.com/')) {

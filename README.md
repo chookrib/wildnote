@@ -2,6 +2,7 @@
 
 ## 项目说明
 
+`wildnote\wildnote-article-parser`为网址解析服务，使用 node.js 开发  
 `wildnote\wildnote-backend`为后端项目，使用 Java 开发  
 `wildnote\wildnote-frontend`为前端项目，使用 Vite + Vue 3 + Javascript 开发同，已废弃  
 `wildnote\wildnote-frontend-ts`为前端项目升级 ts 版本，使用 Vite + Vue 3 + TypeScript 开发  
