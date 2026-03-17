@@ -85,7 +85,9 @@ app.get('/parse', async (req, res) => {
 
     } catch (err) {
         // console.log(err);
-        res.status(500).send(`发生异常: ${err.message}`);
+
+        throw err;
+        // res.status(500).send(`发生异常: ${err.message}`);
     }
 });
 
