@@ -60,7 +60,8 @@ app.get('/parse', async (req, res) => {
         }
 
         // 如果未解析到发布日期
-        if (!extractData.published) {
+        // if (!extractData.published) {
+
             // 手工提取微信公众号文章发布日期
             // 文章模式（传统图文），提取位置有以下三处
             // var createTime = '2026-03-13 20:48';
@@ -76,8 +77,7 @@ app.get('/parse', async (req, res) => {
                     extractData.published = match[1];
                 }
             }
-
-        }
+        //}
 
         console.log(extractData)
 
