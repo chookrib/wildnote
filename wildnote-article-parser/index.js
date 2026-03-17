@@ -59,7 +59,11 @@ app.get('/parse', async (req, res) => {
 
         const extractData = await extractFromHtml(pageContent, url,
             {
-                contentLengthThreshold: 0   // 默认 200, 微信小绿书提取的 content 过短
+                // wordsPerMinute: 300,   // 默认 300, to estimate time to read, 估算阅读所需时间
+                // descriptionTruncateLen: 210,    // 默认 210, max num of chars generated for description
+                descriptionLengthThreshold: 0,   // 默认 180, min num of chars required for description
+                // 微信小绿书提取的 content 过短，关闭 content 长度限制
+                contentLengthThreshold: 0   // 默认 200, min num of chars required for content
             });
         // console.log(extractData);
 
