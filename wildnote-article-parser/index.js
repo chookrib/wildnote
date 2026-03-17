@@ -92,7 +92,7 @@ app.get('/parse', async (req, res) => {
         }
         //}
 
-        // console.log(extractData);
+        console.log(extractData);
 
         res.status(200).json(extractData);
     } catch (err) {
