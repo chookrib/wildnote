@@ -42,6 +42,7 @@ app.get('/parse', async (req, res) => {
         // console.log(await page.content());
 
         let pageContent = await page.content();
+        console.log(pageContent);
         // await writeFile('./page-content.html', pageContent, 'utf8');
 
         // pageContent = pageContent.replace(/(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日/g, "$1-$2-$3");
@@ -54,7 +55,7 @@ app.get('/parse', async (req, res) => {
         // await browser.close();
 
         const extractData = await extractFromHtml(pageContent, url);
-        console.log(extractData)
+        console.log(extractData);
 
         if(!extractData) {
             res.status(500).send('没有解析到内容');
@@ -80,7 +81,7 @@ app.get('/parse', async (req, res) => {
             }
         //}
 
-        console.log(extractData)
+        console.log(extractData);
 
         return res.status(200).json(extractData);
 
