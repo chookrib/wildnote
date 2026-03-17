@@ -54,6 +54,7 @@ app.get('/parse', async (req, res) => {
         // await browser.close();
 
         const extractData = await extractFromHtml(pageContent, url);
+        console.log(extractData)
 
         if(!extractData) {
             res.status(500).send('没有解析到内容');
