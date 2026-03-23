@@ -1,3 +1,5 @@
+title wildnote-article-parser
+
 cd /d "%~dp0"
 rem git pull
 
