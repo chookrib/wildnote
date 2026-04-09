@@ -16,7 +16,7 @@ public class ValueUtility {
     /**
      * 判断字符串是否为 null 或空字符串
      */
-    public static boolean isBlank(String value) {
+    public static boolean isEmptyString(String value) {
         return value == null || value.isBlank();    // isEmpty()
     }
 
@@ -26,7 +26,7 @@ public class ValueUtility {
      * 转 bool，失败返回 null
      */
     public static Boolean toBoolOrNull(String value) {
-        if (isBlank(value))
+        if (isEmptyString(value))
             return null;
         if (Arrays.asList("true", "1", "t", "y", "yes", "on").contains(value.trim().toLowerCase()))
             return true;
@@ -51,7 +51,7 @@ public class ValueUtility {
      * 转 int，失败返回 null
      */
     public static Integer toIntOrNull(String value) {
-        if (isBlank(value))
+        if (isEmptyString(value))
             return null;
         try {
             return Integer.valueOf(value.trim());
@@ -76,7 +76,7 @@ public class ValueUtility {
      * 转 long，失败返回 null
      */
     public static Long toLongOrNull(String value) {
-        if (isBlank(value))
+        if (isEmptyString(value))
             return null;
         try {
             return Long.valueOf(value.trim());
@@ -101,7 +101,7 @@ public class ValueUtility {
      * 转 decimal，失败返回 null
      */
     public static BigDecimal toDecimalOrNull(String value) {
-        if (isBlank(value))
+        if (isEmptyString(value))
             return null;
         try {
             return new BigDecimal(value.trim());
@@ -142,7 +142,7 @@ public class ValueUtility {
         //    return null;
         //}
 
-        if (isBlank(value))
+        if (isEmptyString(value))
             return null;
         try {
             return LocalDateTime.parse(value.trim(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -176,7 +176,7 @@ public class ValueUtility {
      * 转 date，失败返回 null
      */
     public static LocalDate toDateOrNull(String value) {
-        if (isBlank(value))
+        if (isEmptyString(value))
             return null;
         try {
             return LocalDate.parse(value.trim(), java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -210,7 +210,7 @@ public class ValueUtility {
      * 转 time，失败返回 null
      */
     public static LocalTime toTimeOrNull(String value) {
-        if (isBlank(value))
+        if (isEmptyString(value))
             return null;
         try {
             return LocalTime.parse(value.trim(), java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"));

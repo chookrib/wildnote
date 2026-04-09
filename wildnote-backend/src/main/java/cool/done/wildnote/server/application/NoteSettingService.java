@@ -103,7 +103,7 @@ public class NoteSettingService {
      * 存收藏
      */
     public void setFavorite(List<String> list) {
-        if (ValueUtility.isBlank(this.settingFileAbsPath))
+        if (ValueUtility.isEmptyString(this.settingFileAbsPath))
             throw new ApplicationException("配置文件路径未初始化，无法保存收藏");
 
         ObjectNode objectNode = (ObjectNode) this.settingContentJson;

@@ -49,14 +49,14 @@ public class WebhookController {
      */
     @RequestMapping(value = "/webhook/remind/{key}", method = RequestMethod.GET)
     public Result remind(HttpServletRequest request, @PathVariable String key) {
-        if (ValueUtility.isBlank(key))
+        if (ValueUtility.isEmptyString(key))
             throw new ControllerException("Webhook remind 未指定路径参数 key");
 
         key = key.trim();
         String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
 
         String beanName = noteSettingService.getWebhookRemind(key);
-        if (ValueUtility.isBlank(beanName))
+        if (ValueUtility.isEmptyString(beanName))
             throw new ControllerException(String.format("Webhook remind 未配置 %s", key));
 
         // RemindGateway remindGateway = applicationContext.getBean(RemindGateway.class);
@@ -71,7 +71,7 @@ public class WebhookController {
      */
     @RequestMapping(value = "/webhook/record/{key}", method = RequestMethod.GET)
     public Result record(HttpServletRequest request, @PathVariable String key) {
-        if (ValueUtility.isBlank(key))
+        if (ValueUtility.isEmptyString(key))
             throw new ControllerException("Webhook record 未指定路径参数 name");
 
         key = key.trim();
@@ -79,7 +79,7 @@ public class WebhookController {
         String content = RequestValueHelper.getRequestParamStringTrimReq(request, "content");
 
         String path = noteSettingService.getWebhookRecord(key);
-        if (ValueUtility.isBlank(path))
+        if (ValueUtility.isEmptyString(path))
             throw new ControllerException(String.format("Webhook record 未配置 %s", key));
 
         content = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date()) + " " + content;
@@ -103,7 +103,7 @@ public class WebhookController {
      */
     @RequestMapping(value = "/webhook/record-url/{key}", method = RequestMethod.GET)
     public Result url(HttpServletRequest request, @PathVariable String key) {
-        if (ValueUtility.isBlank(key))
+        if (ValueUtility.isEmptyString(key))
             throw new ControllerException("Webhook record-url 未指定路径参数 name");
 
         key = key.trim();
@@ -111,7 +111,7 @@ public class WebhookController {
         String url = RequestValueHelper.getRequestParamStringTrimReq(request, "url");
 
         String path = noteSettingService.getWebhookRecordUrl(key);
-        if (ValueUtility.isBlank(path))
+        if (ValueUtility.isEmptyString(path))
             throw new ControllerException(String.format("Webhook record-url 未配置 %s", key));
 
         // 是否解析
@@ -183,11 +183,11 @@ public class WebhookController {
             // }
         }
 
-        if(ValueUtility.isBlank(parsedDate)){
+        if(ValueUtility.isEmptyString(parsedDate)){
             parsedDate = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date());
         }
         String content = String.format("%s [%s](%s)", parsedDate, parsedTitle, url);
-        if(!ValueUtility.isBlank(parsedMessage)){
+        if(!ValueUtility.isEmptyString(parsedMessage)){
             content += String.format("\n> %s", parsedMessage);
         }
 

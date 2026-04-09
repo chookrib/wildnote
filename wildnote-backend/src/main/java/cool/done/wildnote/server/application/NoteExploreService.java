@@ -10,13 +10,16 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
@@ -30,7 +33,10 @@ public class NoteExploreService {
 
     private final String noteRootAbsPath;
     private final List<String> noteExtensions;
-    private final String noteSettingFileAbsPath;
+    private final List<String> cronFilenameFilter;
+    private final String cronExpressionPrefix;
+    private final String cronExpressionSeparator;
+    private final String settingFileAbsPath;
 
     private DirectoryWatcher watcher = null;
 
@@ -44,12 +50,15 @@ public class NoteExploreService {
     public NoteExploreService(
             @Value("${app.note-root-path}") String noteRootPath,
             @Value("${app.note-extensions}") String noteExtensions,
-            @Value("${app.note-setting-file-path:}") String noteSettingFilePath,
+            @Value("${app.cron-filename-filter:}") String cronFilenameFilter,
+            @Value("${app.cron-expression-prefix:}") String cronExpressionPrefix,
+            @Value("${app.cron-expression-separator:}") String cronExpressionSeparator,
+            @Value("${app.setting-file-path:}") String settingFilePath,
             NoteRemindService noteRemindService,
             ExtraLogService extraLogService,
             NoteSettingService noteSettingService
     ) {
-        if (ValueUtility.isBlank(noteRootPath)) {
+        if (ValueUtility.isEmptyString(noteRootPath)) {
             throw new ApplicationException("未配置笔记根路径");
         }
         Path path;
@@ -59,27 +68,40 @@ public class NoteExploreService {
         } catch (IOException ex) {
             throw new ApplicationException(String.format("笔记根路径非法 %s", ex.getMessage()), ex);
         }
-        //if (!Files.exists(path)) {
+        // if (!Files.exists(path)) {
         //    throw new ApplicationException("笔记根路径不存在");
         //}
         if (!Files.isDirectory(path)) {
             throw new ApplicationException("笔记根路径必须为文件夹");
         }
         this.noteRootAbsPath = path.toString();
-        this.noteExtensions = Arrays.stream(noteExtensions.split(",")).toList();
+        // this.noteExtensions = Arrays.stream(noteExtensions.split(",")).toList();
+        this.noteExtensions = Arrays.stream(noteExtensions.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(String::toLowerCase)
+                .toList();
+        // this.cronFilenameFilter = Arrays.stream(cronFilenameFilter.split(",")).toList();
+        this.cronFilenameFilter = Arrays.stream(cronFilenameFilter.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(String::toLowerCase)
+                .toList();
+        this.cronExpressionPrefix = cronExpressionPrefix;
+        this.cronExpressionSeparator = cronExpressionSeparator;
 
         // 由 NoteExploreService 扎口处理笔记配置文件路径转换
-        String settingPath = "";
-        if (!ValueUtility.isBlank(noteSettingFilePath)) {
+        String settingFileAbsPath = "";
+        if (!ValueUtility.isEmptyString(settingFilePath)) {
             try {
-                settingPath = combineAbsPath(noteSettingFilePath).toString();
+                settingFileAbsPath = combineAbsPath(settingFilePath).toString();
             } catch (Exception ex) {
                 extraLogService.logNoteError(
-                        String.format("笔记配置文件路径 %s 异常: %s", noteSettingFilePath, ex.getMessage()), logger
+                        String.format("笔记配置文件路径 %s 异常: %s", settingFilePath, ex.getMessage()), logger
                 );
             }
         }
-        this.noteSettingFileAbsPath = settingPath;
+        this.settingFileAbsPath = settingFileAbsPath;
 
         this.noteRemindService = noteRemindService;
         this.extraLogService = extraLogService;
@@ -108,30 +130,6 @@ public class NoteExploreService {
     public Map<String, NoteTreeNode> getNoteMap() {
         return noteMap;
     }
-
-    ///**
-    // * 根据文件扩展名，判断是否是有效的笔记文件
-    // */
-    //private boolean isNoteFile(File file) {
-    //    if (!file.exists())
-    //        return false;
-    //    if (file.isDirectory())
-    //        return false;
-    //    return Arrays.stream(noteExtensions).anyMatch(
-    //            ext -> file.getName().toLowerCase().endsWith(ext.toLowerCase())
-    //    );
-    //}
-
-    ///**
-    // * 根据文件扩展名，判判断是否是有效的（支持 cron）笔记文件
-    // */
-    //private boolean isCronNoteFile(File file) {
-    //    if (!isNoteFile(file))
-    //        return false;
-    //    return Arrays.stream(noteExtensions).anyMatch(
-    //            ext -> file.getName().toLowerCase().endsWith(".cron" + ext.toLowerCase())
-    //    );
-    //}
 
     /**
      * 从笔记根路径加载所有笔记
@@ -165,7 +163,7 @@ public class NoteExploreService {
             );
         }
 
-        //files.sort((file1, file2) -> {
+        // files.sort((file1, file2) -> {
         //    if (file1.isDirectory() && file2.isFile())
         //        return -1;
         //    if (file1.isFile() && file2.isDirectory())
@@ -188,14 +186,14 @@ public class NoteExploreService {
         }
 
         // 如果是笔记配置文件，加载配置，需要在判断扩展名之前
-        if (file.getPath().equals(this.noteSettingFileAbsPath)) {
-            noteSettingService.loadSetting(this.noteSettingFileAbsPath);
+        if (file.getPath().equals(this.settingFileAbsPath)) {
+            noteSettingService.loadSetting(this.settingFileAbsPath);
         }
 
         // 跳过不符合扩展名的文件，仅跳过文件，文件夹仍然需要添加
         if (file.isFile()) {
             String ext = file.getName().contains(".") ?
-                    "." + file.getName().substring(file.getName().lastIndexOf('.') + 1) : "";
+                    "." + file.getName().substring(file.getName().lastIndexOf('.') + 1).toLowerCase() : "";
             if (!this.noteExtensions.contains(ext)) {
                 return;
             }
@@ -205,7 +203,7 @@ public class NoteExploreService {
         String absPath = file.toPath().toAbsolutePath().normalize().toString();     // D:\xxx\log\log.log
         String relPath = absPath.substring(noteRootAbsPath.length());               // log\log.log
 
-        //int level = relPath.split("\\\\|/").length - 2;
+        // int level = relPath.split("\\\\|/").length - 2;
         int level = relPath.split(Pattern.quote(File.separator)).length - 2;
 
         Long creationTime = null;
@@ -227,9 +225,11 @@ public class NoteExploreService {
         );
 
         noteMap.put(file.getPath(), note);
-        // 取消判断 cron 文件扩展名，读取所有笔记文件内容，文件很多时会有性能隐患（所有文件内容都要读一遍）
-        if (file.isFile()) {
-            processCron(file);
+        // 判断 cron 文件名
+        if (file.isFile() && !this.cronFilenameFilter.isEmpty()) {
+            if (this.cronFilenameFilter.stream().anyMatch(file.getName().toLowerCase()::contains)) {
+                processCron(file);
+            }
         }
     }
 
@@ -237,6 +237,11 @@ public class NoteExploreService {
      * 处理笔记文件中的提醒
      */
     private void processCron(File file) {
+        if (ValueUtility.isEmptyString(this.cronExpressionPrefix)
+                || ValueUtility.isEmptyString(this.cronExpressionSeparator)) {
+            return;
+        }
+
         // 取出相对路径用于注册提醒服务的路径
         String path = file.getPath().substring(noteRootAbsPath.length());
         try (var lines = Files.lines(file.toPath())) {
@@ -244,11 +249,11 @@ public class NoteExploreService {
             int lineNumber = 0;
             for (String line : (Iterable<String>) lines::iterator) {
                 lineNumber++;
-                if (!line.startsWith("> cron")) {
+                if (!line.startsWith(this.cronExpressionPrefix)) {
                     continue;
                 }
 
-                String[] parts = line.split("\\|");
+                String[] parts = line.split(Pattern.quote(this.cronExpressionSeparator));
                 String cronExpression = parts.length >= 1 ? parts[1].trim() : "";
                 String description = parts.length >= 2 ? parts[2].trim() : "";
                 noteRemindService.scheduleCron(path, lineNumber, cronExpression, description);
@@ -323,7 +328,7 @@ public class NoteExploreService {
      */
     public void insertFileContent(String relPath, String content) {
         // 写法一
-        //try {
+        // try {
         //    Path path = combineAbsPath(relPath);
         //    byte[] originalBytes = Files.readAllBytes(path);
         //    byte[] contentBytes = content.getBytes(StandardCharsets.UTF_8);
@@ -351,7 +356,7 @@ public class NoteExploreService {
         }
 
         // 写法三
-        //try {
+        // try {
         //    Path path = combineAbsPath(relPath);
         //    Path tempPath = Files.createTempFile(UUID.randomUUID().toString(), ".tmp");
         //    // 写入插入内容
@@ -379,7 +384,7 @@ public class NoteExploreService {
     ///**
     // * 在笔记文件夹中创建文件
     // */
-    //public void createFile(String relPath) {
+    // public void createFile(String relPath) {
     //    Path path = combineAbsPath(relPath);
     //    if (Files.exists(path)) {
     //        throw new ApplicationException("创建笔记异常: 笔记文件已存在");

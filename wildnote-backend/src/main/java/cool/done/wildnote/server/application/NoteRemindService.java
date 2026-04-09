@@ -54,7 +54,7 @@ public class NoteRemindService {
     public void scheduleCron(String path, int lineNumber, String cronExpression, String description) {
         NoteCron cron = NoteCron.create(path, lineNumber, cronExpression, description);
 
-        if (!ValueUtility.isBlank(cronExpression)) {
+        if (!ValueUtility.isEmptyString(cronExpression)) {
             try {
                 String jobId = remindScheduler.addJob(cronExpression, description);
                 cron.setJobId(jobId);
@@ -89,7 +89,7 @@ public class NoteRemindService {
         }
 
         for (NoteCron cron : list) {
-            if (!ValueUtility.isBlank(cron.getJobId())) {
+            if (!ValueUtility.isEmptyString(cron.getJobId())) {
                 try {
                     remindScheduler.deleteJob(cron.getJobId());
                     extraLogService.logRemindInfo(String.format("取消调度笔记提醒作业成功: %s %s %s %s",

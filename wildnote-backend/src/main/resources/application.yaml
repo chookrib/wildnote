@@ -27,11 +27,14 @@ app:
   #note-root-path: C:\note
   note-root-path: .\src
   note-extensions: .md,.txt
+  cron-filename-filter: todo,待办
+  cron-expression-prefix: "> cron"
+  cron-expression-separator: "|"
   # 笔记配置文件路径，在笔记根路径下的相对路径
-  note-setting-file-path: wildnote.json
+  setting-file-path: wildnote.json
   extra-log-root-path: log\
 
-  # 解析服务地址
+  # 网址解析服务地址
   article-parser-url: http://localhost:9223/parse
 
   # 使用钉钉发送提醒消息

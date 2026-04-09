@@ -26,7 +26,7 @@ public class ExtraLogService {
     private String logRootAbsPath;
 
     public ExtraLogService(@Value("${app.extra-log-root-path:}") String logRootPath) {
-        if (ValueUtility.isBlank(logRootPath)) {
+        if (ValueUtility.isEmptyString(logRootPath)) {
             throw new ApplicationException("未配置日志根路径");
         }
         Path path;

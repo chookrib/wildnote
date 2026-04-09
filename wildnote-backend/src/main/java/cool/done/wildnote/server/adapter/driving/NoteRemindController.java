@@ -31,7 +31,7 @@ public class NoteRemindController {
         List<NoteCron> cronList = noteRemindService.getCronList();
         Map<String, Long> jobMap = noteRemindService.getCronJobMap();
         List<String> jobIdList = cronList.stream()
-                .filter(cron -> !ValueUtility.isBlank(cron.getJobId()))
+                .filter(cron -> !ValueUtility.isEmptyString(cron.getJobId()))
                 .map(NoteCron::getJobId)
                 .toList();
 
@@ -64,7 +64,7 @@ public class NoteRemindController {
         }
 
         //List<Map<String, Object>> scheduledCronList = cronList.stream()
-        //        .filter(cron -> !ValueUtility.isBlank(cron.getJobId()) && jobIdList.contains(cron.getJobId()))
+        //        .filter(cron -> !ValueUtility.isEmptyString(cron.getJobId()) && jobIdList.contains(cron.getJobId()))
         //        .map(cron -> {
         //            Map<String, Object> map = new java.util.HashMap<>();
         //            map.put("path", cron.getPath());
@@ -81,7 +81,7 @@ public class NoteRemindController {
         //            return map;
         //        }).toList();
         //List<Map<String, Object>> unscheduledCronList = cronList.stream()
-        //        .filter(cron -> ValueUtility.isBlank(cron.getJobId()) || !jobIdList.contains(cron.getJobId()))
+        //        .filter(cron -> ValueUtility.isEmptyString(cron.getJobId()) || !jobIdList.contains(cron.getJobId()))
         //        .map(cron -> {
         //            Map<String, Object> map = new java.util.HashMap<>();
         //            map.put("path", cron.getPath());

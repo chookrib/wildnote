@@ -33,7 +33,7 @@ public class AuthService {
             @Value("${app.auth-jwt-secret:}") String jwtSecret,
             @Value("${app.auth-jwt-expires:}") String jwtExpires,
             NoteSettingService noteSettingService) {
-        if (!ValueUtility.isBlank(jwtSecret)) {
+        if (!ValueUtility.isEmptyString(jwtSecret)) {
             this.authJwtSecret = jwtSecret;
         } else {
             throw new ApplicationException("app.auth-jwt-secret 配置错误");
@@ -50,7 +50,7 @@ public class AuthService {
      * 登录
      */
     public String login(String username, String password) {
-        if (ValueUtility.isBlank(username) || ValueUtility.isBlank(password)) {
+        if (ValueUtility.isEmptyString(username) || ValueUtility.isEmptyString(password)) {
             throw new ApplicationException("用户名或密码不能为空");
         }
 
@@ -66,7 +66,7 @@ public class AuthService {
             try {
                 String settingPassword = noteSettingService.getAuthPassword(username);
                 if (
-                        !ValueUtility.isBlank(settingPassword) &&
+                        !ValueUtility.isEmptyString(settingPassword) &&
                                 settingPassword.equals(CryptoUtility.md5Encode(password))
                     //settingPassword.equals(password)
                 ) {
@@ -93,7 +93,7 @@ public class AuthService {
      * 验证 AccessToken
      */
     public boolean verifyAccessToken(String accessToken) {
-        if (ValueUtility.isBlank(accessToken)) {
+        if (ValueUtility.isEmptyString(accessToken)) {
             return false;
         }
 
