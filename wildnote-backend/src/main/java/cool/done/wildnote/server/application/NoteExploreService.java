@@ -32,8 +32,9 @@ public class NoteExploreService {
     private static final Logger logger = LoggerFactory.getLogger(NoteExploreService.class);
 
     private final String noteRootAbsPath;
-    private final List<String> noteExtensions;
-    private final List<String> cronFilenameFilter;
+    private final List<String> noteExtensionList;
+    private final List<String> notePathPrefixExcludeList;
+    private final List<String> cronFilenameFilterList;
     private final String cronExpressionPrefix;
     private final String cronExpressionSeparator;
     private final String settingFileAbsPath;
@@ -50,7 +51,8 @@ public class NoteExploreService {
     public NoteExploreService(
             @Value("${app.note-root-path}") String noteRootPath,
             @Value("${app.note-extensions}") String noteExtensions,
-            @Value("${app.cron-filename-filter:}") String cronFilenameFilter,
+            @Value("${app.note-path-prefix-excludes}") String notePathPrefixExcludes,
+            @Value("${app.cron-filename-filters:}") String cronFilenameFilters,
             @Value("${app.cron-expression-prefix:}") String cronExpressionPrefix,
             @Value("${app.cron-expression-separator:}") String cronExpressionSeparator,
             @Value("${app.setting-file-path:}") String settingFilePath,
@@ -75,14 +77,18 @@ public class NoteExploreService {
             throw new ApplicationException("笔记根路径必须为文件夹");
         }
         this.noteRootAbsPath = path.toString();
-        // this.noteExtensions = Arrays.stream(noteExtensions.split(",")).toList();
-        this.noteExtensions = Arrays.stream(noteExtensions.split(","))
+        // this.noteExtensionList = Arrays.stream(noteExtensions.split(",")).toList();
+        this.noteExtensionList = Arrays.stream(noteExtensions.split("\\|"))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(String::toLowerCase)
                 .toList();
-        // this.cronFilenameFilter = Arrays.stream(cronFilenameFilter.split(",")).toList();
-        this.cronFilenameFilter = Arrays.stream(cronFilenameFilter.split(","))
+        this.notePathPrefixExcludeList = Arrays.stream(notePathPrefixExcludes.split("\\|"))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(String::toLowerCase)
+                .toList();
+        this.cronFilenameFilterList = Arrays.stream(cronFilenameFilters.split("\\|"))
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .map(String::toLowerCase)
@@ -139,19 +145,19 @@ public class NoteExploreService {
         noteMap.clear();
         noteRemindService.clearCron();
 
-        ArrayList<File> files = new ArrayList<>();
+        ArrayList<File> fileAndDirList = new ArrayList<>();
         try {
             Files.walkFileTree(Path.of(noteRootAbsPath), new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    files.add(file.toFile());
+                    fileAndDirList.add(file.toFile());
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     if (!dir.equals(Path.of(noteRootAbsPath))) {    // 排除根路径
-                        files.add(dir.toFile());
+                        fileAndDirList.add(dir.toFile());
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -163,44 +169,45 @@ public class NoteExploreService {
             );
         }
 
-        // files.sort((file1, file2) -> {
-        //    if (file1.isDirectory() && file2.isFile())
+        // fileAndDirList.sort((f1, f2) -> {
+        //    if (f1.isDirectory() && f2.isFile())
         //        return -1;
-        //    if (file1.isFile() && file2.isDirectory())
+        //    if (f1.isFile() && f2.isDirectory())
         //        return 1;
-        //    return file1.getName().compareTo(file2.getName());
+        //    return f1.getName().compareTo(f2.getName());
         //});
 
-        for (File file : files) {
-            processFile(file);
+        for (File item : fileAndDirList) {
+            processFile(item);
         }
     }
 
     /**
      * 笔记文件夹中的文件和文件夹处理
      */
-    private void processFile(File file) {
-        // 需先判断是否存在，当不存在时 file.isDirectory() 和 file.isFile() 都会返回 false
-        if (!file.exists()) {
+    private void processFile(File fileOrDir) {
+        // 需先判断是否存在，当不存在时 fileOrDir.isDirectory() 和 fileOrDir.isFile() 都会返回 false
+        if (!fileOrDir.exists()) {
             return;
         }
 
         // 如果是笔记配置文件，加载配置，需要在判断扩展名之前
-        if (file.getPath().equals(this.settingFileAbsPath)) {
+        if (fileOrDir.getPath().equals(this.settingFileAbsPath)) {
             noteSettingService.loadSetting(this.settingFileAbsPath);
+            return;     // 不处理配置文件
         }
 
         // 跳过不符合扩展名的文件，仅跳过文件，文件夹仍然需要添加
-        if (file.isFile()) {
-            String ext = file.getName().contains(".") ?
-                    "." + file.getName().substring(file.getName().lastIndexOf('.') + 1).toLowerCase() : "";
-            if (!this.noteExtensions.contains(ext)) {
+        if (fileOrDir.isFile()) {
+            String ext = fileOrDir.getName().contains(".") ?
+                    "." + fileOrDir.getName().substring(fileOrDir.getName().lastIndexOf('.') + 1).toLowerCase() : "";
+            if (!this.noteExtensionList.contains(ext)) {
                 return;
             }
         }
 
         // 添加文件或文件夹
-        String absPath = file.toPath().toAbsolutePath().normalize().toString();     // D:\xxx\log\log.log
+        String absPath = fileOrDir.toPath().toAbsolutePath().normalize().toString();     // D:\xxx\log\log.log
         String relPath = absPath.substring(noteRootAbsPath.length());               // log\log.log
 
         // int level = relPath.split("\\\\|/").length - 2;
@@ -208,7 +215,7 @@ public class NoteExploreService {
 
         Long creationTime = null;
         try {
-            BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+            BasicFileAttributes attrs = Files.readAttributes(fileOrDir.toPath(), BasicFileAttributes.class);
             creationTime = attrs.creationTime().toMillis();
         } catch (IOException ex) {
             extraLogService.logNoteError(String.format("获取文件系统创建时间属性异常: %s", absPath), logger);
@@ -217,28 +224,34 @@ public class NoteExploreService {
         NoteTreeNode note = NoteTreeNode.create(
                 relPath,
                 absPath,
-                file.getName(),
-                file.isDirectory(),
+                fileOrDir.getName(),
+                fileOrDir.isDirectory(),
                 creationTime,
-                file.lastModified(),
+                fileOrDir.lastModified(),
                 level
         );
 
-        noteMap.put(file.getPath(), note);
-        // 判断 cron 文件名
-        if (file.isFile() && !this.cronFilenameFilter.isEmpty()) {
-            if (this.cronFilenameFilter.stream().anyMatch(file.getName().toLowerCase()::contains)) {
-                processCron(file);
-            }
+        // 判断是否在排除路径范围内
+        if(this.notePathPrefixExcludeList.stream().anyMatch(fileOrDir.getName().toLowerCase()::startsWith)) {
+            return;
         }
+
+        noteMap.put(fileOrDir.getPath(), note);
+        processCron(fileOrDir);
     }
 
     /**
      * 处理笔记文件中的提醒
      */
     private void processCron(File file) {
-        if (ValueUtility.isEmptyString(this.cronExpressionPrefix)
-                || ValueUtility.isEmptyString(this.cronExpressionSeparator)) {
+        if(!file.isFile()) {
+            return;
+        }
+        // 判断 cron 文件名
+        if(this.cronFilenameFilterList.isEmpty() || this.cronFilenameFilterList.stream().noneMatch(file.getName().toLowerCase()::contains)) {
+            return;
+        }
+        if(ValueUtility.isEmptyString(this.cronExpressionPrefix) || ValueUtility.isEmptyString(this.cronExpressionSeparator)){
             return;
         }
 

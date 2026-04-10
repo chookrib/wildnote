@@ -26,8 +26,9 @@ app:
   # 笔记根路径，支持绝对路径和相对路径
   #note-root-path: C:\note
   note-root-path: .\src
-  note-extensions: .md,.txt
-  cron-filename-filter: todo,待办
+  note-extensions: .md|.txt
+  note-path-prefix-excludes: .stfolder
+  cron-filename-filters: todo|待办
   cron-expression-prefix: "> cron"
   cron-expression-separator: "|"
   # 笔记配置文件路径，在笔记根路径下的相对路径
