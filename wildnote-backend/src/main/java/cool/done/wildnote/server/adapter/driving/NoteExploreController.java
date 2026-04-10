@@ -75,7 +75,9 @@ public class NoteExploreController {
     public Result exploreSaveContent(@RequestBody String requestBody) {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String path = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "path");
-        String content = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "content");
+        // String content = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "content");
+        // 不去除空格
+        String content = RequestValueHelper.getRequestJsonStringOrEmpty(requestJson, "content");
         noteExploreService.saveFileContent(path, content);
         return Result.ok();
     }
