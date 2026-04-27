@@ -1,11 +1,13 @@
 package cool.done.wildnote.server;
 
+import cool.done.wildnote.server.utility.ValueUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.InputStream;
@@ -26,6 +28,30 @@ public class Application {
                 getFileName(),
                 props.getProperty("Build-Time", ""),
                 props.getProperty("Git-Commit-Id-Abbrev", ""));
+
+        ConfigurableEnvironment environment = applicationContext.getEnvironment();
+
+        // 为 Accessor 赋值
+        Accessor.appContext = applicationContext;
+        Accessor.appEnv = environment.getProperty("app.env", "");
+        Accessor.appName = environment.getProperty("app.name", "");
+        if (ValueUtility.isEmptyString(Accessor.appName))
+            logger.warn("app.name 配置缺失");
+
+        // 仅在开发环境打印配置，不记录日志
+        if (Accessor.appEnvIsDev()) {
+            // 打印 environment
+            System.out.println("environment:");
+            environment.getPropertySources().forEach(propertySource -> {
+                if (propertySource.getSource() instanceof java.util.Map) {
+                    ((java.util.Map<?, ?>) propertySource.getSource()).forEach((k, v) -> {
+                        System.out.println("    " + k + " = " + v);
+                    });
+                }
+            });
+        }
+
+        logger.info("应用启动完成: {}", Accessor.appName);
     }
 
     /**

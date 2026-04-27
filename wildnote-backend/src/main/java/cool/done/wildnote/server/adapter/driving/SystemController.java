@@ -1,5 +1,6 @@
 package cool.done.wildnote.server.adapter.driving;
 
+import cool.done.wildnote.server.Accessor;
 import cool.done.wildnote.server.application.NoteSettingService;
 import cool.done.wildnote.server.domain.RemindGateway;
 import cool.done.wildnote.server.domain.SmsGateway;
@@ -37,7 +38,10 @@ public class SystemController {
      */
     @RequestMapping(value = "/api/system/setting", method = RequestMethod.GET)
     public Result systemSetting() {
-        return Result.okData(Map.of("content", noteSettingService.getSettingContent()));
+        return Result.okData(Map.of(
+                "content", noteSettingService.getSettingContent(),
+                "env", Accessor.appEnv
+        ));
     }
 
     /**

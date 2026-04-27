@@ -2,7 +2,6 @@ package cool.done.wildnote.server.adapter.driving;
 
 import cool.done.wildnote.server.application.NoteExploreService;
 import cool.done.wildnote.server.application.NoteTreeNodeDto;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -114,7 +113,7 @@ public class NoteExploreController {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String sourcePath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "sourcePath");
         String targetPath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "targetPath");
-        if(sourcePath == targetPath) {
+        if(!sourcePath.equalsIgnoreCase(targetPath)) {
             noteExploreService.moveFile(sourcePath, targetPath);
         }
         return Result.ok();
@@ -150,7 +149,7 @@ public class NoteExploreController {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String sourcePath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "sourcePath");
         String targetPath = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "targetPath");
-        if(sourcePath == targetPath) {
+        if(!sourcePath.equalsIgnoreCase(targetPath)) {
             noteExploreService.moveDirectory(sourcePath, targetPath);
         }
         return Result.ok();

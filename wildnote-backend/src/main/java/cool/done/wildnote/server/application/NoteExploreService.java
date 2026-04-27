@@ -232,7 +232,7 @@ public class NoteExploreService {
         );
 
         // 判断是否在排除路径范围内
-        if(this.notePathPrefixExcludeList.stream().anyMatch(fileOrDir.getName().toLowerCase()::startsWith)) {
+        if (this.notePathPrefixExcludeList.stream().anyMatch(fileOrDir.getName().toLowerCase()::startsWith)) {
             return;
         }
 
@@ -244,14 +244,14 @@ public class NoteExploreService {
      * 处理笔记文件中的提醒
      */
     private void processCron(File file) {
-        if(!file.isFile()) {
+        if (!file.isFile()) {
             return;
         }
         // 判断 cron 文件名
-        if(this.cronFilenameFilterList.isEmpty() || this.cronFilenameFilterList.stream().noneMatch(file.getName().toLowerCase()::contains)) {
+        if (this.cronFilenameFilterList.isEmpty() || this.cronFilenameFilterList.stream().noneMatch(file.getName().toLowerCase()::contains)) {
             return;
         }
-        if(ValueUtility.isEmptyString(this.cronExpressionPrefix) || ValueUtility.isEmptyString(this.cronExpressionSeparator)){
+        if (ValueUtility.isEmptyString(this.cronExpressionPrefix) || ValueUtility.isEmptyString(this.cronExpressionSeparator)) {
             return;
         }
 
@@ -423,6 +423,8 @@ public class NoteExploreService {
             } catch (IOException ex) {
                 throw new ApplicationException(String.format("创建笔记文件异常: %s", ex.getMessage()), ex);
             }
+        } else {
+            throw new ApplicationException(String.format("创建笔记文件失败: 笔记文件已存在"));
         }
     }
 
@@ -467,6 +469,9 @@ public class NoteExploreService {
             } catch (IOException ex) {
                 throw new ApplicationException(String.format("创建笔记文件夹异常: %s", ex.getMessage()), ex);
             }
+        }
+        else {
+            throw new ApplicationException(String.format("创建笔记文件夹失败: 笔记文件夹已存在"));
         }
     }
 

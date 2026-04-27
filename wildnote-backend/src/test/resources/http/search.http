@@ -1,0 +1,16 @@
+### 搜索笔记名
+POST http://{{host}}/api/search/path
+Content-Type: application/json
+
+{
+  "keyword": "todo"
+}
+
+### 搜索笔记内容
+POST http://{{host}}/api/search/content
+Content-Type: application/json
+
+{
+  "keyword": "todo"
+}
+
