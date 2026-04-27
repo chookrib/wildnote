@@ -38,7 +38,7 @@ const logout = function () {
       <!--<RouterView :key="$route.fullPath" />-->
       <router-view v-slot="{ Component }">
         <keep-alive :include="['Search']">
-          <component :is="Component"></component>
+          <component :is="Component" :key="$route.fullPath"></component>
         </keep-alive>
       </router-view>
     </div>
