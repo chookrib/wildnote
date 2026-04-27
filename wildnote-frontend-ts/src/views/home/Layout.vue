@@ -35,7 +35,12 @@ const logout = function () {
       <a href="javascript:void(0)" @click="logout">注销</a>
     </div>
     <div class="layout-content">
-      <RouterView :key="$route.fullPath" />
+      <!--<RouterView :key="$route.fullPath" />-->
+      <router-view v-slot="{ Component }">
+        <keep-alive :include="['Search']">
+          <component :is="Component"></component>
+        </keep-alive>
+      </router-view>
     </div>
   </a-config-provider>
 </template>

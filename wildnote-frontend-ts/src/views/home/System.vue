@@ -4,6 +4,7 @@ import { message } from 'ant-design-vue';
 import axios from '@/utility/axios-utility';
 
 const windowLocationOrigin = window.location.origin;
+const appEnv = ref('');
 const settingContent = ref('');
 
 onMounted(() => {
@@ -12,6 +13,7 @@ onMounted(() => {
 
 const loadSetting = () => {
   axios.get('/api/system/setting').then((response) => {
+    appEnv.value = response.data.data.env;
     settingContent.value = response.data.data.content;
   });
 };
@@ -57,6 +59,12 @@ const testSmsCode = () => {
     <template #title>当前网址</template>
     <template #extra> </template>
     {{ windowLocationOrigin }}
+  </a-card>
+
+  <a-card>
+    <template #title>当前运行环境</template>
+    <template #extra> </template>
+    {{ appEnv }}
   </a-card>
 
   <a-card>

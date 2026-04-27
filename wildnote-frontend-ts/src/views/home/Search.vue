@@ -1,26 +1,35 @@
-<script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
-import { FileTextOutlined, FolderFilled, SearchOutlined } from '@ant-design/icons-vue';
+<script setup lang="ts" name="Search">
+import {computed, onMounted, ref} from 'vue';
+
+// defineOptions({
+//   name: 'Search'
+// })
+
+import {RouterLink} from 'vue-router';
+import {FileTextOutlined, FolderFilled, SearchOutlined} from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
-import type { ColumnsType } from 'ant-design-vue/es/table';
+import type {ColumnsType} from 'ant-design-vue/es/table';
 
 // const dataSource = ref([]);
 const dataSource = ref<Array<{ path: string; lastModifiedTime: string; directory: boolean }>>([]);
+const searchType = ref('path');
 const searchKey = ref('');
 
 onMounted(() => {
-  axios.get('/api/explore/all').then((response) => {
-    dataSource.value = response.data.data.list;
-  });
+  // axios.get('/api/explore/all').then((response) => {
+  //   dataSource.value = response.data.data.list;
+  // });
 });
 
 const dataSourceComputed = computed(() => {
-  if (searchKey.value.length === 0) {
-    return [];
-  }
-  const ds = dataSource.value.filter((node) => node.path.toLowerCase().includes(searchKey.value.toLowerCase()));
-  return ds.sort((a, b) => {
+  // if (searchKey.value.length === 0) {
+  //   return [];
+  // }
+  // const ds = dataSource.value.filter((node) => node.path.toLowerCase().includes(searchKey.value.toLowerCase()));
+  // return ds.sort((a, b) => {
+  //   return a.path.localeCompare(b.path);
+  // });
+  return dataSource.value.sort((a, b) => {
     return a.path.localeCompare(b.path);
   });
 });
@@ -38,15 +47,31 @@ const columns: ColumnsType<any> = [
     responsive: ['sm'],
   },
 ];
+
+const search = () => {
+  axios
+    .post(searchType.value === 'content' ? '/api/search/content' : '/api/search/path',
+      {keyword: searchKey.value})
+    .then((response) => {
+      dataSource.value = response.data.data.list;
+    });
+};
 </script>
 
 <template>
   <div class="search-header">
-    <a-input v-model:value="searchKey" placeholder="最输入关键字搜索" size="small" :allow-clear="true">
-      <template #prefix>
-        <SearchOutlined />
-      </template>
-    </a-input>
+    <a-space>
+      <a-input v-model:value="searchKey" placeholder="输入关键字搜索" :allow-clear="true">
+        <template #prefix>
+          <SearchOutlined/>
+        </template>
+      </a-input>
+      <a-select v-model:value="searchType">
+        <a-select-option value="path">路径</a-select-option>
+        <a-select-option value="content">内容</a-select-option>
+      </a-select>
+      <a-button @click="search()">搜索</a-button>
+    </a-space>
   </div>
   <a-card>
     <a-table
@@ -57,16 +82,16 @@ const columns: ColumnsType<any> = [
       size="small"
     >
       <template #emptyText>
-        <a-empty description="没有搜索结果" />
+        <a-empty description="没有搜索结果"/>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'path'">
           <RouterLink v-if="record.directory" :to="{ path: '/explore', query: { path: record.path + '\\' } }">
-            <FolderFilled :style="{ color: '#f7c427' }" />
+            <FolderFilled :style="{ color: '#f7c427' }"/>
             {{ record.path }}
           </RouterLink>
           <RouterLink v-if="!record.directory" :to="{ path: '/note', query: { path: record.path } }">
-            <FileTextOutlined :style="{ color: '#000000' }" />
+            <FileTextOutlined :style="{ color: '#000000' }"/>
             {{ record.path }}
           </RouterLink>
         </template>
@@ -91,6 +116,7 @@ const columns: ColumnsType<any> = [
   left: 0;
   right: 0;
   z-index: 1000;
+  display: flex;
 }
 
 .search-header * {
