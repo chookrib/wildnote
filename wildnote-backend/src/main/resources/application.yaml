@@ -35,7 +35,7 @@ app:
   setting-file-path: wildnote.json
   extra-log-root-path: log\
 
-  # rg 路径
+  # ripgrep 路径
   ripgrep-path: rg.exe
   # 网址解析服务地址
   article-parser-url: http://localhost:9223/parse
