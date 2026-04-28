@@ -282,9 +282,15 @@ public class NoteSearchController {
         String url = "http://localhost:" + everythingHttpPort + "/?search=" + keyword + "&json=1&path_column=1&size_column=1&date_modified_column=1&sort=path";
 
         String response = restTemplate.getForObject(url, String.class);
-        JsonNode json = JsonUtility.deserialize(response);
+        JsonNode responseJson = JsonUtility.deserialize(response);
 
-        return Result.okData(json);
+        String downloadToken = UUID.randomUUID().toString();
+        downloadTokenCache.put(downloadToken, downloadToken);
+
+        return Result.okData(Map.of(
+                "list", responseJson.get("results"),
+                "downloadToken", downloadToken
+        ));
     }
 
     // /**
