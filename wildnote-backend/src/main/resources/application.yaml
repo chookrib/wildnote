@@ -37,8 +37,11 @@ app:
 
   # ripgrep 路径
   ripgrep-exe-path: rg.exe
+  everything-http-port: 8081
+  # Everything 路径
+  # everything-exe-path: everything.exe
   # Everything command line interface 路径
-  everything-es-exe-path: es.exe
+  # everything-es-exe-path: es.exe
   # everything-es-opt-path: D:\
   # 网址解析服务地址
   article-parser-url: http://localhost:9223/parse

@@ -1,9 +1,11 @@
 package cool.done.wildnote.server.adapter.driving;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import cool.done.wildnote.server.application.NoteExploreService;
 import cool.done.wildnote.server.application.NoteTreeNodeDto;
+import cool.done.wildnote.server.utility.JsonUtility;
 import cool.done.wildnote.server.utility.ValueUtility;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -45,8 +48,11 @@ public class NoteSearchController {
     @Value("${app.ripgrep-exe-path:}")
     private String ripgrepExePath;
 
-    @Value("${app.everything-es-exe-path:}")
-    private String everythingEsExePath;
+    @Value("${app.everything-http-port:}")
+    private String everythingHttpPort;
+
+    // @Value("${app.everything-es-exe-path:}")
+    // private String everythingEsExePath;
 
     // @Value("${app.everything-es-opt-path:}")
     // private String everythingEsOptPath;
@@ -202,6 +208,67 @@ public class NoteSearchController {
         }
     }
 
+    // /**
+    //  * 调用 Everything 搜索
+    //  */
+    // @RequestMapping(value = "/api/search/everything", method = RequestMethod.POST)
+    // public Result searchEverything(@RequestBody String requestBody) {
+    //     var requestJson = RequestValueHelper.getRequestJson(requestBody);
+    //     String keyword = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "keyword");
+    //     // System.out.println(keyword);
+    //
+    //     if (ValueUtility.isEmptyString(everythingEsExePath)) {
+    //         throw new ControllerException("没有指定 Everything es exe 路径");
+    //     }
+    //
+    //     // if (ValueUtility.isEmptyString(everythingEsOptPath)) {
+    //     //     throw new ControllerException("没有指定 Everything es opt 路径");
+    //     // }
+    //
+    //     var result = new ArrayList<String>();
+    //     try {
+    //         ProcessBuilder pb = new ProcessBuilder(
+    //                 everythingEsExePath,
+    //                 "-instance", "\"WildNoteInstance\"",
+    //                 // "-path"
+    //                 // everythingEsOptPath,    // 盘符需要以 \ 结尾，文件夹有没有 \ 都可以
+    //                 keyword
+    //         );
+    //
+    //         Process process = pb.start();
+    //         // System.out.println("执行命令: " + String.join(" ", pb.command()));
+    //         process.getOutputStream().close();
+    //
+    //         try (BufferedReader reader = new BufferedReader(
+    //                 new InputStreamReader(process.getInputStream(),
+    //                         // StandardCharsets.UTF_8
+    //                         Charset.forName("GBK")
+    //                 )
+    //         )) {
+    //             String line;
+    //             while ((line = reader.readLine()) != null) {
+    //                 result.add(line);
+    //             }
+    //         }
+    //
+    //         if (result.size() > 1000) {
+    //             throw new ControllerException("搜索结果超过1000条，请缩小搜索范围");
+    //         }
+    //
+    //         String downloadToken = UUID.randomUUID().toString();
+    //         downloadTokenCache.put(downloadToken, downloadToken);
+    //
+    //         return Result.okData(Map.of(
+    //                 "list",
+    //                 result.stream().sorted(String.CASE_INSENSITIVE_ORDER).toList(),
+    //                 "downloadToken",
+    //                 downloadToken
+    //         ));
+    //     } catch (Exception ex) {
+    //         throw new ControllerException(ex);
+    //     }
+    // }
+
     /**
      * 调用 Everything 搜索
      */
@@ -211,55 +278,13 @@ public class NoteSearchController {
         String keyword = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "keyword");
         // System.out.println(keyword);
 
-        if (ValueUtility.isEmptyString(everythingEsExePath)) {
-            throw new ControllerException("没有指定 Everything es exe 路径");
-        }
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:" + everythingHttpPort + "/?search=" + keyword + "&json=1&path_column=1&size_column=1&date_modified_column=1&sort=path";
 
-        // if (ValueUtility.isEmptyString(everythingEsOptPath)) {
-        //     throw new ControllerException("没有指定 Everything es opt 路径");
-        // }
+        String response = restTemplate.getForObject(url, String.class);
+        JsonNode json = JsonUtility.deserialize(response);
 
-        var result = new ArrayList<String>();
-        try {
-            ProcessBuilder pb = new ProcessBuilder(
-                    everythingEsExePath,
-                    // "-path"
-                    // everythingEsOptPath,    // 盘符需要以 \ 结尾，文件夹有没有 \ 都可以
-                    keyword
-            );
-
-            Process process = pb.start();
-            // System.out.println("执行命令: " + String.join(" ", pb.command()));
-            process.getOutputStream().close();
-
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream(),
-                            // StandardCharsets.UTF_8
-                            Charset.forName("GBK")
-                    )
-            )) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.add(line);
-                }
-            }
-
-            if (result.size() > 1000) {
-                throw new ControllerException("搜索结果超过1000条，请缩小搜索范围");
-            }
-
-            String downloadToken = UUID.randomUUID().toString();
-            downloadTokenCache.put(downloadToken, downloadToken);
-
-            return Result.okData(Map.of(
-                    "list",
-                    result.stream().sorted(String.CASE_INSENSITIVE_ORDER).toList(),
-                    "downloadToken",
-                    downloadToken
-            ));
-        } catch (Exception ex) {
-            throw new ControllerException(ex);
-        }
+        return Result.okData(json);
     }
 
     // /**
