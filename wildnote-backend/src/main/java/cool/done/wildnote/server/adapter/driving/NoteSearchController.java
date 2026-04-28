@@ -8,7 +8,6 @@ import cool.done.wildnote.server.application.NoteTreeNodeDto;
 import cool.done.wildnote.server.utility.JsonUtility;
 import cool.done.wildnote.server.utility.ValueUtility;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -24,8 +23,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -216,6 +213,9 @@ public class NoteSearchController {
     //     var requestJson = RequestValueHelper.getRequestJson(requestBody);
     //     String keyword = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "keyword");
     //     // System.out.println(keyword);
+    //     if (keyword.length() <= 3) {
+    //         throw new ControllerException("搜索关键不能少于三个字符");
+    //     }
     //
     //     if (ValueUtility.isEmptyString(everythingEsExePath)) {
     //         throw new ControllerException("没有指定 Everything es exe 路径");
@@ -277,6 +277,9 @@ public class NoteSearchController {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String keyword = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "keyword");
         // System.out.println(keyword);
+        if (keyword.length() <= 3) {
+            throw new ControllerException("搜索关键不能少于三个字符");
+        }
 
         RestTemplate restTemplate = new RestTemplate();
         String url = "http://localhost:" + everythingHttpPort + "/?search=" + keyword + "&json=1&path_column=1&size_column=1&date_modified_column=1&sort=path";
