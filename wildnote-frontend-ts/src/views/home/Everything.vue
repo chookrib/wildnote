@@ -26,7 +26,7 @@ const search = () => {
   axios
     .post('/api/search/everything',{keyword: searchKey.value})
     .then((response) => {
-      dataSource.value = response.data.data.results;
+      dataSource.value = response.data.data.list;
       downloadToken.value = response.data.data.downloadToken;
     });
 };
