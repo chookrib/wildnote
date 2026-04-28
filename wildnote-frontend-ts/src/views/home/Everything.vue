@@ -7,7 +7,7 @@ import axios from '@/utility/axios-utility';
 import type {ColumnsType} from 'ant-design-vue/es/table';
 
 // const dataSource = ref([]);
-const dataSource = ref<Array<string>>([]);
+const dataSource = ref<Array<{ type: string; name: string; path: string, size: string, date_modified: string }>>([]);
 const searchKey = ref('');
 const downloadToken = ref('');
 const downloadUrlRoot = import.meta.env.VITE_API_URL;
@@ -26,7 +26,7 @@ const search = () => {
   axios
     .post('/api/search/everything',{keyword: searchKey.value})
     .then((response) => {
-      dataSource.value = response.data.data.list;
+      dataSource.value = response.data.data.results;
       downloadToken.value = response.data.data.downloadToken;
     });
 };
@@ -56,8 +56,14 @@ const search = () => {
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'path'">
-          <div style="word-break: break-all;">
-            <a :href="downloadUrlRoot+'api/search/everything/download?path='+encodeURIComponent(record)+'&token='+downloadToken">{{ record }}</a>
+          <div style="word-break: break-all;" v-if="record.type==='file'">
+            <a :href="downloadUrlRoot+'api/search/everything/download?path='+encodeURIComponent(record.path+'\\'+record.name)+'&token='+downloadToken">
+              {{ record.path+'\\'+record.name }}
+              <a-tag>{{record.size}}</a-tag>
+            </a>
+          </div>
+          <div style="word-break: break-all;" v-if="record.type==='folder'">
+            {{ record.path+'\\'+record.name }}
           </div>
         </template>
       </template>
