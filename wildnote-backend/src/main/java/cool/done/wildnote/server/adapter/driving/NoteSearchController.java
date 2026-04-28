@@ -213,8 +213,8 @@ public class NoteSearchController {
     //     var requestJson = RequestValueHelper.getRequestJson(requestBody);
     //     String keyword = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "keyword");
     //     // System.out.println(keyword);
-    //     if (keyword.length() <= 3) {
-    //         throw new ControllerException("搜索关键不能少于三个字符");
+    //     if (keyword.length() < 3) {
+    //         throw new ControllerException("搜索关键字不能少于3个字符");
     //     }
     //
     //     if (ValueUtility.isEmptyString(everythingEsExePath)) {
@@ -277,8 +277,8 @@ public class NoteSearchController {
         var requestJson = RequestValueHelper.getRequestJson(requestBody);
         String keyword = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "keyword");
         // System.out.println(keyword);
-        if (keyword.length() <= 3) {
-            throw new ControllerException("搜索关键不能少于三个字符");
+        if (keyword.length() < 3) {
+            throw new ControllerException("搜索关键字不能少于3个字符");
         }
 
         RestTemplate restTemplate = new RestTemplate();
