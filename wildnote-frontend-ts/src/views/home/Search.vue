@@ -21,18 +21,18 @@ onMounted(() => {
   // });
 });
 
-const dataSourceComputed = computed(() => {
-  // if (searchKey.value.length === 0) {
-  //   return [];
-  // }
-  // const ds = dataSource.value.filter((node) => node.path.toLowerCase().includes(searchKey.value.toLowerCase()));
-  // return ds.sort((a, b) => {
-  //   return a.path.localeCompare(b.path);
-  // });
-  return dataSource.value.sort((a, b) => {
-    return a.path.localeCompare(b.path);
-  });
-});
+// const dataSourceComputed = computed(() => {
+//   // if (searchKey.value.length === 0) {
+//   //   return [];
+//   // }
+//   // const ds = dataSource.value.filter((node) => node.path.toLowerCase().includes(searchKey.value.toLowerCase()));
+//   // return ds.sort((a, b) => {
+//   //   return a.path.localeCompare(b.path);
+//   // });
+//   return dataSource.value.sort((a, b) => {
+//     return a.path.localeCompare(b.path);
+//   });
+// });
 
 const columns: ColumnsType<any> = [
   {
@@ -61,7 +61,7 @@ const search = () => {
 <template>
   <div class="search-header">
     <a-space>
-      <a-input v-model:value="searchKey" placeholder="输入关键字搜索" :allow-clear="true">
+      <a-input v-model:value="searchKey" placeholder="输入关键字搜索笔记" :allow-clear="true">
         <template #prefix>
           <SearchOutlined/>
         </template>
@@ -77,7 +77,7 @@ const search = () => {
     <a-table
       :columns="columns"
       :row-key="(record) => record.path"
-      :data-source="dataSourceComputed"
+      :data-source="dataSource"
       :pagination="false"
       size="small"
     >

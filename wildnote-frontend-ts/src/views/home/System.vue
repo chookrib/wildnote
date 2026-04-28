@@ -3,6 +3,10 @@ import { onMounted, ref } from 'vue';
 import { message } from 'ant-design-vue';
 import axios from '@/utility/axios-utility';
 
+import * as localStorageUtility from '@/utility/local-storage-utility';
+import { showConfirm } from '@/utility/confirm-utility';
+import router from '@/router';
+
 const windowLocationOrigin = window.location.origin;
 const appEnv = ref('');
 const settingContent = ref('');
@@ -52,9 +56,27 @@ const testSmsCode = () => {
       message.success('测试短信验证码发送成功');
     });
 };
+
+const logout = function () {
+  showConfirm({
+    title: '注销',
+    content: '确定要注销吗？',
+    onOk: () => {
+      localStorageUtility.deleteAccessToken();
+      // window.location.href = '/login.html';
+      router.push({ path: '/login', query: { nlr: 'true' } });
+    },
+  });
+};
 </script>
 
 <template>
+  <a-card>
+    <template #title>注销</template>
+    <template #extra> </template>
+    <a-button type="primary" :danger="true" @click="logout">注销</a-button>
+  </a-card>
+
   <a-card>
     <template #title>当前网址</template>
     <template #extra> </template>
@@ -64,7 +86,7 @@ const testSmsCode = () => {
   <a-card>
     <template #title>当前运行环境</template>
     <template #extra> </template>
-    {{ appEnv }}
+    <a-tag>{{ appEnv }}</a-tag>
   </a-card>
 
   <a-card>

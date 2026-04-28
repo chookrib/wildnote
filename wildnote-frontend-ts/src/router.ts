@@ -50,6 +50,10 @@ const router = createRouter({
           path: 'log',
           component: () => import('@/views/home/Log.vue'),
         },
+        {
+          path: 'everything',
+          component: () => import('@/views/home/Everything.vue'),
+        },
       ],
     },
   ],

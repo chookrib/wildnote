@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
 import zhCN from 'ant-design-vue/es/locale/zh_CN';
-import * as localStorageUtility from '@/utility/local-storage-utility';
-import { showConfirm } from '@/utility/confirm-utility';
-import router from '@/router';
+// import * as localStorageUtility from '@/utility/local-storage-utility';
+// import { showConfirm } from '@/utility/confirm-utility';
+// import router from '@/router';
 
 const title = window.location.hostname;
 
-const logout = function () {
-  showConfirm({
-    title: '注销',
-    content: '确定要注销吗？',
-    onOk: () => {
-      localStorageUtility.deleteAccessToken();
-      // window.location.href = '/login.html';
-      router.push({ path: '/login', query: { nlr: 'true' } });
-    },
-  });
-};
+// const logout = function () {
+//   showConfirm({
+//     title: '注销',
+//     content: '确定要注销吗？',
+//     onOk: () => {
+//       localStorageUtility.deleteAccessToken();
+//       // window.location.href = '/login.html';
+//       router.push({ path: '/login', query: { nlr: 'true' } });
+//     },
+//   });
+// };
 </script>
 
 <template>
@@ -32,7 +32,8 @@ const logout = function () {
       <RouterLink to="/remind">提醒</RouterLink>
       <RouterLink to="/system">系统</RouterLink>
       <RouterLink to="/log">日志</RouterLink>
-      <a href="javascript:void(0)" @click="logout">注销</a>
+      <RouterLink to="/everything">文件</RouterLink>
+      <!-- <a href="javascript:void(0)" @click="logout">注销</a> -->
     </div>
     <div class="layout-content">
       <!--<RouterView :key="$route.fullPath" />-->
