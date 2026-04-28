@@ -1,0 +1,10 @@
+### 保存笔记内容
+POST http://{{host}}/api/explore/save-content
+Content-Type: application/json
+Access-Token: {{accessToken}}
+
+{
+  "path": "\\test.md",
+  "content": "{{content}}"
+}
+

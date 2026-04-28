@@ -36,7 +36,10 @@ app:
   extra-log-root-path: log\
 
   # ripgrep 路径
-  ripgrep-path: rg.exe
+  ripgrep-exe-path: rg.exe
+  # Everything command line interface 路径
+  everything-es-exe-path: es.exe
+  # everything-es-opt-path: D:\
   # 网址解析服务地址
   article-parser-url: http://localhost:9223/parse
 

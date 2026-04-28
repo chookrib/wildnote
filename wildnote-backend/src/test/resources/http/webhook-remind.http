@@ -1,6 +1,5 @@
 ### Webhook remind
 < {%
-    client.global.clearAll();
     client.global.set('message', new Date().toISOString());
 %}
 GET http://{{host}}/webhook/remind/dingtalk?message={{message}}

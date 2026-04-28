@@ -2,6 +2,7 @@ package cool.done.wildnote.server.adapter.driving;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import cool.done.wildnote.server.application.ApplicationConfig;
 import cool.done.wildnote.server.application.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
@@ -31,9 +32,11 @@ public class AuthController {
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
 
+    private final ApplicationConfig accessor;
     private final AuthService authService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(ApplicationConfig accessor, AuthService authService) {
+        this.accessor = accessor;
         this.authService = authService;
     }
 
@@ -134,6 +137,11 @@ public class AuthController {
         String captcha = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "captcha");
         String username = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "username");
         String password = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "password");
+
+        // 添加开发环境固定验证码
+        if(accessor.isAppEnvDev()) {
+            captchaCache.put("dev-captcha", "8888");
+        }
 
         String code = captchaCache.getIfPresent(fingerprint);
         if (code == null) {

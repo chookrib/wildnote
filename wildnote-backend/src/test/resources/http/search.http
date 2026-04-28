@@ -1,6 +1,7 @@
 ### 搜索笔记名
 POST http://{{host}}/api/search/path
 Content-Type: application/json
+Access-Token: {{accessToken}}
 
 {
   "keyword": "todo"
@@ -9,8 +10,27 @@ Content-Type: application/json
 ### 搜索笔记内容
 POST http://{{host}}/api/search/content
 Content-Type: application/json
+Access-Token: {{accessToken}}
 
 {
   "keyword": "todo"
+}
+
+### 搜索内容测试
+POST http://{{host}}/api/search/content/test
+Content-Type: application/json
+Access-Token: {{accessToken}}
+
+{
+  "keyword": "c:\\"
+}
+
+### 调用 Everything 搜索
+POST http://{{host}}/api/search/everything
+Content-Type: application/json
+Access-Token: {{accessToken}}
+
+{
+  "keyword": "资料"
 }
 

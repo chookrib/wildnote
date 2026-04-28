@@ -1,6 +1,5 @@
 package cool.done.wildnote.server.adapter.driving;
 
-import cool.done.wildnote.server.Accessor;
 import cool.done.wildnote.server.application.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,6 +37,7 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
         globalInterceptor.excludePathPatterns("/api/.well-known");
         globalInterceptor.excludePathPatterns("/api/captcha/**");
         globalInterceptor.excludePathPatterns("/api/login");
+        globalInterceptor.excludePathPatterns("/api/search/everything/download");
 
         //拦截地址
         globalInterceptor.addPathPatterns("/api/**");
@@ -75,11 +75,6 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
         public boolean preHandle(
                 HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler)
                 throws NotLoginException {
-
-            // 测试环境不验证
-            if(Accessor.appEnvIsDev())
-                return true;
-
             String accessToken = request.getHeader("Access-Token");
 
             if (!authService.verifyAccessToken(accessToken)) {

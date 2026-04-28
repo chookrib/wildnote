@@ -1,0 +1,18 @@
+### 登录
+< {%
+    // client.global.clearAll();
+%}
+POST http://{{host}}/api/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin",
+  "f": "dev-captcha",
+  "captcha": "8888"
+}
+
+> {%
+    client.global.set('accessToken', response.body.data.accessToken);
+%}
+
