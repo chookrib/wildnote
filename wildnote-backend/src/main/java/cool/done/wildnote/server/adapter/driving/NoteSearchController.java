@@ -282,7 +282,15 @@ public class NoteSearchController {
         }
 
         RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:" + everythingHttpPort + "/?search=" + keyword + "&json=1&path_column=1&size_column=1&date_modified_column=1&sort=path";
+        String url = "http://localhost:" + everythingHttpPort +
+                "/?search=" + keyword +
+                "&json=1" + // 返回json
+                "&path_column=1" +  // json 中包含路径
+                "&size_column=1" +  // json 中包含大小
+                "&date_modified_column=1" + // json 中包含修改时间
+                "&sort=path" +  // 接路径排序
+                "&path=1"   // 在路径中搜索
+                ;
 
         String response = restTemplate.getForObject(url, String.class);
         JsonNode responseJson = JsonUtility.deserialize(response);
