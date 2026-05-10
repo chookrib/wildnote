@@ -136,7 +136,7 @@ public class ValueUtility {
      * 转 datetime，失败返回 null
      */
     public static LocalDateTime toDateTimeOrNull(String value) {
-        //try {
+        // try {
         //    return DateUtils.parseDate(value.trim(), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy/MM/dd");
         //} catch (Exception ex) {
         //    return null;
@@ -250,7 +250,7 @@ public class ValueUtility {
         if (millisTimestamp == null) {
             return null;
         }
-        //return millisTimestamp - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
+        // return millisTimestamp - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) * 1000;
         return millisTimestamp - LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)) * 1000;
     }
 }
