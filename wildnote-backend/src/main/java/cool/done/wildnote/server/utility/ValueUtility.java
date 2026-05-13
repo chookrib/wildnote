@@ -1,6 +1,7 @@
 package cool.done.wildnote.server.utility;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,6 +12,7 @@ import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 值Utility
@@ -26,15 +28,20 @@ public class ValueUtility {
 
     //==================================================================================================================
 
+    // 定义 bool 值范围
+    private static final List<String> BOOL_TRUE = Arrays.asList("true", "1", "t", "y", "yes", "on");
+    private static final List<String> BOOL_FALSE = Arrays.asList("false", "0", "f", "n", "no", "off");
+
     /**
      * 转 bool，失败返回 null
      */
     public static Boolean toBoolOrNull(String value) {
         if (isEmptyString(value))
             return null;
-        if (Arrays.asList("true", "1", "t", "y", "yes", "on").contains(value.trim().toLowerCase()))
+        String b = value.trim().toLowerCase();
+        if (BOOL_TRUE.contains(b))
             return true;
-        else if (Arrays.asList("false", "0", "f", "n", "no", "off").contains(value.trim().toLowerCase()))
+        else if (BOOL_FALSE.contains(b))
             return false;
         return null;
     }
@@ -101,6 +108,11 @@ public class ValueUtility {
 
     //==================================================================================================================
 
+    // 定义 decimal 边界值 DECIMAL(28, 8)，满足绝大部分场景
+    private static final int DECIMAL_SCALE = 8;
+    private static final BigDecimal DECIMAL_MIN_VALUE = new BigDecimal("-99999999999999999999.99999999");
+    private static final BigDecimal DECIMAL_MAX_VALUE = new BigDecimal("99999999999999999999.99999999");
+
     /**
      * 转 decimal，失败返回 null
      */
@@ -108,7 +120,16 @@ public class ValueUtility {
         if (isEmptyString(value))
             return null;
         try {
-            return new BigDecimal(value.trim());
+            // return new BigDecimal(value.trim());
+
+            BigDecimal d = new BigDecimal(value.trim());
+            // 规范化小数位（四舍五入）
+            d = d.setScale(DECIMAL_SCALE, RoundingMode.HALF_UP);
+            // 检查是否超出边界
+            if (d.compareTo(DECIMAL_MIN_VALUE) < 0 || d.compareTo(DECIMAL_MAX_VALUE) > 0) {
+                return null;
+            }
+            return d;
         } catch (NumberFormatException ex) {
             return null;
         }
@@ -121,6 +142,10 @@ public class ValueUtility {
         BigDecimal d = toDecimalOrNull(value);
         if (d != null)
             return d;
+        if (defaultValue == null)
+            return null;
+        if (defaultValue.compareTo(DECIMAL_MIN_VALUE) < 0 || defaultValue.compareTo(DECIMAL_MAX_VALUE) > 0)
+            throw new UtilityException("默认值超出 deciaml 范围");
         return defaultValue;
     }
 
@@ -171,12 +196,6 @@ public class ValueUtility {
      * 转 datetime，精度到毫秒，失败返回 null
      */
     public static LocalDateTime toDateTimeOrNull(String value) {
-        // try {
-        //    return DateUtils.parseDate(value.trim(), "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy/MM/dd");
-        //} catch (Exception ex) {
-        //    return null;
-        //}
-
         if (isEmptyString(value))
             return null;
 
