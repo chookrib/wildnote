@@ -17,18 +17,18 @@ import java.util.Map;
 @RestController
 public class SystemController {
 
-    private final ApplicationConfig accessor;
+    private final ApplicationConfig applicationConfig;
     private final RemindGateway remindGateway;
     private final SmsGateway smsGateway;
     private final NoteSettingService noteSettingService;
 
     public SystemController(
-            ApplicationConfig accessor,
+            ApplicationConfig applicationConfig,
             RemindGateway remindGateway,
             SmsGateway smsGateway,
             NoteSettingService noteSettingService
     ) {
-        this.accessor = accessor;
+        this.applicationConfig = applicationConfig;
         this.remindGateway = remindGateway;
         this.smsGateway = smsGateway;
         this.noteSettingService = noteSettingService;
@@ -41,7 +41,7 @@ public class SystemController {
     public Result systemSetting() {
         return Result.okData(Map.of(
                 "content", noteSettingService.getSettingContent(),
-                "env", accessor.getAppEnv()
+                "env", applicationConfig.getAppEnv()
         ));
     }
 

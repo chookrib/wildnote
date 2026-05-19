@@ -32,11 +32,11 @@ public class AuthController {
             .expireAfterWrite(5, TimeUnit.MINUTES)
             .build();
 
-    private final ApplicationConfig accessor;
+    private final ApplicationConfig applicationConfig;
     private final AuthService authService;
 
-    public AuthController(ApplicationConfig accessor, AuthService authService) {
-        this.accessor = accessor;
+    public AuthController(ApplicationConfig applicationConfig, AuthService authService) {
+        this.applicationConfig = applicationConfig;
         this.authService = authService;
     }
 
@@ -139,7 +139,7 @@ public class AuthController {
         String password = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "password");
 
         // 添加开发环境固定验证码
-        if(accessor.isAppEnvDev()) {
+        if(applicationConfig.isAppEnvDev()) {
             captchaCache.put("dev-captcha", "8888");
         }
 
