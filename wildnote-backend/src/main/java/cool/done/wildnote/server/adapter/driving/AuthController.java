@@ -139,7 +139,7 @@ public class AuthController {
         String password = RequestValueHelper.getRequestJsonStringTrimReq(requestJson, "password");
 
         // 添加开发环境固定验证码
-        if(applicationConfig.isAppEnvDev()) {
+        if (applicationConfig.isAppEnvDev()) {
             captchaCache.put("dev-captcha", "8888");
         }
 

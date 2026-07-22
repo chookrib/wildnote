@@ -207,6 +207,7 @@ public class NoteSearchController {
 
     // /**
     //  * 调用 Everything 搜索
+    //  * 使用 Everything command line interface 会乱码
     //  */
     // @RequestMapping(value = "/api/search/everything", method = RequestMethod.POST)
     // public Result searchEverything(@RequestBody String requestBody) {

@@ -56,3 +56,8 @@ app:
   sms-aliyun-secret:
   sms-aliyun-sign:
   sms-aliyun-template:
+
+  # 使用 OpenAI 兼容接口
+  openai-base-url:
+  openai-api-key:
+  openai-model:
