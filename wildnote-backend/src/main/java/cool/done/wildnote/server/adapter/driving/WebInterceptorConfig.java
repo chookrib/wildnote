@@ -21,25 +21,28 @@ public class WebInterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        //拦截器
+        // 拦截器
         InterceptorRegistration globalInterceptor = registry.addInterceptor(getGlobalHandlerInterceptor());
 
-        //排除
-        //globalInterceptor.excludePathPatterns("/img/**");
-        //globalInterceptor.excludePathPatterns("/js/**");
-        //globalInterceptor.excludePathPatterns("/css/**");
-        //globalInterceptor.excludePathPatterns("/**/*.html");
+        // 排除
+        // globalInterceptor.excludePathPatterns("/img/**");
+        // globalInterceptor.excludePathPatterns("/js/**");
+        // globalInterceptor.excludePathPatterns("/css/**");
+        // globalInterceptor.excludePathPatterns("/**/*.html");
 
-        //排除所有地址
-        //globalInterceptor.excludePathPatterns("/**");
+        // 排除所有地址
+        // globalInterceptor.excludePathPatterns("/**");
 
-        //排除地址
+        // 排除地址
         globalInterceptor.excludePathPatterns("/api/.well-known");
         globalInterceptor.excludePathPatterns("/api/captcha/**");
         globalInterceptor.excludePathPatterns("/api/login");
         globalInterceptor.excludePathPatterns("/api/search/everything/download");
 
-        //拦截地址
+        // 生产环境需关闭
+        // globalInterceptor.excludePathPatterns("/api/test/**");
+
+        // 拦截地址
         globalInterceptor.addPathPatterns("/api/**");
     }
 

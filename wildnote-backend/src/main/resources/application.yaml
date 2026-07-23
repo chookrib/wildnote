@@ -44,7 +44,8 @@ app:
   # everything-es-exe-path: es.exe
   # everything-es-opt-path: D:\
   # 网址解析服务地址
-  article-parser-url: http://localhost:9223/parse
+  # article-parser-url: http://localhost:9223/parse
+  chrome-cdp-port: 9222
 
   # 使用钉钉发送提醒消息
   remind-dingtalk-key:

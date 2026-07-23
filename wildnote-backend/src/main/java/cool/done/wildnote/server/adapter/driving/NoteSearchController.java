@@ -96,7 +96,7 @@ public class NoteSearchController {
         // System.out.println(keyword);
 
         if (ValueUtility.isEmptyString(ripgrepExePath)) {
-            throw new ControllerException("没有指定 ripgrep exe 路径");
+            throw new ControllerException("未指定 ripgrep exe 路径，无法搜索");
         }
 
         var nodeMap = noteExploreService.getNoteMap();
@@ -156,7 +156,7 @@ public class NoteSearchController {
         // System.out.println(keyword);
 
         if (ValueUtility.isEmptyString(ripgrepExePath)) {
-            throw new ControllerException("没有指定 ripgrep exe 路径");
+            throw new ControllerException("未指定 ripgrep exe 路径，无法搜索");
         }
 
         var result = new ArrayList<String>();
@@ -280,6 +280,10 @@ public class NoteSearchController {
         // System.out.println(keyword);
         if (keyword.length() < 3) {
             throw new ControllerException("搜索关键字不能少于3个字符");
+        }
+
+        if (ValueUtility.isEmptyString(everythingHttpPort)) {
+            throw new ControllerException("未指定 Everything Http Port，无法搜索");
         }
 
         RestTemplate restTemplate = new RestTemplate();

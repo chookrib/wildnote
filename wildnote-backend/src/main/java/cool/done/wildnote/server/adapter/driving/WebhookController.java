@@ -1,9 +1,11 @@
 package cool.done.wildnote.server.adapter.driving;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.LoadState;
 import cool.done.wildnote.server.application.NoteExploreService;
 import cool.done.wildnote.server.application.NoteSettingService;
+import cool.done.wildnote.server.domain.OpenAIGateway;
 import cool.done.wildnote.server.domain.RemindGateway;
 import cool.done.wildnote.server.utility.JsonUtility;
 import cool.done.wildnote.server.utility.ValueUtility;
@@ -32,18 +34,24 @@ public class WebhookController {
     private final ApplicationContext applicationContext;
     private final NoteExploreService noteExploreService;
     private final NoteSettingService noteSettingService;
+    private final OpenAIGateway openAIGateway;
 
-    @Value("${app.article-parser-url:}")
-    private String articleParserUrl;
+    // @Value("${app.article-parser-url:}")
+    // private String articleParserUrl;
+
+    @Value("${app.chrome-cdp-port:}")
+    private String chromeCdpPort;
 
     public WebhookController(
             ApplicationContext applicationContext,
             NoteSettingService noteSettingService,
-            NoteExploreService noteExploreService
+            NoteExploreService noteExploreService,
+            OpenAIGateway openAIGateway
     ) {
         this.applicationContext = applicationContext;
         this.noteSettingService = noteSettingService;
         this.noteExploreService = noteExploreService;
+        this.openAIGateway = openAIGateway;
     }
 
     /**
@@ -127,42 +135,43 @@ public class WebhookController {
         String parsedTitle = "";
         String parsedMessage = "";
 
-        try {
-            java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
-                    //.connectTimeout(java.time.Duration.ofSeconds(5))
-                    .build();
-
-            java.net.http.HttpRequest httpRequest = java.net.http.HttpRequest.newBuilder()
-                    .uri(java.net.URI.create(articleParserUrl + "?url=" + java.net.URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8)))
-                    //.timeout(java.time.Duration.ofSeconds(8))
-                    //.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36")
-                    .GET()
-                    .build();
-
-            java.net.http.HttpResponse<String> response = client.send(
-                    httpRequest,
-                    java.net.http.HttpResponse.BodyHandlers.ofString()
-            );
-
-            // logger.info("解析网页响应: url={}, status={}, headers={}, bodyLength={}",
-            //         url, response.statusCode(), response.headers().map(), response.body() == null ? 0 : response.body().length());
-
-            if (response.statusCode() == 200) {
-                // String responseBody = response.body()
-                //         .replaceAll("(?is)<script.*?>.*?</script>", " ")
-                //         .replaceAll("(?is)<style.*?>.*?</style>", " ")
-                //         .replaceAll("(?is)<[^>]+>", " ")
-                //         .replaceAll("\\s+", " ")
-                //         .trim();
-                var responseJson = JsonUtility.deserialize(response.body());
-                parsedDate = responseJson.get("published").asText();
-                parsedTitle = responseJson.get("title").asText();
-            } else {
-                parsedMessage = String.format("解析网址失败: %s %s", response.statusCode(), response.body());
-            }
-        } catch (Exception e) {
-            parsedMessage = String.format("解析网址异常: %s", e.getMessage());
-        }
+        // 由另一个程序负责解析网页标题和日期
+        // try {
+        //     java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
+        //             //.connectTimeout(java.time.Duration.ofSeconds(5))
+        //             .build();
+        //
+        //     java.net.http.HttpRequest httpRequest = java.net.http.HttpRequest.newBuilder()
+        //             .uri(java.net.URI.create(articleParserUrl + "?url=" + java.net.URLEncoder.encode(url, java.nio.charset.StandardCharsets.UTF_8)))
+        //             //.timeout(java.time.Duration.ofSeconds(8))
+        //             //.header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36")
+        //             .GET()
+        //             .build();
+        //
+        //     java.net.http.HttpResponse<String> response = client.send(
+        //             httpRequest,
+        //             java.net.http.HttpResponse.BodyHandlers.ofString()
+        //     );
+        //
+        //     // logger.info("解析网页响应: url={}, status={}, headers={}, bodyLength={}",
+        //     //         url, response.statusCode(), response.headers().map(), response.body() == null ? 0 : response.body().length());
+        //
+        //     if (response.statusCode() == 200) {
+        //         // String responseBody = response.body()
+        //         //         .replaceAll("(?is)<script.*?>.*?</script>", " ")
+        //         //         .replaceAll("(?is)<style.*?>.*?</style>", " ")
+        //         //         .replaceAll("(?is)<[^>]+>", " ")
+        //         //         .replaceAll("\\s+", " ")
+        //         //         .trim();
+        //         var responseJson = JsonUtility.deserialize(response.body());
+        //         parsedDate = responseJson.get("published").asText();
+        //         parsedTitle = responseJson.get("title").asText();
+        //     } else {
+        //         parsedMessage = String.format("解析网址失败: %s %s", response.statusCode(), response.body());
+        //     }
+        // } catch (Exception e) {
+        //     parsedMessage = String.format("解析网址异常: %s", e.getMessage());
+        // }
 
         // try {
         //     java.net.URL targetUrl = new java.net.URL(url);
@@ -183,17 +192,17 @@ public class WebhookController {
         //     }
         //
         //     urlResponseBody = sb.toString().trim();
-        // } catch (Exception e) {
+        // } catch (Exception ex) {
         //     logger.warn("Webhook url 获取网页内容异常: {}", url, e);
         // }
 
-        // 启动 Playwright 并连接到远程调试端口
+        // 使用 Playwright 并连接到远程调试端口
+        String playwrightPageContent = "";
         try (Playwright playwright = Playwright.create()) {
             BrowserType chromium = playwright.chromium();
 
-            // 连接到远程调试端口
             BrowserContext context;
-            try (Browser browser = chromium.connectOverCDP("http://localhost:9222")) {
+            try (Browser browser = chromium.connectOverCDP("http://localhost:" + this.chromeCdpPort)) {
                 // 获取默认上下文和页面
                 context = browser.contexts().get(0);
                 Page page = context.pages().get(0);
@@ -204,27 +213,79 @@ public class WebhookController {
                 // 等待页面加载完成
                 page.waitForLoadState(LoadState.NETWORKIDLE);
 
-                // 提取页面标题
-                String title = page.title();
-                System.out.println("页面标题: " + title);
+                // String title = page.title();
+                // 提取 <meta> 标签中的日期
+                // String date = page.evaluate("() => { " +
+                //         "const metaDate = document.querySelector('meta[property=\"article:published_time\"]'); " +
+                //         "return metaDate ? metaDate.getAttribute('content') : null; " +
+                //         "}");
 
-                // 提取页面中的日期（假设日期在某个特定元素中）
-                // 这里以提取 <meta> 标签中的日期为例
-                String date = page.evaluate("() => { " +
-                        "const metaDate = document.querySelector('meta[property=\"article:published_time\"]'); " +
-                        "return metaDate ? metaDate.getAttribute('content') : null; " +
-                        "}");
+                // This model's maximum context length is 262144 tokens. However, you requested 0 output tokens and your prompt contains at least 262145 input tokens, for a total of at least 262145 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=262145)
+                // 直接用网页源代码会超上下文
+                // playwrightPageContent = page.content();
 
-                if (date != null) {
-                    System.out.println("发布日期: " + date);
-                } else {
-                    System.out.println("未找到发布日期。");
+                // 返回用户实际看到的文本（类似浏览器中 Ctrl+A 复制的效果），自动跳过隐藏元素。
+                playwrightPageContent = page.innerText("body");
+                // 返回所有元素的文本节点，包括隐藏元素。如果页面有隐藏但包含重要文本的元素，可用此方法。
+                // playwrightPageContent = page.textContent("body");
+
+                if (ValueUtility.isEmptyString(playwrightPageContent)) {
+                    throw new RuntimeException("使用 Chrome CDP 打开网址未获得内容");
                 }
             }
-
+        } catch (Exception ex) {
+            parsedMessage = String.format("使用 Chrome CDP 打开网址异常: %s", ex.getMessage());
         }
 
+        String llmAnswer = this.openAIGateway.chatCompletions("""
+                # Role
+                你是一个专业的网页内容提取专家。你的任务是从提供的 HTML 源代码中准确提取“页面标题”和“发布时间”。
+                
+                # Extraction Rules
+                请严格遵守以下规则进行提取：
+                
+                1. **标题 (Title)**:
+                   - 优先查找 `<title>` 标签内的文本。
+                   - 如果 `<title>` 包含网站名称后缀（如 " | 知乎"），请尝试去除后缀，只保留核心文章标题。
+                   - 如果找不到 `<title>`，或者 `<title>` 没有当前网页内容对应的标题，则查找 `<h1>` 或带有 `class="article-title"` / `id="post-title"` 等语义化标签的内容。
+                   - 输出必须为纯文本字符串，如果完全找不到发布时间，请返回空字符串。
+                
+                2. **发布日期 (Publish Date)**:
+                   - 优先查找结构化数据标记：`<meta property="article:published_time">`、`<time datetime="...">` 或 JSON-LD 中的 `datePublished` 字段。
+                   - 如果找不到结构化数据，则查找包含“发布”、“时间”、“日期”等关键词附近的文本节点。
+                   - **标准化格式**：无论原始格式如何，请将提取到的时间转换为 ISO 8601 标准格式，并仅保留日期部分 (YYYY-MM-DD)。
+                   - 如果完全找不到发布时间，请返回空字符串。
+                
+                3. **噪声过滤**:
+                   - 忽略导航栏、页脚、广告脚本和无关的元数据。
+                   - 只关注正文区域的核心信息。
+                
+                # Output Format
+                请以严格的 JSON 格式输出结果，不要包含任何 Markdown 代码块标记（如 ```json），也不要输出额外的解释性文字。JSON 结构如下：
+                {
+                    "title": "提取到的标题字符串或空字符串",
+                    "date": "标准化后的日期字符串或空字符串"
+                }
+                
+                # Example
+                Input: <html>...<meta property="article:published_time" content="2023-10-05T14:30:00+08:00">...<title>人工智能的未来 - TechBlog</title>...</html>
+                Output: {"title": "人工智能的未来", "publish_date": "2023-10-05"}
+                
+                # Input Data
+                以下是待分析的 HTML 源代码：
+                """ + playwrightPageContent);
 
+        JsonNode llmAnswerJson = JsonUtility.deserialize(llmAnswer);
+        JsonNode llmAnswerJsonTitle = llmAnswerJson.path("title");
+        if (!llmAnswerJsonTitle.isMissingNode()) {
+            parsedTitle = llmAnswerJsonTitle.asText();
+        }
+        JsonNode llmAnswerJsonDate = llmAnswerJson.path("date");
+        if (!llmAnswerJsonDate.isMissingNode()) {
+            parsedDate = llmAnswerJsonDate.asText();
+        }
+
+        // 没有日期时取当前时间
         if (ValueUtility.isEmptyString(parsedDate)) {
             parsedDate = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date());
         }
