@@ -114,6 +114,8 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!--<failOnNoGitDirectory>false</failOnNoGitDirectory>-->
+                    <!--<failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>-->
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
                     <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
                     <commitIdGenerationMode>full</commitIdGenerationMode>
@@ -137,4 +139,4 @@
         </plugins>
     </build>
 </project>
-<!-- last dependency upgrade 20260721 -->
+        <!-- last dependency upgrade 20260721 -->

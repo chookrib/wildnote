@@ -10,14 +10,15 @@ spring:
     name: wildnote
   web:
     resources:
-      # 指定前端静态资源路径，相对于wildnote-backend目录的路径
-      static-locations: file:..\wildnote-frontend-ts\dist
+      # 指定前端静态资源路径，相对于 wildnote-backend 的路径
+      static-locations: file:..\wildnote-frontend\dist
 
 app:
   name: wildnote
   env: dev
 
-  # 生产环境必须保留 auth-username 和 auth-password 配置，否则可以使用 admin/admin 登录！！！
+  # 指定基于何处认证信息进行认证，app | setting，app=基于应用配置文件认证，setting=基于用户配置文件认证
+  auth-by: app
   auth-username: admin
   auth-password: admin
   auth-jwt-secret: secret
@@ -27,24 +28,17 @@ app:
   #note-root-path: C:\note
   note-root-path: .\src
   note-extensions: .md|.txt
-  note-path-prefix-excludes: .stfolder
+  note-path-prefix-excludes:
   cron-filename-filters: todo|待办
   cron-expression-prefix: "> cron"
   cron-expression-separator: "|"
-  # 笔记配置文件路径，在笔记根路径下的相对路径
+  # 用户配置文件路径，在笔记根路径下的相对路径
   setting-file-path: wildnote.json
   extra-log-root-path: log\
 
   # ripgrep 路径
   ripgrep-exe-path: rg.exe
   everything-http-port: 9221
-  # Everything 路径
-  # everything-exe-path: everything.exe
-  # Everything command line interface 路径
-  # everything-es-exe-path: es.exe
-  # everything-es-opt-path: D:\
-  # 网址解析服务地址
-  # article-parser-url: http://localhost:9223/parse
   chrome-cdp-port: 9222
 
   # 使用钉钉发送提醒消息

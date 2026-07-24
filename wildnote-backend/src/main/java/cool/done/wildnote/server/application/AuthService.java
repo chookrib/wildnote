@@ -18,6 +18,9 @@ public class AuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
+    @Value("${app.auth-by:}")
+    private String authBy;
+
     @Value("${app.auth-username:}")
     private String authUsername;
 
@@ -54,31 +57,27 @@ public class AuthService {
             throw new ApplicationException("用户名或密码不能为空");
         }
 
-        boolean authSuccess = false;
-
-        // 先从环境配置文件中获取认证信息
-        if (this.authUsername.equals(username) && this.authPassword.equals(password)) {
-            authSuccess = true;
-        }
-
-        if (!authSuccess) {
-            // 再从笔记配置文件中获取认证信息
+        if (this.authBy.equals("app")) {
+            if (!this.authUsername.equals(username) || !this.authPassword.equals(password)) {
+                throw new ApplicationException("用户名或密码错误，错误代码 101");
+            }
+        } else if (this.authBy.equals("setting")) {
             try {
                 String settingPassword = noteSettingService.getAuthPassword(username);
-                if (
-                        !ValueUtility.isEmptyString(settingPassword) &&
-                                settingPassword.equals(CryptoUtility.md5Encode(password))
-                    //settingPassword.equals(password)
-                ) {
-                    authSuccess = true;
+                if(ValueUtility.isEmptyString(settingPassword))
+                {
+                    throw new ApplicationException("用户名或密码错误，错误代码 201");
+                }
+                if (!settingPassword.equals(CryptoUtility.md5Encode(password))) {
+                    throw new ApplicationException("用户名或密码错误，错误代码 202");
                 }
             } catch (Exception ex) {
-                logger.info("从配置文件中获取认证信息异常: {}", ex.getMessage());
+                // logger.info("从用户配置文件中获取认证信息异常: {}", ex.getMessage());
+                throw new ApplicationException("用户名或密码错误，错误代码 203");
             }
         }
-
-        if (!authSuccess) {
-            throw new ApplicationException("用户名或密码错误");
+        else {
+            throw new ApplicationException("用户名或密码错误，错误代码 301");
         }
 
         return CryptoUtility.jwtEncode(
@@ -87,7 +86,6 @@ public class AuthService {
                 LocalDateTime.now().plusMinutes(this.authJwtExpiresMinute)
         );
     }
-
 
     /**
      * 验证 AccessToken
@@ -99,7 +97,7 @@ public class AuthService {
 
         try {
             Map<String, ?> payload = CryptoUtility.jwtDecode(accessToken, this.authJwtSecret);
-            //return Objects.toString(payload.get("username"), "").equals(this.authUsername);
+            // return Objects.toString(payload.get("username"), "").equals(this.authUsername);
             return true;
         } catch (Exception ex) {
             return false;
