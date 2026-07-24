@@ -117,7 +117,7 @@ for /f "delims=" %%i in ('dir target\*.jar /b /o:-n') do (
 
 用浏览器打开 `http://localhost:8080`，默认账号密码为 `admin / admin`。
 
-> ⚠️ 生产环境请务必修改 `app.auth-username` 和 `app.auth-password`。
+> ⚠️ 生产环境请务必修改认证相关配置。
 
 ## 后端主要配置项
 
