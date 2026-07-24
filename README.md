@@ -97,7 +97,6 @@ npm run dev
 
 使用以下批处理启动项目，可自动选择最新打包的 jar 文件：
 ```bat
-@echo off
 title wildnote
 cd /d "D:\your-path\wildnote\wildnote-backend"
 
