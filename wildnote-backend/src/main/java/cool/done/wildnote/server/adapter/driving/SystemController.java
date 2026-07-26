@@ -46,17 +46,17 @@ public class SystemController {
     }
 
     /**
-     * 测试提醒功能
+     * 测试提醒通知功能
      */
-    @RequestMapping(value = "/api/system/test/remind", method = RequestMethod.GET)
-    public Result systemTestRemind(HttpServletRequest request) {
+    @RequestMapping(value = "/api/system/test/remind-notify", method = RequestMethod.GET)
+    public Result systemTestRemindNotify(HttpServletRequest request) {
         String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
-        this.remindGateway.remind(message);
+        this.remindGateway.notify(message);
         return Result.ok();
     }
 
     /**
-     * 测试短信功能
+     * 测试短信验证码功能
      */
     @RequestMapping(value = "/api/system/test/sms-code", method = RequestMethod.GET)
     public Result systemTestSmsCode(HttpServletRequest request) {

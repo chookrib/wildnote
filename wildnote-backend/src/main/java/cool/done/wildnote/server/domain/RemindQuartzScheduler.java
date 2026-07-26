@@ -30,7 +30,7 @@ public class RemindQuartzScheduler implements RemindScheduler {
                     (context) -> {
                         JobDataMap data = context.getJobDetail().getJobDataMap();
                         String message = data.getString("message");
-                        this.remindGateway.remind(message);
+                        this.remindGateway.notify(message);
                     });
             this.scheduler.start();
         } catch (SchedulerException ex) {

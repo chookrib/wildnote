@@ -6,7 +6,7 @@ package cool.done.wildnote.server.domain;
 public interface RemindGateway {
 
     /**
-     * 发送提醒消息
+     * 提醒通知
      */
-    void remind(String message);
+    void notify(String message);
 }

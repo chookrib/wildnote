@@ -55,42 +55,42 @@ public class WebhookController {
     }
 
     /**
-     * 提醒 Webhook
+     * 通知 Webhook
      */
-    @RequestMapping(value = "/webhook/remind/{key}", method = RequestMethod.GET)
-    public Result remind(HttpServletRequest request, @PathVariable String key) {
+    @RequestMapping(value = "/webhook/notify/{key}", method = RequestMethod.GET)
+    public Result notify(HttpServletRequest request, @PathVariable String key) {
         if (ValueUtility.isEmptyString(key))
-            throw new ControllerException("Webhook remind 未指定路径参数 key");
+            throw new ControllerException("Webhook notify 未指定路径参数 key");
 
         key = key.trim();
         String message = RequestValueHelper.getRequestParamStringTrimReq(request, "message");
 
-        String beanName = noteSettingService.getWebhookRemind(key);
+        String beanName = noteSettingService.getWebhookNotify(key);
         if (ValueUtility.isEmptyString(beanName))
-            throw new ControllerException(String.format("Webhook remind 未配置 %s", key));
+            throw new ControllerException(String.format("Webhook notify 未配置 %s", key));
 
         // RemindGateway remindGateway = applicationContext.getBean(RemindGateway.class);
         RemindGateway remindGateway = (RemindGateway) applicationContext.getBean(beanName);
-        remindGateway.remind(String.format("Webhook remind 成功: %s %s", key, message));
+        remindGateway.notify(String.format("Webhook notify 成功: %s %s", key, message));
 
         return Result.ok();
     }
 
     /**
-     * 记录 Webhook，未指定 mode 默认为 append
+     * 保存文本 Webhook，未指定 mode 默认为 append
      */
-    @RequestMapping(value = "/webhook/record/{key}", method = RequestMethod.GET)
-    public Result record(HttpServletRequest request, @PathVariable String key) {
+    @RequestMapping(value = "/webhook/save-text/{key}", method = RequestMethod.GET)
+    public Result saveText(HttpServletRequest request, @PathVariable String key) {
         if (ValueUtility.isEmptyString(key))
-            throw new ControllerException("Webhook record 未指定路径参数 key");
+            throw new ControllerException("Webhook save-text 未指定路径参数 key");
 
         key = key.trim();
         String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "append", "mode");
         String content = RequestValueHelper.getRequestParamStringTrimReq(request, "content");
 
-        String path = noteSettingService.getWebhookRecord(key);
+        String path = noteSettingService.getWebhookSaveText(key);
         if (ValueUtility.isEmptyString(path))
-            throw new ControllerException(String.format("Webhook record 未配置 %s", key));
+            throw new ControllerException(String.format("Webhook save-text 未配置 %s", key));
 
         content = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date()) + " " + content;
 
@@ -99,7 +99,7 @@ public class WebhookController {
         } else if ("insert".equalsIgnoreCase(mode)) {
             noteExploreService.insertFileContent(path, "\n\n" + content);
         } else {
-            throw new ControllerException("Webhook record mode 非法");
+            throw new ControllerException("Webhook save-text mode 非法");
         }
 
         return Result.okData(Map.of(
@@ -109,25 +109,25 @@ public class WebhookController {
     }
 
     /**
-     * 记录网址 Webhook，未指定 mode 默认为 append
+     * 保存网址 Webhook，未指定 mode 默认为 append
      */
-    @RequestMapping(value = "/webhook/record-url/{key}", method = RequestMethod.GET)
-    public Result url(HttpServletRequest request, @PathVariable String key) {
+    @RequestMapping(value = "/webhook/save-url/{key}", method = RequestMethod.GET)
+    public Result saveUrl(HttpServletRequest request, @PathVariable String key) {
         if (ValueUtility.isEmptyString(key))
-            throw new ControllerException("Webhook record-url 未指定路径参数 key");
+            throw new ControllerException("Webhook save-url 未指定路径参数 key");
 
         key = key.trim();
         String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "append", "mode");
         String url = RequestValueHelper.getRequestParamStringTrimReq(request, "url");
 
-        String path = noteSettingService.getWebhookRecordUrl(key);
+        String path = noteSettingService.getWebhookSaveUrl(key);
         if (ValueUtility.isEmptyString(path))
-            throw new ControllerException(String.format("Webhook record-url 未配置 %s", key));
+            throw new ControllerException(String.format("Webhook save-url 未配置 %s", key));
 
         // 判断是否为 url
         String urlLowerCase = url.toLowerCase();
         if (!urlLowerCase.startsWith("https://") && !urlLowerCase.startsWith("http://")) {
-            throw new ControllerException(String.format("Webhook record-url 指定的 url 不合法"));
+            throw new ControllerException(String.format("Webhook save-url 指定的 url 不合法"));
         }
 
         // 解析结果
@@ -299,7 +299,7 @@ public class WebhookController {
         } else if ("insert".equalsIgnoreCase(mode)) {
             noteExploreService.insertFileContent(path, "\n\n" + content);
         } else {
-            throw new ControllerException("Webhook url mode 非法");
+            throw new ControllerException("Webhook save-url mode 非法");
         }
 
         return Result.okData(Map.of(

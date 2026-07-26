@@ -28,16 +28,16 @@ const reloadAllNote = () => {
   });
 };
 
-const testRemindPanelVisible = ref(false);
-const testRemindMessage = ref('');
-const openTestRemindPanel = () => {
-  testRemindPanelVisible.value = true;
+const testRemindNotifyPanelVisible = ref(false);
+const testRemindNotifyMessage = ref('');
+const openTestRemindNotifyPanel = () => {
+  testRemindNotifyPanelVisible.value = true;
 };
 
-const testRemind = () => {
-  axios.get('/api/system/test/remind?message=' + testRemindMessage.value).then((response) => {
-    testRemindPanelVisible.value = false;
-    message.success('测试提醒消息发送成功');
+const testRemindNotify = () => {
+  axios.get('/api/system/test/remind-notify?message=' + testRemindNotifyMessage.value).then((response) => {
+    testRemindNotifyPanelVisible.value = false;
+    message.success('测试提醒通知成功');
   });
 };
 
@@ -53,7 +53,7 @@ const testSmsCode = () => {
     .get('/api/system/test/sms-code?mobile=' + testSmsCodeMobile.value + '&code=' + testSmsCodeValue.value)
     .then((response) => {
       testSmsCodePanelVisible.value = false;
-      message.success('测试短信验证码发送成功');
+      message.success('测试短信验证码成功');
     });
 };
 
@@ -106,20 +106,20 @@ const logout = function () {
     <template #title>测试</template>
     <a-space>
       <a-button type="primary" @click="reloadAllNote">重新加载所有笔记</a-button>
-      <a-button type="primary" @click="openTestRemindPanel">测试发送提醒消息</a-button>
-      <a-button type="primary" @click="openTestSmsCodePanel">测试发送短信验证码</a-button>
+      <a-button type="primary" @click="openTestRemindNotifyPanel">测试提醒通知</a-button>
+      <a-button type="primary" @click="openTestSmsCodePanel">测试短信验证码</a-button>
     </a-space>
   </a-card>
 
-  <a-modal v-model:open="testRemindPanelVisible" title="测试发送提醒消息" @ok="testRemind">
+  <a-modal v-model:open="testRemindNotifyPanelVisible" title="测试提醒通知" @ok="testRemindNotify">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item label="提醒内容">
-        <a-input v-model:value="testRemindMessage"></a-input>
+        <a-input v-model:value="testRemindNotifyMessage"></a-input>
       </a-form-item>
     </a-form>
   </a-modal>
 
-  <a-modal v-model:open="testSmsCodePanelVisible" title="测试发送短信验证码" @ok="testSmsCode">
+  <a-modal v-model:open="testSmsCodePanelVisible" title="测试短信验证码" @ok="testSmsCode">
     <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }">
       <a-form-item label="手机">
         <a-input v-model:value="testSmsCodeMobile"></a-input>

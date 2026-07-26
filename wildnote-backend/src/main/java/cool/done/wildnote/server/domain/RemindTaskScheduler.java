@@ -36,7 +36,7 @@ public class RemindTaskScheduler implements RemindScheduler {
         String jobId = UUID.randomUUID().toString();
         CronTrigger cronTrigger = new CronTrigger(cronExpression);  // Spring 风格 cron 只支持6位表达式
         ScheduledFuture<?> scheduledFuture = taskScheduler.schedule(() -> {
-                    remindGateway.remind(message);
+                    remindGateway.notify(message);
                 },
                 cronTrigger
         );

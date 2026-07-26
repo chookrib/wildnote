@@ -38,7 +38,7 @@ public class DingTalkRemindGatewayAdapter implements RemindGateway {
     }
 
     @Override
-    public void remind(String message) {
+    public void notify(String message) {
         try {
             String response = dingTalkChatSend(message);
             extraLogService.logRemindInfo(String.format("钉钉提醒结果: %s %s", message, response), logger);
