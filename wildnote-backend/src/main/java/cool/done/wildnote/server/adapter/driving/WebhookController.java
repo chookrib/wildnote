@@ -85,25 +85,25 @@ public class WebhookController {
             throw new ControllerException("Webhook save-text 未指定路径参数 key");
 
         key = key.trim();
-        String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "append", "mode");
-        String content = RequestValueHelper.getRequestParamStringTrimReq(request, "content");
+        String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "insert", "mode");
+        String text = RequestValueHelper.getRequestParamStringTrimReq(request, "text");
 
         String path = noteSettingService.getWebhookSaveText(key);
         if (ValueUtility.isEmptyString(path))
             throw new ControllerException(String.format("Webhook save-text 未配置 %s", key));
 
-        content = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date()) + " " + content;
+        text = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date()) + " " + text;
 
         if ("append".equalsIgnoreCase(mode)) {
-            noteExploreService.appendFileContent(path, "\n\n" + content);
+            noteExploreService.appendFileContent(path, "\n\n" + text);
         } else if ("insert".equalsIgnoreCase(mode)) {
-            noteExploreService.insertFileContent(path, "\n\n" + content);
+            noteExploreService.insertFileContent(path, "\n\n" + text);
         } else {
             throw new ControllerException("Webhook save-text mode 非法");
         }
 
         return Result.okData(Map.of(
-                "content", content,
+                "text", text,
                 "mode", mode
         ));
     }
@@ -117,7 +117,7 @@ public class WebhookController {
             throw new ControllerException("Webhook save-url 未指定路径参数 key");
 
         key = key.trim();
-        String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "append", "mode");
+        String mode = RequestValueHelper.getRequestParamStringTrimOrDefault(request, "insert", "mode");
         String url = RequestValueHelper.getRequestParamStringTrimReq(request, "url");
 
         String path = noteSettingService.getWebhookSaveUrl(key);
@@ -289,22 +289,22 @@ public class WebhookController {
         if (ValueUtility.isEmptyString(parsedDate)) {
             parsedDate = new SimpleDateFormat("*yyyyMMdd HH:mm:ss*").format(new Date());
         }
-        String content = String.format("%s [%s](%s)", parsedDate, parsedTitle, url);
+        String text = String.format("%s [%s](%s)", parsedDate, parsedTitle, url);
         if (!ValueUtility.isEmptyString(parsedMessage)) {
-            content += String.format("\n> %s", parsedMessage);
+            text += String.format("\n> %s", parsedMessage);
         }
 
         if ("append".equalsIgnoreCase(mode)) {
-            noteExploreService.appendFileContent(path, "\n\n" + content);
+            noteExploreService.appendFileContent(path, "\n\n" + text);
         } else if ("insert".equalsIgnoreCase(mode)) {
-            noteExploreService.insertFileContent(path, "\n\n" + content);
+            noteExploreService.insertFileContent(path, "\n\n" + text);
         } else {
             throw new ControllerException("Webhook save-url mode 非法");
         }
 
         return Result.okData(Map.of(
                 "url", url,
-                "content", content,
+                "text", text,
                 "mode", mode
         ));
     }
