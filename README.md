@@ -14,9 +14,9 @@
 
 ## 技术架构
 
-| 层级 | 技术栈 |
-|------|--------|
-| 后端 | Java 17, Spring Boot 3.5 |
+| 层级 | 技术栈                                  |
+| ---- | --------------------------------------- |
+| 后端 | Java 17, Spring Boot 3.5                |
 | 前端 | TypeScript, Vite, Vue 3, Ant Design Vue |
 
 ## 项目结构
@@ -39,11 +39,11 @@ wildnote/
 
 ### 运行环境要求
 
-| 组件 | 版本 | 说明 |
-|------|------|------|
-| JDK | 17+ | 后端运行环境 |
-| Maven | 3.9+ | 后端构建工具 |
-| Node.js | 22+ | 前端构建环境 |
+| 组件    | 版本 | 说明         |
+| ------- | ---- | ------------ |
+| JDK     | 17+  | 后端运行环境 |
+| Maven   | 3.9+ | 后端构建工具 |
+| Node.js | 22+  | 前端构建环境 |
 
 ### 外部工具要求
 
@@ -121,32 +121,32 @@ for /f "delims=" %%i in ('dir target\*.jar /b /o:-n') do (
 
 ## 后端主要配置项
 
-| 配置项 | 默认值 | 说明 |
-|--------|--------|------|
-| `server.port` | `8080` | 服务端口 |
-| `app.auth-by` | `app` | 指定基于何处认证信息进行认证，app \| setting，app=基于应用配置文件认证，setting=基于用户配置文件认证|
-| `app.auth-username` | `admin` | 登录用户名 |
-| `app.auth-password` | `admin` | 登录密码 |
-| `app.auth-jwt-secret` | `secret` | JWT 密钥 |
-| `app.auth-jwt-expires` | `30d` | JWT 过期时间，值为时长（正整数）加时长单位（d/h/m）|
-| `app.note-root-path` | `.\src` | 笔记根路径（绝对/相对路径均可） |
-| `app.note-extensions` | `.md\|.txt` | 支持的笔记文件扩展名，`\|` 分隔 |
-| `app.note-path-prefix-excludes` | | 需要忽略的路径前缀，`\|` 分隔 |
-| `app.cron-filename-filters` | `todo\|待办` | 笔记内容 cron 任务识别过滤器，笔记路径中需包含这些名称，`\|` 分隔 |
-| `app.cron-expression-prefix` | `> cron` | 笔记内容 cron 任务识别前缀 |
-| `app.cron-expression-separator` | `\|` | 笔记内容 cron 任务分隔符 |
-| `app.setting-file-path` | `wildnote.json` | 用户配置文件路径（相对于笔记根路径），认证、收藏、Webhook配置 |
-| `app.extra-log-root-path` | `log\` | 日志保存路径，笔记监听、通知、短信日志|
-| `app.ripgrep-exe-path` | `rg.exe` | ripgrep 可执行文件路径 |
-| `app.everything-http-port` | `9221` | Everything HTTP Server 端口 |
-| `app.chrome-cdp-port` | `9222` | Chrome CDP 远程调试端口 |
-| `app.remind-dingtalk-key` | | 钉钉机器人 Access Token |
-| `app.remind-dingtalk-secret` | | 钉钉机器人 Secret |
-| `app.remind-dingtalk-chatid` | | 钉钉机器人 Chat ID |
-| `app.sms-aliyun-key` | | 阿里云短信 AccessKey ID |
-| `app.sms-aliyun-secret` | | 阿里云短信 AccessKey Secret |
-| `app.sms-aliyun-sign` | | 阿里云短信签名 |
-| `app.sms-aliyun-template` | | 阿里云短信模板 |
-| `app.openai-base-url` | | OpenAI 兼容接口地址 |
-| `app.openai-api-key` | | OpenAI API Key |
-| `app.openai-model` | | OpenAI 模型名称 |
+| 配置项                          | 默认值          | 说明                                                                                                 |
+| ------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
+| `server.port`                   | `8080`          | 服务端口                                                                                             |
+| `app.auth-by`                   | `app`           | 指定基于何处认证信息进行认证，app \| setting，app=基于应用配置文件认证，setting=基于用户配置文件认证 |
+| `app.auth-username`             | `admin`         | 登录用户名                                                                                           |
+| `app.auth-password`             | `admin`         | 登录密码                                                                                             |
+| `app.auth-jwt-secret`           | `secret`        | JWT 密钥                                                                                             |
+| `app.auth-jwt-expires`          | `30d`           | JWT 过期时间，值为时长（正整数）加时长单位（d/h/m）                                                  |
+| `app.note-root-path`            | `.\src`         | 笔记根路径（绝对/相对路径均可）                                                                      |
+| `app.note-extensions`           | `.md\|.txt`     | 支持的笔记文件扩展名，`\|` 分隔                                                                      |
+| `app.note-path-prefix-excludes` |                 | 需要忽略的路径前缀，`\|` 分隔                                                                        |
+| `app.cron-filename-filters`     | `todo\|待办`    | 笔记内容 cron 任务识别过滤器，笔记路径中需包含这些名称，`\|` 分隔                                    |
+| `app.cron-expression-prefix`    | `> cron`        | 笔记内容 cron 任务识别前缀                                                                           |
+| `app.cron-expression-separator` | `\|`            | 笔记内容 cron 任务分隔符                                                                             |
+| `app.setting-file-path`         | `wildnote.json` | 用户配置文件路径（相对于笔记根路径），认证、收藏、Webhook配置                                        |
+| `app.extra-log-root-path`       | `log\`          | 日志保存路径，笔记监听、通知、短信日志                                                               |
+| `app.ripgrep-exe-path`          | `rg.exe`        | ripgrep 可执行文件路径                                                                               |
+| `app.everything-http-port`      | `9221`          | Everything HTTP Server 端口                                                                          |
+| `app.chrome-cdp-port`           | `9222`          | Chrome CDP 远程调试端口                                                                              |
+| `app.remind-dingtalk-key`       |                 | 钉钉机器人 Access Token                                                                              |
+| `app.remind-dingtalk-secret`    |                 | 钉钉机器人 Secret                                                                                    |
+| `app.remind-dingtalk-chatid`    |                 | 钉钉机器人 Chat ID                                                                                   |
+| `app.sms-aliyun-key`            |                 | 阿里云短信 AccessKey ID                                                                              |
+| `app.sms-aliyun-secret`         |                 | 阿里云短信 AccessKey Secret                                                                          |
+| `app.sms-aliyun-sign`           |                 | 阿里云短信签名                                                                                       |
+| `app.sms-aliyun-template`       |                 | 阿里云短信模板                                                                                       |
+| `app.openai-base-url`           |                 | OpenAI 兼容接口地址                                                                                  |
+| `app.openai-api-key`            |                 | OpenAI API Key                                                                                       |
+| `app.openai-model`              |                 | OpenAI 模型名称                                                                                      |
