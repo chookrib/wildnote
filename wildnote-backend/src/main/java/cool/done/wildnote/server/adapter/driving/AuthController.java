@@ -140,7 +140,7 @@ public class AuthController {
 
         // 添加开发环境固定验证码
         if (applicationConfig.isAppEnvDev()) {
-            captchaCache.put("dev-captcha", "8888");
+            captchaCache.put("dev-captcha", "8888");    // 开发环境供 test/resources/http/login.http 测试使用
         }
 
         String code = captchaCache.getIfPresent(fingerprint);

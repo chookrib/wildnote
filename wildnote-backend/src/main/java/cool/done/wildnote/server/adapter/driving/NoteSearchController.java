@@ -104,10 +104,11 @@ public class NoteSearchController {
         try {
             ProcessBuilder pb = new ProcessBuilder(
                     ripgrepExePath,
-                    "-F",   // 字面量搜索
-                    "-l",   // 只列出文件
-                    "-i",   // 忽略大小写
-                    keyword,
+                    "-F",       // 字面量搜索
+                    "-l",       // 只列出文件
+                    "-i",       // 忽略大小写
+                    "--",       // 使用 -- 分隔 keyword 使得可以搜索 - 开头的字符串，以及防止命令注入
+                    keyword,    // 查询参数两端无需添加双引号
                     noteExploreService.getNoteRootAbsPath()
             );
 
@@ -163,12 +164,13 @@ public class NoteSearchController {
         try {
             ProcessBuilder pb = new ProcessBuilder(
                     ripgrepExePath,
-                    "-F",   // 字面量搜索
-                    "-l",   // 只列出文件
-                    "-i",   // 忽略大小写
+                    "-F",       // 字面量搜索
+                    "-l",       // 只列出文件
+                    "-i",       // 忽略大小写
                     // "--no-messages",
+                    "--",       // 使用 -- 分隔 keyword 使得可以搜索 - 开头的字符串，以及防止命令注入
                     keyword,    // 查询参数两端无需添加双引号
-                    "C:\\Program Files\\FileZilla Server"   // 路径两端无需添加双引号，路径结尾不能有 \
+                    "C:\\Program Files"   // 路径两端无需添加双引号，路径结尾不能有 \
             );
 
             // 不合并 stderr 到 stdout
