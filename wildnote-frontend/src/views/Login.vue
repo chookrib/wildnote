@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import {onMounted, reactive, ref} from 'vue';
-import { LockOutlined, UserOutlined, SafetyOutlined } from '@ant-design/icons-vue';
+import {LockOutlined, UserOutlined, SafetyOutlined} from '@ant-design/icons-vue';
 import axios from '@/utility/axios-utility';
 import * as localStorageUtility from '@/utility/local-storage-utility';
-import { useRoute } from 'vue-router';
+import {useRoute} from 'vue-router';
 import router from '@/router';
 
 const route = useRoute();
-if (route.query.nlr !== 'true') router.push({ path: '/index' }); // 尝试进入系统
+if (route.query.nlr !== 'true') router.push({path: '/index'}); // 尝试进入系统
 
 const f = ref('');
 const captchaSrc = ref('');
-const loginForm = reactive({ username: '', password: '', captcha: '' });
+const loginForm = reactive({username: '', password: '', captcha: ''});
 
 onMounted(() => {
-  loadCaptcha();
+  refreshCaptcha();
 });
 
-const loadCaptcha = () => {
+const refreshCaptcha = () => {
   // f.value = Math.random().toString(36).substring(2) + Date.now().toString(36);
   // f.value = crypto.randomUUID();
   f.value = Math.random().toString();
@@ -25,19 +25,34 @@ const loadCaptcha = () => {
   console.log(captchaSrc.value);
 };
 
-const login = () => {
-  axios
-    .post('/api/login', {
+// const login = () => {
+//   axios
+//     .post('/api/login', {
+//       f: f.value,
+//       captcha: loginForm.captcha,
+//       username: loginForm.username,
+//       password: loginForm.password,
+//     })
+//     .then((response) => {
+//       localStorageUtility.setAccessToken(response.data.data.accessToken);
+//       // window.location.href = '/index';
+//       router.push({path: '/index'});
+//     });
+// };
+const login = async () => {
+  try {
+    const response = await axios.post('/api/login', {
       f: f.value,
       captcha: loginForm.captcha,
       username: loginForm.username,
       password: loginForm.password,
-    })
-    .then((response) => {
-      localStorageUtility.setAccessToken(response.data.data.accessToken);
-      // window.location.href = '/index';
-      router.push({ path: '/index' });
     });
+    localStorageUtility.setAccessToken(response.data.data.accessToken);
+    router.push({path: '/index'});
+  } catch (error) {
+    refreshCaptcha();  // 刷新验证码
+    // console.error('登录失败:', error);
+  }
 };
 </script>
 
@@ -46,32 +61,32 @@ const login = () => {
     <a-card :hoverable="true" class="login-box">
       <div class="logo-box-outside">
         <div class="logo-box-inside">
-          <img src="/img/logo192.png" alt="" />
+          <img src="/img/logo192.png" alt=""/>
         </div>
       </div>
       <a-form autocomplete="off">
         <a-form-item>
           <a-input v-model:value="loginForm.username" placeholder="账号" @keyup.enter="login">
             <template #prefix>
-              <UserOutlined />
+              <UserOutlined/>
             </template>
           </a-input>
         </a-form-item>
         <a-form-item>
           <a-input-password v-model:value="loginForm.password" placeholder="密码" @keyup.enter="login">
             <template #prefix>
-              <LockOutlined />
+              <LockOutlined/>
             </template>
           </a-input-password>
         </a-form-item>
         <a-form-item>
           <a-input v-model:value="loginForm.captcha" placeholder="验证码" @keyup.enter="login">
             <template #prefix>
-              <SafetyOutlined />
+              <SafetyOutlined/>
             </template>
             <template #suffix>
-              <img alt="" :src="captchaSrc" @click="loadCaptcha" />
-            </template>">
+              <img alt="" :src="captchaSrc" @click="refreshCaptcha"/>
+            </template>
           </a-input>
 
         </a-form-item>

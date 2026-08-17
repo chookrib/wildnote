@@ -63,7 +63,7 @@ public class AuthController {
 
         // String code = String.valueOf((int)((Math.random() * 9 + 1) * 1000));
         // String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";  //去除易混淆字符01IlOo
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";  // 去除易混淆字符01IlOo
         StringBuilder codeBuilder = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             int idx = (int) (Math.random() * chars.length());
@@ -144,6 +144,8 @@ public class AuthController {
         }
 
         String code = captchaCache.getIfPresent(fingerprint);
+        captchaCache.invalidate(fingerprint);           // 每次触发登录，不管是否登录成功，均使验证码失效，前端在登录失败时刷新验证码
+
         if (code == null) {
             throw new ControllerException("验证码已过期");
         }

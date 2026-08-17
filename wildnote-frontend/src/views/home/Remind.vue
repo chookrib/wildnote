@@ -37,12 +37,16 @@ const activeCronListComputed = computed(() => {
         }
       });
     } else if (sorter.field === 'delayTime' || sorter.field === 'cronDetail') {
+      // return [...activeCronList.value].sort((a, b) => {
+      //   if (sorter.order === 'ascend') {
+      //     return Number(a.delayTime) > Number(b.delayTime) ? 1 : -1;
+      //   } else {
+      //     return Number(a.delayTime) < Number(b.delayTime) ? 1 : -1;
+      //   }
+      // });
       return [...activeCronList.value].sort((a, b) => {
-        if (sorter.order === 'ascend') {
-          return Number(a.delayTime) > Number(b.delayTime) ? 1 : -1;
-        } else {
-          return Number(a.delayTime) < Number(b.delayTime) ? 1 : -1;
-        }
+        const d = (Number(a.delayTime) || 0) - (Number(b.delayTime) || 0);
+        return sorter.order === 'ascend' ? d : -d;
       });
     }
   }

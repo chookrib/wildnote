@@ -77,7 +77,7 @@ public class WebhookController {
     }
 
     /**
-     * 保存文本 Webhook，未指定 mode 默认为 append
+     * 保存文本 Webhook，未指定 mode 默认为 insert
      */
     @RequestMapping(value = "/webhook/save-text/{key}", method = RequestMethod.GET)
     public Result saveText(HttpServletRequest request, @PathVariable String key) {
@@ -109,7 +109,7 @@ public class WebhookController {
     }
 
     /**
-     * 保存网址 Webhook，未指定 mode 默认为 append
+     * 保存网址 Webhook，未指定 mode 默认为 insert
      */
     @RequestMapping(value = "/webhook/save-url/{key}", method = RequestMethod.GET)
     public Result saveUrl(HttpServletRequest request, @PathVariable String key) {
@@ -269,7 +269,7 @@ public class WebhookController {
                 
                 # Example
                 Input: <html>...<meta property="article:published_time" content="2023-10-05T14:30:00+08:00">...<title>人工智能的未来 - TechBlog</title>...</html>
-                Output: {"title": "人工智能的未来", "publish_date": "2023-10-05"}
+                Output: {"title": "人工智能的未来", "date": "2023-10-05"}
                 
                 # Input Data
                 以下是待分析的 HTML 源代码：
